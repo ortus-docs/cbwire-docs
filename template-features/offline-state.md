@@ -1,0 +1,25 @@
+---
+description: Display modals, alerts, or any HTML when your users are offline.
+---
+
+# Offline State
+
+CBWIRE provides offline state management, making it easy to toggle UI elements when the user is offline or online.
+
+You can use _wire:offline_ to display elements when CBWIRE detects that the user is offline.
+
+```html
+<div wire:offline><!-- Oh no, you're offline --></div>
+```
+
+You can append _.class_ to your _wire:offline_ directive and specify a CSS class to toggle when the user is offline.
+
+```html
+<div wire:offline.class="online" class="online"></div>
+```
+
+Use _.remove_ to specify classes you want to be removed when offline.
+
+```html
+<div wire:offline.class.remove="im-online" class="im-online"></div>
+```
