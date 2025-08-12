@@ -29,6 +29,38 @@ If you want the latest bleeding edge, run:
 box install cbwire@be
 ```
 
+## BoxLang Setup
+
+When using BoxLang with CBWIRE, you need to ensure that the required compatibility modules are installed. BoxLang requires the [bx-compat-cfml](https://forgebox.io/view/bx-compat-cfml) and [bx-esapi](https://forgebox.io/view/bx-esapi) modules to work with CBWIRE.
+
+If you're launching your server using CommandBox, you can create a `server.json` file in your project root to automatically install these dependencies and configure your server:
+
+```json
+{
+    "app":{
+        "cfengine":"boxlang",
+        "serverHomeDirectory":".engine/boxlang"
+    },
+    "web":{
+        "rewrites":{
+            "enable":"true"
+        }
+    },
+    "JVM":{
+        "javaVersion":"openjdk21_jdk"
+    },
+    "scripts":{
+        "onServerInitialInstall":"install bx-compat-cfml,bx-esapi"
+    }
+}
+```
+
+This configuration will:
+- Set BoxLang as the CFML engine
+- Configure URL rewrites (recommended for ColdBox)
+- Use OpenJDK 21 (recommended for BoxLang)
+- Automatically install the required compatibility modules when the server starts for the first time
+
 ## Livewire Assets <a href="#layout-setup" id="layout-setup"></a>
 
 For CBWIRE to work, your layout must include Livewire's CSS and JavaScript assets. CBWIRE 4 automatically adds these assets to your layout.
