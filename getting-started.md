@@ -58,7 +58,7 @@ If you're launching your server using CommandBox, you can create a `server.json`
 This configuration will:
 - Set BoxLang as the CFML engine
 - Configure URL rewrites (recommended for ColdBox)
-- Use OpenJDK 21 (recommended for BoxLang)
+- Use OpenJDK 21 (required for BoxLang)
 - Automatically install the required compatibility modules when the server starts for the first time
 
 ## Livewire Assets <a href="#layout-setup" id="layout-setup"></a>
