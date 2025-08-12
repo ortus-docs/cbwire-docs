@@ -8,7 +8,7 @@ You can get started with CBWIRE with a few initial steps.
 
 * BoxLang or CFML Server
   * BoxLang 1.0+
-    * Currently requires [bx-compat-cfml](https://forgebox.io/view/bx-compat-cfml) module
+    * Currently requires [bx-compat-cfml](https://forgebox.io/view/bx-compat-cfml) and [bx-esapi](https://forgebox.io/view/bx-esapi) modules
   * Adobe ColdFusion 2021+
   * Lucee 5+
 * ColdBox 6+
