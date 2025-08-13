@@ -1,7 +1,5 @@
 # Lifecycle Methods
 
-## Overview
-
 CBWIRE provides lifecycle methods you can hook into to update and render your [components](components.md).
 
 ## Order Of Operations

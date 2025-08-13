@@ -1,7 +1,5 @@
 # Data Binding
 
-## Overview
-
 You can bind your [data properties](properties.md) to input elements within your [template](templates.md) using [**wire:model**](../template-directives/wire-model.md).
 
 {% tabs %}

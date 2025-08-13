@@ -1,7 +1,5 @@
 # Lazy Loading
 
-## Overview
-
 A slow component can slow down the loading of an entire page. CBWIRE's lazy loading feature allows you to delay loading your components until the page is fully rendered.&#x20;
 
 Let's create a slow component that users will hate.

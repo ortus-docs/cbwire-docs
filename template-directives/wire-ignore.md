@@ -1,7 +1,5 @@
 # wire:ignore
 
-## Overview
-
 You can tell CBWIRE to ignore updating parts of your [templates](../the-essentials/templates.md) using **wire:ignore**. This is especially useful when using Alpine.js and other third-party libraries.
 
 ```html

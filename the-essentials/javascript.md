@@ -1,7 +1,5 @@
 # JavaScript
 
-## Overview
-
 CBWIRE includes Alpine.js, and uses Livewire.js for all client-side functionality and DOM diffing. These tools give you complete control over client-side functionality while providing ways to interact with your component server-side.
 
 ## Alpine.js

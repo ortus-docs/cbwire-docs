@@ -1,9 +1,5 @@
 # How It Works
 
-## Overview
-
-
-
 This diagram shows the Counter we created in the [Introduction](./) and how CBWIRE re-renders our template and updates the DOM.
 
 <figure><img src=".gitbook/assets/image (12).png" alt=""><figcaption></figcaption></figure>

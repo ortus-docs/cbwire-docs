@@ -1,7 +1,5 @@
 # Troubleshooting
 
-## Overview
-
 As you use CBWIRE, you are likely to run into issues from time to time. The most common issues are rendering issues. Here, we try to address the most common problems and show how to solve them.
 
 ## CBWIRE

@@ -1,7 +1,5 @@
 # wire:confirm
 
-## Overview
-
 You can use **wire:confirm** in your [templates](../the-essentials/templates.md) to prompt users for confirmation before executing actions. This can be useful when dealing with potentially irreversible actions such as deletions or updates.
 
 ```html

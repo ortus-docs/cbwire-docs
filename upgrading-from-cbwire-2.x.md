@@ -2,8 +2,6 @@
 
 CBWIRE has dramatically improved since its v2.x days. Here, we will outline the core differences between CBWIRE 2 and CBWIRE 4 to assist you with upgrading.
 
-## Overview
-
 Here's a quick list of features in 4.x you'll get when upgrading:
 
 * Easier access to data properties, component methods, and computed properties from your templates.

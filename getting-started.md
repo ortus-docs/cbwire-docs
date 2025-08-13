@@ -1,7 +1,5 @@
 # Getting Started
 
-## Overview
-
 You can get started with CBWIRE with a few initial steps.
 
 ## Requirements

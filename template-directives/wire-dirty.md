@@ -1,7 +1,5 @@
 # wire:dirty
 
-## Overview
-
 You can use **wire:dirty** with [wire:model](wire-model.md) to display elements when [data properties](../the-essentials/properties.md) have been updated on the client side but not the server side.
 
 {% tabs %}

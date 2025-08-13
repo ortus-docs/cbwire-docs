@@ -1,7 +1,5 @@
 # wire:init
 
-## Overview
-
 You can run an [action](../the-essentials/actions.md) once your component is rendered in the browser using **wire:init**. This can be helpful when you don't want to hold up loading the entire page but want to load some data immediately after the page loads.
 
 {% hint style="info" %}

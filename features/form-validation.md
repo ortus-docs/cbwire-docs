@@ -1,7 +1,5 @@
 # Form Validation
 
-## Overview
-
 You can use ColdBox's validation engine [cbValidation](https://coldbox-validation.ortusbooks.com/) and [**wire:model**](../template-directives/wire-model.md) to validate your forms.
 
 {% tabs %}

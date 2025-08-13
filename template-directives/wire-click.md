@@ -1,7 +1,5 @@
 # wire:click
 
-## Overview
-
 You can listen for click events within your [templates](../the-essentials/templates.md) using **wire:click** and provide an [action](../the-essentials/actions.md) to run when clicked.
 
 {% tabs %}

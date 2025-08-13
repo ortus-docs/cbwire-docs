@@ -1,7 +1,5 @@
 # Events
 
-## Overview
-
 Events and listeners provide an elegant means for your components to communicate. You can dispatch events from one component, listen for them on another, execute actions, and re-render the listener.
 
 ## Dispatching Events

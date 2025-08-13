@@ -1,7 +1,5 @@
 # wire:key
 
-## Overview
-
 Using **wire:key** is essential, especially when looping over elements, to ensure that Livewire's DOM diffing correctly identifies what has changed and needs updating in the browser.
 
 Consider this listing of posts.

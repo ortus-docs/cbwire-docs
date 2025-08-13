@@ -1,7 +1,5 @@
 # Actions
 
-## Overview
-
 Actions are methods on your [component](components.md) that either change the component's [data properties](properties.md) or perform some routine, such as updating your database or anything you can dream up in CFML.
 
 Here is a basic example of how to use it:

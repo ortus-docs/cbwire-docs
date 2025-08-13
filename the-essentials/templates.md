@@ -1,7 +1,5 @@
 # Templates
 
-## Overview
-
 Templates are your [components](components.md)' HTML and consist of valid HTML/CFML tags. This includes \<cfif>, \<cfloop>, etc.
 
 {% tabs %}

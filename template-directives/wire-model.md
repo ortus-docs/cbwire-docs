@@ -1,7 +1,5 @@
 # wire:model
 
-## Overview
-
 You can use **wire:model** in your [templates](../the-essentials/templates.md) to bind to [data properties](../the-essentials/properties.md) with form inputs.
 
 {% tabs %}

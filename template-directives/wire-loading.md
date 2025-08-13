@@ -1,7 +1,5 @@
 # wire:loading
 
-## Overview
-
 Using **wire:loading**, you can show and hide elements in your [templates](../the-essentials/templates.md) while a request is sent to the server.
 
 {% tabs %}

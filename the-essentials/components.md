@@ -1,7 +1,5 @@
 # Components
 
-## Overview
-
 Components are sections of your application that you want to be reactive to user input.
 
 {% hint style="info" %}

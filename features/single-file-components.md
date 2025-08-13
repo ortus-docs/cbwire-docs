@@ -1,7 +1,5 @@
 # Single-file Components
 
-## Overview
-
 [Components](../the-essentials/components.md) are typically built with a **.bx and a .bxm file (Boxlang )** or a **.cfc file and a .cfm file (CFML)**. You can combine these into a single .bxm or .cfm file, similar to how components in Vue.js are built.
 
 Let's look at the example from the [introduction](../) that uses two separate files.

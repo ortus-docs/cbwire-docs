@@ -1,7 +1,5 @@
 # WireBox
 
-## Overview
-
 You can access any dependencies your component may have using [WireBox](https://wirebox.ortusbooks.com/), ColdBox's robust dependency injection framework.
 
 {% hint style="success" %}

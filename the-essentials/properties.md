@@ -1,7 +1,5 @@
 # Data Properties
 
-## Overview
-
 Data Properties hold the state of our component and are defined with a **data** structure in your [component](components.md). Each data property is assigned a default value.
 
 {% tabs %}

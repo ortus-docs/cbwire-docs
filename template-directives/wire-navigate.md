@@ -1,7 +1,5 @@
 # wire:navigate
 
-## Overview
-
 You can use Livewire's **wire:navigate** feature to speed up page navigation and give your users a SPA-like experience.
 
 ```html

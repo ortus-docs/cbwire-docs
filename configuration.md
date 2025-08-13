@@ -1,7 +1,5 @@
 # Configuration
 
-## Overview
-
 You can alter CBWIRE and Livewire's default behavior by overriding settings in your **config/ColdBox.cfc** file.
 
 {% tabs %}
