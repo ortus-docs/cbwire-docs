@@ -1,29 +1,41 @@
 # wire:poll
 
-Polling is a straightforward yet effective technique used in web applications to continuously request updates from the server at regular intervals. This method is essential for keeping page content fresh without the complexity of technologies like WebSockets.
+The `wire:poll` directive provides an easy way to automatically refresh content at regular intervals, keeping your application's data current without requiring user interaction or complex real-time technologies.
 
-In CBWIRE, implementing polling is as simple as adding **wire:poll** to an element in your component.
+## Basic Usage
 
-## Example: Real-time Subscriber Count
-
-Here’s an example of a Subscriber Count component that dynamically updates the user's subscriber count:
+This dashboard component demonstrates `wire:poll` for real-time data updates, including custom intervals, background throttling, and viewport-based polling:
 
 {% tabs %}
 {% tab title="BoxLang" %}
 ```javascript
+// wires/LiveDashboard.bx
 class extends="cbwire.models.Component" {
-
     data = {
-        "count": 0
+        "subscriberCount": 0,
+        "activeUsers": 0,
+        "systemStatus": "operational",
+        "notifications": []
     };
 
-    function refreshSubscribers() {
-        // Simulate fetching subscriber count
-        data.count = querySubscriberCount();
+    function updateSubscribers() {
+        // Fetch latest subscriber count
+        data.subscriberCount = subscriberService.getCount();
     }
 
-    function renderIt() {
-        return template( "wires.subscriberCount" );
+    function updateActiveUsers() {
+        // Update active user count
+        data.activeUsers = userService.getActiveCount();
+    }
+
+    function checkSystemStatus() {
+        // Check system health
+        data.systemStatus = systemService.getStatus();
+    }
+
+    function refreshNotifications() {
+        // Get recent notifications
+        data.notifications = notificationService.getRecent(5);
     }
 }
 ```
@@ -31,63 +43,142 @@ class extends="cbwire.models.Component" {
 
 {% tab title="CFML" %}
 ```javascript
+// wires/LiveDashboard.cfc
 component extends="cbwire.models.Component" {
-
     data = {
-        "count": 0
+        "subscriberCount" = 0,
+        "activeUsers" = 0,
+        "systemStatus" = "operational",
+        "notifications" = []
     };
 
-    function refreshSubscribers() {
-        // Simulate fetching subscriber count
-        data.count = querySubscriberCount();
+    function updateSubscribers() {
+        // Fetch latest subscriber count
+        data.subscriberCount = subscriberService.getCount();
     }
 
-    function renderIt() {
-        return template( "wires.subscriberCount" );
+    function updateActiveUsers() {
+        // Update active user count
+        data.activeUsers = userService.getActiveCount();
+    }
+
+    function checkSystemStatus() {
+        // Check system health
+        data.systemStatus = systemService.getStatus();
+    }
+
+    function refreshNotifications() {
+        // Get recent notifications
+        data.notifications = notificationService.getRecent(5);
     }
 }
 ```
 {% endtab %}
 {% endtabs %}
 
-In your subscriberCount view file (wires/subscriberCount.bxm or wires/subscriberCount.cfm):
-
+{% tabs %}
+{% tab title="BoxLang" %}
 ```html
-<div wire:poll="refreshSubscribers">
-    Subscribers: #count#
+<!-- wires/liveDashboard.bxm -->
+<bx:output>
+<div class="dashboard">
+    <h1>Live Dashboard</h1>
+    
+    <!-- Basic polling every 2.5 seconds (default) -->
+    <div wire:poll="updateSubscribers" class="metric-card">
+        <h3>Subscribers</h3>
+        <span class="count">#subscriberCount#</span>
+    </div>
+    
+    <!-- Custom polling interval (every 5 seconds) -->
+    <div wire:poll.5s="updateActiveUsers" class="metric-card">
+        <h3>Active Users</h3>
+        <span class="count">#activeUsers#</span>
+    </div>
+    
+    <!-- Continuous polling even when tab is inactive -->
+    <div wire:poll.10s.keep-alive="checkSystemStatus" class="status-card">
+        <h3>System Status</h3>
+        <span class="status #systemStatus#">#uCase(systemStatus)#</span>
+    </div>
+    
+    <!-- Poll only when visible on screen -->
+    <div wire:poll.15s.visible="refreshNotifications" class="notifications-card">
+        <h3>Recent Notifications</h3>
+        <bx:if notifications.len()>
+            <ul>
+                <bx:loop array="#notifications#" index="notification">
+                    <li>#notification.message#</li>
+                </bx:loop>
+            </ul>
+        <bx:else>
+            <p>No recent notifications</p>
+        </bx:if>
+    </div>
 </div>
+</bx:output>
 ```
+{% endtab %}
 
-Normally, the subscriber count would only update upon page refresh. However, with **wire:poll**, the **refreshSubscribers()** method is called every 2.5 seconds, ensuring the count is always up-to-date.
-
-## Timing Control
-
-Polling can be resource-intensive, particularly with many users. To manage this, CBWIRE allows you to control the polling interval:
-
+{% tab title="CFML" %}
 ```html
-<!-- Poll every 15 seconds -->
-<div wire:poll.15s>
-
-<!-- Poll every 15000 milliseconds -->
-<div wire:poll.15000ms>
+<!-- wires/liveDashboard.cfm -->
+<cfoutput>
+<div class="dashboard">
+    <h1>Live Dashboard</h1>
+    
+    <!-- Basic polling every 2.5 seconds (default) -->
+    <div wire:poll="updateSubscribers" class="metric-card">
+        <h3>Subscribers</h3>
+        <span class="count">#subscriberCount#</span>
+    </div>
+    
+    <!-- Custom polling interval (every 5 seconds) -->
+    <div wire:poll.5s="updateActiveUsers" class="metric-card">
+        <h3>Active Users</h3>
+        <span class="count">#activeUsers#</span>
+    </div>
+    
+    <!-- Continuous polling even when tab is inactive -->
+    <div wire:poll.10s.keep-alive="checkSystemStatus" class="status-card">
+        <h3>System Status</h3>
+        <span class="status #systemStatus#">#uCase(systemStatus)#</span>
+    </div>
+    
+    <!-- Poll only when visible on screen -->
+    <div wire:poll.15s.visible="refreshNotifications" class="notifications-card">
+        <h3>Recent Notifications</h3>
+        <cfif arrayLen(notifications)>
+            <ul>
+                <cfloop array="#notifications#" index="notification">
+                    <li>#notification.message#</li>
+                </cfloop>
+            </ul>
+        <cfelse>
+            <p>No recent notifications</p>
+        </cfif>
+    </div>
+</div>
+</cfoutput>
 ```
+{% endtab %}
+{% endtabs %}
 
-## Background Throttling
+## What wire:poll Does
 
-CBWIRE intelligently throttles polling when the webpage is in the background. This reduces server load significantly. However, if continuous polling is necessary, you can use the **.keep-alive** modifier:
+When you add `wire:poll` to an element, CBWIRE automatically:
 
-```html
-<div wire:poll.keep-alive>
-```
+- **Calls your method repeatedly**: Executes the specified component method at regular intervals
+- **Updates content automatically**: Refreshes the display with new data from each polling request
+- **Optimizes performance**: Intelligently throttles polling when the browser tab is inactive
+- **Manages resources**: Uses a default 2.5-second interval that balances freshness with server load
 
-This ensures polling continues even when the tab is not active.
+## Available Modifiers
 
-## Viewport Throttling
+You can customize polling behavior with these modifiers:
 
-To optimize performance further, you can use the **.visible** modifier, which makes CBWIRE poll only when the element is visible on the user’s screen:
+- **Timing**: `.5s`, `.15s`, `.5000ms` - Set custom polling intervals
+- **Background**: `.keep-alive` - Continue polling when browser tab is inactive  
+- **Viewport**: `.visible` - Poll only when element is visible on screen
 
-```html
-<div wire:poll.visible>
-```
-
-This is useful for content lower on a page, as it starts polling only when scrolled into view and stops when it's no longer visible.
+Combine modifiers as needed: `wire:poll.10s.keep-alive` or `wire:poll.15s.visible`
