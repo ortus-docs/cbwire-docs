@@ -417,60 +417,6 @@ component extends="cbwire.models.Component" {
 {% endtab %}
 {% endtabs %}
 
-## Form Validation Integration
-
-`wire:submit` works seamlessly with CBWIRE's built-in cbValidation:
-
-{% tabs %}
-{% tab title="BoxLang" %}
-```html
-<bx:output>
-<form wire:submit="saveSettings">
-    <div>
-        <input type="text" wire:model="siteName" required>
-        <bx:if hasError("siteName")>
-            <span class="error">#getError("siteName")#</span>
-        </bx:if>
-    </div>
-    
-    <div>
-        <input type="email" wire:model="adminEmail" required>
-        <bx:if hasError("adminEmail")>
-            <span class="error">#getError("adminEmail")#</span>
-        </bx:if>
-    </div>
-    
-    <button type="submit">Save Settings</button>
-</form>
-</bx:output>
-```
-{% endtab %}
-
-{% tab title="CFML" %}
-```html
-<cfoutput>
-<form wire:submit="saveSettings">
-    <div>
-        <input type="text" wire:model="siteName" required>
-        <cfif hasError("siteName")>
-            <span class="error">#getError("siteName")#</span>
-        </cfif>
-    </div>
-    
-    <div>
-        <input type="email" wire:model="adminEmail" required>
-        <cfif hasError("adminEmail")>
-            <span class="error">#getError("adminEmail")#</span>
-        </cfif>
-    </div>
-    
-    <button type="submit">Save Settings</button>
-</form>
-</cfoutput>
-```
-{% endtab %}
-{% endtabs %}
-
 ## Best Practices
 
 ### Automatic Form Protection
