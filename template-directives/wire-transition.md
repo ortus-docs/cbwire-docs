@@ -46,15 +46,15 @@ component extends="cbwire.models.Component" {
 <!-- wires/blogPost.bxm -->
 <bx:output>
 <div>
-    <h1>#data.post.title#</h1>
-    <p>#data.post.content#</p>
+    <h1>#post.title#</h1>
+    <p>#post.content#</p>
 
     <button wire:click="toggleComments">Show Comments</button>
 
-    <bx:if data.showComments>
+    <bx:if showComments>
         <div wire:transition>
             <h3>Comments</h3>
-            <bx:loop array="#data.post.comments#" index="comment">
+            <bx:loop array="#post.comments#" index="comment">
                 <div class="comment">
                     <strong>#comment.author#:</strong>
                     <p>#comment.text#</p>
@@ -72,15 +72,15 @@ component extends="cbwire.models.Component" {
 <!-- wires/blogPost.cfm -->
 <cfoutput>
 <div>
-    <h1>#data.post.title#</h1>
-    <p>#data.post.content#</p>
+    <h1>#post.title#</h1>
+    <p>#post.content#</p>
 
     <button wire:click="toggleComments">Show Comments</button>
 
-    <cfif data.showComments>
+    <cfif showComments>
         <div wire:transition>
             <h3>Comments</h3>
-            <cfloop array="#data.post.comments#" index="comment">
+            <cfloop array="#post.comments#" index="comment">
                 <div class="comment">
                     <strong>#comment.author#:</strong>
                     <p>#comment.text#</p>
@@ -192,7 +192,7 @@ You can combine multiple modifiers to create the exact transition you need:
 ### Modal Dialog
 
 ```html
-<bx:if data.showModal>
+<bx:if showModal>
     <div class="modal-backdrop">
         <div wire:transition.scale.origin.top class="modal-content">
             <h2>Confirm Action</h2>
@@ -207,10 +207,10 @@ You can combine multiple modifiers to create the exact transition you need:
 ### Notification Panel
 
 ```html
-<bx:if data.showNotifications>
+<bx:if showNotifications>
     <div wire:transition.opacity.duration.200ms class="notification-panel">
         <h3>Recent Notifications</h3>
-        <bx:loop array="#data.notifications#" index="notification">
+        <bx:loop array="#notifications#" index="notification">
             <div class="notification-item">
                 #notification.message#
             </div>
@@ -223,10 +223,10 @@ You can combine multiple modifiers to create the exact transition you need:
 
 ```html
 <button wire:click="toggleDetails">
-    <bx:if data.showDetails>Hide<bx:else>Show</bx:if> Details
+    <bx:if showDetails>Hide<bx:else>Show</bx:if> Details
 </button>
 
-<bx:if data.showDetails>
+<bx:if showDetails>
     <div wire:transition.scale.origin.top.duration.250ms>
         <p>Additional content that expands from the top...</p>
     </div>
