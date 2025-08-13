@@ -306,7 +306,11 @@ component extends="cbwire.models.Component" {
 {% endtab %}
 {% endtabs %}
 
+{% tabs %}
+{% tab title="BoxLang" %}
 ```html
+<!-- wires/userRegistration.bxm -->
+<bx:output>
 <form wire:submit="register" class="registration-form">
     <bx:if errors.keyExists("general")><div class="error">#errors.general#</div></bx:if>
     
@@ -337,11 +341,55 @@ component extends="cbwire.models.Component" {
         <bx:if isRegistering>Creating Account...<bx:else>Create Account</bx:if>
     </button>
 </form>
+</bx:output>
 ```
+{% endtab %}
+
+{% tab title="CFML" %}
+```html
+<!-- wires/userRegistration.cfm -->
+<cfoutput>
+<form wire:submit="register" class="registration-form">
+    <cfif structKeyExists(errors, "general")><div class="error">#errors.general#</div></cfif>
+    
+    <div>
+        <input type="text" wire:model="firstName" placeholder="First Name" required>
+        <cfif structKeyExists(errors, "firstName")><span class="error">#errors.firstName#</span></cfif>
+    </div>
+    
+    <div>
+        <input type="text" wire:model="lastName" placeholder="Last Name" required>
+    </div>
+    
+    <div>
+        <input type="email" wire:model="email" placeholder="Email" required>
+        <cfif structKeyExists(errors, "email")><span class="error">#errors.email#</span></cfif>
+    </div>
+    
+    <div>
+        <input type="password" wire:model="password" placeholder="Password" required>
+    </div>
+    
+    <div>
+        <input type="password" wire:model="confirmPassword" placeholder="Confirm Password" required>
+        <cfif structKeyExists(errors, "confirmPassword")><span class="error">#errors.confirmPassword#</span></cfif>
+    </div>
+    
+    <button type="submit" <cfif isRegistering>disabled</cfif>>
+        <cfif isRegistering>Creating Account...<cfelse>Create Account</cfif>
+    </button>
+</form>
+</cfoutput>
+```
+{% endtab %}
+{% endtabs %}
 
 ### Product Search Form
 
+{% tabs %}
+{% tab title="BoxLang" %}
 ```html
+<bx:output>
 <form wire:submit="searchProducts" class="search-form">
     <div class="search-inputs">
         <input type="text" wire:model="searchTerm" placeholder="Search products...">
@@ -367,14 +415,52 @@ component extends="cbwire.models.Component" {
         </bx:loop>
     </div>
 </bx:if>
+</bx:output>
 ```
+{% endtab %}
+
+{% tab title="CFML" %}
+```html
+<cfoutput>
+<form wire:submit="searchProducts" class="search-form">
+    <div class="search-inputs">
+        <input type="text" wire:model="searchTerm" placeholder="Search products...">
+        <select wire:model="category">
+            <option value="">All Categories</option>
+            <cfloop array="#categories#" index="cat">
+                <option value="#cat.id#">#cat.name#</option>
+            </cfloop>
+        </select>
+    </div>
+    
+    <button type="submit">Search</button>
+</form>
+
+<cfif arrayLen(searchResults)>
+    <div class="search-results">
+        <cfloop array="#searchResults#" index="product">
+            <div class="product-card">
+                <h3>#product.name#</h3>
+                <p>#product.description#</p>
+                <span class="price">$#product.price#</span>
+            </div>
+        </cfloop>
+    </div>
+</cfif>
+</cfoutput>
+```
+{% endtab %}
+{% endtabs %}
 
 
 ## Form Validation Integration
 
 `wire:submit` works seamlessly with form validation:
 
+{% tabs %}
+{% tab title="BoxLang" %}
 ```html
+<bx:output>
 <form wire:submit="saveSettings">
     <div>
         <input type="text" wire:model="siteName" required>
@@ -392,7 +478,34 @@ component extends="cbwire.models.Component" {
     
     <button type="submit">Save Settings</button>
 </form>
+</bx:output>
 ```
+{% endtab %}
+
+{% tab title="CFML" %}
+```html
+<cfoutput>
+<form wire:submit="saveSettings">
+    <div>
+        <input type="text" wire:model="siteName" required>
+        <cfif structKeyExists(errors, "siteName")>
+            <span class="error">#errors.siteName#</span>
+        </cfif>
+    </div>
+    
+    <div>
+        <input type="email" wire:model="adminEmail" required>
+        <cfif structKeyExists(errors, "adminEmail")>
+            <span class="error">#errors.adminEmail#</span>
+        </cfif>
+    </div>
+    
+    <button type="submit">Save Settings</button>
+</form>
+</cfoutput>
+```
+{% endtab %}
+{% endtabs %}
 
 ## Best Practices
 
@@ -400,17 +513,32 @@ component extends="cbwire.models.Component" {
 
 Always disable the submit button during processing:
 
+{% tabs %}
+{% tab title="BoxLang" %}
 ```html
 <button type="submit" <bx:if isProcessing>disabled</bx:if>>
     <bx:if isProcessing>Processing...<bx:else>Submit</bx:if>
 </button>
 ```
+{% endtab %}
+
+{% tab title="CFML" %}
+```html
+<button type="submit" <cfif isProcessing>disabled</cfif>>
+    <cfif isProcessing>Processing...<cfelse>Submit</cfif>
+</button>
+```
+{% endtab %}
+{% endtabs %}
 
 ### Provide User Feedback
 
 Show clear loading states and progress indicators:
 
+{% tabs %}
+{% tab title="BoxLang" %}
 ```html
+<bx:output>
 <form wire:submit="processOrder">
     <!-- Form fields -->
     
@@ -427,7 +555,33 @@ Show clear loading states and progress indicators:
         Place Order
     </button>
 </form>
+</bx:output>
 ```
+{% endtab %}
+
+{% tab title="CFML" %}
+```html
+<cfoutput>
+<form wire:submit="processOrder">
+    <!-- Form fields -->
+    
+    <cfif isProcessing>
+        <div class="processing-indicator">
+            <span>Processing your order...</span>
+            <div class="progress-bar">
+                <div class="progress" style="width: #processingProgress#%"></div>
+            </div>
+        </div>
+    </cfif>
+    
+    <button type="submit" <cfif isProcessing>disabled</cfif>>
+        Place Order
+    </button>
+</form>
+</cfoutput>
+```
+{% endtab %}
+{% endtabs %}
 
 ### Handle Errors Gracefully
 
