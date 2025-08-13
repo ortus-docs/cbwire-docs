@@ -187,51 +187,29 @@ You can combine multiple modifiers to create the exact transition you need:
 </div>
 ```
 
-## Practical Examples
+## Troubleshooting
 
-### Modal Dialog
+### Transitions Not Working
+
+If you're not seeing transition effects, it may be because Livewire is having trouble with DOM diffing. You can often fix this by adding `wire:key` to the same element that has `wire:transition`:
 
 ```html
-<bx:if showModal>
-    <div class="modal-backdrop">
-        <div wire:transition.scale.origin.top class="modal-content">
-            <h2>Confirm Action</h2>
-            <p>Are you sure you want to proceed?</p>
-            <button wire:click="closeModal">Cancel</button>
-            <button wire:click="confirmAction">Confirm</button>
-        </div>
+<!-- If this doesn't transition properly -->
+<bx:if showPanel>
+    <div wire:transition>
+        Panel content
+    </div>
+</bx:if>
+
+<!-- Try adding wire:key -->
+<bx:if showPanel>
+    <div wire:transition wire:key="panel-content">
+        Panel content
     </div>
 </bx:if>
 ```
 
-### Notification Panel
-
-```html
-<bx:if showNotifications>
-    <div wire:transition.opacity.duration.200ms class="notification-panel">
-        <h3>Recent Notifications</h3>
-        <bx:loop array="#notifications#" index="notification">
-            <div class="notification-item">
-                #notification.message#
-            </div>
-        </bx:loop>
-    </div>
-</bx:if>
-```
-
-### Expandable Content
-
-```html
-<button wire:click="toggleDetails">
-    <bx:if showDetails>Hide<bx:else>Show</bx:if> Details
-</button>
-
-<bx:if showDetails>
-    <div wire:transition.scale.origin.top.duration.250ms>
-        <p>Additional content that expands from the top...</p>
-    </div>
-</bx:if>
-```
+This helps Livewire properly track the element across updates and apply transitions correctly.
 
 ## Limitations
 
