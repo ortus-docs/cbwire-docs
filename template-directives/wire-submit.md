@@ -181,10 +181,9 @@ Use `wire:submit.prevent` to explicitly prevent the default form submission (tho
 {% endtab %}
 {% endtabs %}
 
-
 ## Practical Example
 
-This user registration form demonstrates multiple `wire:submit` features including form handling, validation, error display, loading states, and success handling:
+This user registration form demonstrates multiple `wire:submit` features including form handling, validation using cbValidation, error display, loading states, and success handling:
 
 {% tabs %}
 {% tab title="BoxLang" %}
@@ -197,29 +196,43 @@ class extends="cbwire.models.Component" {
         "email": "",
         "password": "",
         "confirmPassword": "",
-        "isRegistering": false,
-        "errors": {}
+        "isRegistering": false
+    };
+    
+    constraints = {
+        "firstName": {
+            "required": true,
+            "requiredMessage": "First name is required"
+        },
+        "lastName": {
+            "required": true,
+            "requiredMessage": "Last name is required"
+        },
+        "email": {
+            "required": true,
+            "type": "email",
+            "requiredMessage": "Email is required",
+            "typeMessage": "Please enter a valid email address"
+        },
+        "password": {
+            "required": true,
+            "size": "6..",
+            "requiredMessage": "Password is required",
+            "sizeMessage": "Password must be at least 6 characters"
+        },
+        "confirmPassword": {
+            "required": true,
+            "sameAs": "password",
+            "requiredMessage": "Please confirm your password",
+            "sameAsMessage": "Passwords must match"
+        }
     };
 
     function register() {
         data.isRegistering = true;
-        data.errors = {};
         
-        // Validate inputs
-        if (!data.firstName.trim().len()) {
-            data.errors.firstName = "First name is required";
-        }
-        
-        if (!data.email.trim().len() || !isValid("email", data.email)) {
-            data.errors.email = "Valid email is required";
-        }
-        
-        if (data.password != data.confirmPassword) {
-            data.errors.confirmPassword = "Passwords must match";
-        }
-        
-        // If validation fails, stop here
-        if (data.errors.keyArray().len()) {
+        // Validate using cbValidation
+        if (!validateOrFail()) {
             data.isRegistering = false;
             return;
         }
@@ -234,10 +247,10 @@ class extends="cbwire.models.Component" {
         });
         
         if (result.success) {
-            // Redirect or show success message
-            relocate("login");
+            // Redirect to login page
+            redirect("/login");
         } else {
-            data.errors.general = result.message;
+            addError("general", result.message);
         }
         
         data.isRegistering = false;
@@ -256,29 +269,43 @@ component extends="cbwire.models.Component" {
         "email" = "",
         "password" = "",
         "confirmPassword" = "",
-        "isRegistering" = false,
-        "errors" = {}
+        "isRegistering" = false
+    };
+    
+    constraints = {
+        "firstName" = {
+            "required" = true,
+            "requiredMessage" = "First name is required"
+        },
+        "lastName" = {
+            "required" = true,
+            "requiredMessage" = "Last name is required"
+        },
+        "email" = {
+            "required" = true,
+            "type" = "email",
+            "requiredMessage" = "Email is required",
+            "typeMessage" = "Please enter a valid email address"
+        },
+        "password" = {
+            "required" = true,
+            "size" = "6..",
+            "requiredMessage" = "Password is required",
+            "sizeMessage" = "Password must be at least 6 characters"
+        },
+        "confirmPassword" = {
+            "required" = true,
+            "sameAs" = "password",
+            "requiredMessage" = "Please confirm your password",
+            "sameAsMessage" = "Passwords must match"
+        }
     };
 
     function register() {
         data.isRegistering = true;
-        data.errors = {};
         
-        // Validate inputs
-        if (!len(trim(data.firstName))) {
-            data.errors.firstName = "First name is required";
-        }
-        
-        if (!len(trim(data.email)) || !isValid("email", data.email)) {
-            data.errors.email = "Valid email is required";
-        }
-        
-        if (data.password != data.confirmPassword) {
-            data.errors.confirmPassword = "Passwords must match";
-        }
-        
-        // If validation fails, stop here
-        if (structCount(data.errors)) {
+        // Validate using cbValidation
+        if (!validateOrFail()) {
             data.isRegistering = false;
             return;
         }
@@ -293,10 +320,10 @@ component extends="cbwire.models.Component" {
         });
         
         if (result.success) {
-            // Redirect or show success message
-            relocate("login");
+            // Redirect to login page
+            redirect("/login");
         } else {
-            data.errors.general = result.message;
+            addError("general", result.message);
         }
         
         data.isRegistering = false;
@@ -312,29 +339,31 @@ component extends="cbwire.models.Component" {
 <!-- wires/userRegistration.bxm -->
 <bx:output>
 <form wire:submit="register" class="registration-form">
-    <bx:if errors.keyExists("general")><div class="error">#errors.general#</div></bx:if>
+    <bx:if hasError("general")><div class="error">#getError("general")#</div></bx:if>
     
     <div>
         <input type="text" wire:model="firstName" placeholder="First Name" required>
-        <bx:if errors.keyExists("firstName")><span class="error">#errors.firstName#</span></bx:if>
+        <bx:if hasError("firstName")><span class="error">#getError("firstName")#</span></bx:if>
     </div>
     
     <div>
         <input type="text" wire:model="lastName" placeholder="Last Name" required>
+        <bx:if hasError("lastName")><span class="error">#getError("lastName")#</span></bx:if>
     </div>
     
     <div>
         <input type="email" wire:model="email" placeholder="Email" required>
-        <bx:if errors.keyExists("email")><span class="error">#errors.email#</span></bx:if>
+        <bx:if hasError("email")><span class="error">#getError("email")#</span></bx:if>
     </div>
     
     <div>
         <input type="password" wire:model="password" placeholder="Password" required>
+        <bx:if hasError("password")><span class="error">#getError("password")#</span></bx:if>
     </div>
     
     <div>
         <input type="password" wire:model="confirmPassword" placeholder="Confirm Password" required>
-        <bx:if errors.keyExists("confirmPassword")><span class="error">#errors.confirmPassword#</span></bx:if>
+        <bx:if hasError("confirmPassword")><span class="error">#getError("confirmPassword")#</span></bx:if>
     </div>
     
     <button type="submit">
@@ -350,29 +379,31 @@ component extends="cbwire.models.Component" {
 <!-- wires/userRegistration.cfm -->
 <cfoutput>
 <form wire:submit="register" class="registration-form">
-    <cfif structKeyExists(errors, "general")><div class="error">#errors.general#</div></cfif>
+    <cfif hasError("general")><div class="error">#getError("general")#</div></cfif>
     
     <div>
         <input type="text" wire:model="firstName" placeholder="First Name" required>
-        <cfif structKeyExists(errors, "firstName")><span class="error">#errors.firstName#</span></cfif>
+        <cfif hasError("firstName")><span class="error">#getError("firstName")#</span></cfif>
     </div>
     
     <div>
         <input type="text" wire:model="lastName" placeholder="Last Name" required>
+        <cfif hasError("lastName")><span class="error">#getError("lastName")#</span></cfif>
     </div>
     
     <div>
         <input type="email" wire:model="email" placeholder="Email" required>
-        <cfif structKeyExists(errors, "email")><span class="error">#errors.email#</span></cfif>
+        <cfif hasError("email")><span class="error">#getError("email")#</span></cfif>
     </div>
     
     <div>
         <input type="password" wire:model="password" placeholder="Password" required>
+        <cfif hasError("password")><span class="error">#getError("password")#</span></cfif>
     </div>
     
     <div>
         <input type="password" wire:model="confirmPassword" placeholder="Confirm Password" required>
-        <cfif structKeyExists(errors, "confirmPassword")><span class="error">#errors.confirmPassword#</span></cfif>
+        <cfif hasError("confirmPassword")><span class="error">#getError("confirmPassword")#</span></cfif>
     </div>
     
     <button type="submit">
@@ -384,10 +415,9 @@ component extends="cbwire.models.Component" {
 {% endtab %}
 {% endtabs %}
 
-
 ## Form Validation Integration
 
-`wire:submit` works seamlessly with form validation:
+`wire:submit` works seamlessly with CBWIRE's built-in cbValidation:
 
 {% tabs %}
 {% tab title="BoxLang" %}
@@ -396,15 +426,15 @@ component extends="cbwire.models.Component" {
 <form wire:submit="saveSettings">
     <div>
         <input type="text" wire:model="siteName" required>
-        <bx:if errors.keyExists("siteName")>
-            <span class="error">#errors.siteName#</span>
+        <bx:if hasError("siteName")>
+            <span class="error">#getError("siteName")#</span>
         </bx:if>
     </div>
     
     <div>
         <input type="email" wire:model="adminEmail" required>
-        <bx:if errors.keyExists("adminEmail")>
-            <span class="error">#errors.adminEmail#</span>
+        <bx:if hasError("adminEmail")>
+            <span class="error">#getError("adminEmail")#</span>
         </bx:if>
     </div>
     
@@ -420,15 +450,15 @@ component extends="cbwire.models.Component" {
 <form wire:submit="saveSettings">
     <div>
         <input type="text" wire:model="siteName" required>
-        <cfif structKeyExists(errors, "siteName")>
-            <span class="error">#errors.siteName#</span>
+        <cfif hasError("siteName")>
+            <span class="error">#getError("siteName")#</span>
         </cfif>
     </div>
     
     <div>
         <input type="email" wire:model="adminEmail" required>
-        <cfif structKeyExists(errors, "adminEmail")>
-            <span class="error">#errors.adminEmail#</span>
+        <cfif hasError("adminEmail")>
+            <span class="error">#getError("adminEmail")#</span>
         </cfif>
     </div>
     
@@ -517,12 +547,17 @@ Show clear loading states and progress indicators:
 
 ### Handle Errors Gracefully
 
-Display validation errors clearly and reset states appropriately:
+Use cbValidation for comprehensive error handling:
 
 ```javascript
 function submitForm() {
     data.isSubmitting = true;
-    data.errors = {};
+    
+    // Use cbValidation for validation
+    if (!validateOrFail()) {
+        data.isSubmitting = false;
+        return;
+    }
     
     try {
         // Process form
@@ -530,11 +565,12 @@ function submitForm() {
         
         if (result.success) {
             // Success handling
+            redirect("/success");
         } else {
-            data.errors = result.errors;
+            addError("general", result.message);
         }
     } catch (any e) {
-        data.errors.general = "An unexpected error occurred. Please try again.";
+        addError("general", "An unexpected error occurred. Please try again.");
     }
     
     data.isSubmitting = false;
@@ -546,5 +582,5 @@ function submitForm() {
 {% endhint %}
 
 {% hint style="warning" %}
-Remember to validate form data both on the client side for user experience and on the server side for security. Never trust client-side validation alone.
+Always use CBWIRE's built-in cbValidation for form validation rather than manual validation. This provides consistent error handling and integrates seamlessly with the validation display methods.
 {% endhint %}
