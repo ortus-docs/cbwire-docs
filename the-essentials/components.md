@@ -1,7 +1,5 @@
 # Components
 
-Components are sections of your application that you want to be reactive to user input.
-
 Components are the fundamental building blocks of CBWIRE applications. They encapsulate both the data and behavior needed to create interactive user interface elements that respond to user actions without requiring full page refreshes. Think of components as self-contained, reusable pieces of functionality that manage their own state and handle their own user interactions.
 
 {% hint style="info" %}
