@@ -82,8 +82,6 @@ Controls whether CBWIRE automatically includes its CSS and JavaScript assets in 
 
 **Default:** `true`
 
-{% tabs %}
-{% tab title="BoxLang" %}
 ```javascript
 moduleSettings = {
     "cbwire": {
@@ -91,23 +89,9 @@ moduleSettings = {
     }
 };
 ```
-{% endtab %}
-
-{% tab title="CFML" %}
-```javascript
-moduleSettings = {
-    "cbwire" = {
-        "autoInjectAssets" = false
-    }
-};
-```
-{% endtab %}
-{% endtabs %}
 
 When disabled, you'll need to manually include the assets in your layout:
 
-{% tabs %}
-{% tab title="BoxLang" %}
 ```html
 <!-- In your layout's <head> -->
 #wireStyles()#
@@ -115,18 +99,6 @@ When disabled, you'll need to manually include the assets in your layout:
 <!-- Before closing </body> -->
 #wireScripts()#
 ```
-{% endtab %}
-
-{% tab title="CFML" %}
-```html
-<!-- In your layout's <head> -->
-#wireStyles()#
-
-<!-- Before closing </body> -->
-#wireScripts()#
-```
-{% endtab %}
-{% endtabs %}
 
 ### moduleRootURL
 
@@ -146,8 +118,6 @@ Defines the directory where your CBWIRE components are stored, relative to your 
 
 **Default:** `wires`
 
-{% tabs %}
-{% tab title="BoxLang" %}
 ```javascript
 moduleSettings = {
     "cbwire": {
@@ -155,18 +125,6 @@ moduleSettings = {
     }
 };
 ```
-{% endtab %}
-
-{% tab title="CFML" %}
-```javascript
-moduleSettings = {
-    "cbwire" = {
-        "wiresLocation" = "app/components"
-    }
-};
-```
-{% endtab %}
-{% endtabs %}
 
 ### trimStringValues
 
@@ -226,8 +184,6 @@ Sets the URI endpoint where CBWIRE processes component updates and actions. You 
 
 **Default:** `/cbwire/updates`
 
-{% tabs %}
-{% tab title="BoxLang" %}
 ```javascript
 moduleSettings = {
     "cbwire": {
@@ -235,18 +191,6 @@ moduleSettings = {
     }
 };
 ```
-{% endtab %}
-
-{% tab title="CFML" %}
-```javascript
-moduleSettings = {
-    "cbwire" = {
-        "updateEndpoint" = "/index.cfm/cbwire/updates"
-    }
-};
-```
-{% endtab %}
-{% endtabs %}
 
 ### maxUploadSeconds
 
@@ -254,8 +198,6 @@ Specifies the maximum time (in seconds) allowed for file upload operations to co
 
 **Default:** `300` (5 minutes)
 
-{% tabs %}
-{% tab title="BoxLang" %}
 ```javascript
 moduleSettings = {
     "cbwire": {
@@ -263,18 +205,6 @@ moduleSettings = {
     }
 };
 ```
-{% endtab %}
-
-{% tab title="CFML" %}
-```javascript
-moduleSettings = {
-    "cbwire" = {
-        "maxUploadSeconds" = 600 // 10 minutes
-    }
-};
-```
-{% endtab %}
-{% endtabs %}
 
 {% hint style="info" %}
 When URL rewriting is disabled, remember to include `/index.cfm` in your `updateEndpoint` configuration.
@@ -288,8 +218,6 @@ Controls whether a progress bar appears at the top of the page during [wire:navi
 
 **Default:** `true`
 
-{% tabs %}
-{% tab title="BoxLang" %}
 ```javascript
 moduleSettings = {
     "cbwire": {
@@ -297,18 +225,6 @@ moduleSettings = {
     }
 };
 ```
-{% endtab %}
-
-{% tab title="CFML" %}
-```javascript
-moduleSettings = {
-    "cbwire" = {
-        "showProgressBar" = false
-    }
-};
-```
-{% endtab %}
-{% endtabs %}
 
 ### progressBarColor
 
@@ -316,8 +232,6 @@ Customizes the color of the progress bar displayed during [wire:navigate](templa
 
 **Default:** `#2299dd`
 
-{% tabs %}
-{% tab title="BoxLang" %}
 ```javascript
 moduleSettings = {
     "cbwire": {
@@ -325,18 +239,6 @@ moduleSettings = {
     }
 };
 ```
-{% endtab %}
-
-{% tab title="CFML" %}
-```javascript
-moduleSettings = {
-    "cbwire" = {
-        "progressBarColor" = "##ff6b35"
-    }
-};
-```
-{% endtab %}
-{% endtabs %}
 
 {% hint style="info" %}
 The progress bar only appears when using `wire:navigate` for page transitions. Standard CBWIRE component updates don't trigger the progress bar.
@@ -350,8 +252,6 @@ Enables Cross-Site Request Forgery (CSRF) protection for CBWIRE requests. When e
 
 **Default:** `false`
 
-{% tabs %}
-{% tab title="BoxLang" %}
 ```javascript
 moduleSettings = {
     "cbwire": {
@@ -359,18 +259,6 @@ moduleSettings = {
     }
 };
 ```
-{% endtab %}
-
-{% tab title="CFML" %}
-```javascript
-moduleSettings = {
-    "cbwire" = {
-        "csrfEnabled" = true
-    }
-};
-```
-{% endtab %}
-{% endtabs %}
 
 ### csrfStorage
 
@@ -378,8 +266,6 @@ Specifies the WireBox mapping for the storage provider used to store CSRF tokens
 
 **Default:** `SessionStorage@cbstorages`
 
-{% tabs %}
-{% tab title="BoxLang" %}
 ```javascript
 moduleSettings = {
     "cbwire": {
@@ -387,18 +273,6 @@ moduleSettings = {
     }
 };
 ```
-{% endtab %}
-
-{% tab title="CFML" %}
-```javascript
-moduleSettings = {
-    "cbwire" = {
-        "csrfStorage" = "CacheStorage@cbstorages"
-    }
-};
-```
-{% endtab %}
-{% endtabs %}
 
 {% hint style="warning" %}
 CSRF protection will be enabled by default starting in CBWIRE 5.0. It's recommended to enable and test CSRF protection in your applications now to ensure compatibility.
