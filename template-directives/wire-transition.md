@@ -4,20 +4,33 @@ CBWIRE offers a smooth way to show or hide elements on your webpage with the `wi
 
 ## Basic Usage
 
-Use `wire:transition` on elements that appear or disappear based on your component's state. When you toggle the visibility of an element, it will gracefully fade into view instead of appearing abruptly.
+This interactive dashboard component demonstrates multiple `wire:transition` features including basic transitions, directional control, duration customization, and different effect types:
 
 {% tabs %}
 {% tab title="BoxLang" %}
 ```javascript
-// wires/BlogPost.bx
+// wires/Dashboard.bx
 class extends="cbwire.models.Component" {
     data = {
-        "post": {},
-        "showComments": false
+        "showStats": false,
+        "showNotifications": false,
+        "showModal": false
     };
 
-    function toggleComments() {
-        data.showComments = !data.showComments;
+    function toggleStats() {
+        data.showStats = !data.showStats;
+    }
+
+    function toggleNotifications() {
+        data.showNotifications = !data.showNotifications;
+    }
+
+    function showModal() {
+        data.showModal = true;
+    }
+
+    function closeModal() {
+        data.showModal = false;
     }
 }
 ```
@@ -25,15 +38,28 @@ class extends="cbwire.models.Component" {
 
 {% tab title="CFML" %}
 ```javascript
-// wires/BlogPost.cfc
+// wires/Dashboard.cfc
 component extends="cbwire.models.Component" {
     data = {
-        "post" = {},
-        "showComments" = false
+        "showStats" = false,
+        "showNotifications" = false,
+        "showModal" = false
     };
 
-    function toggleComments() {
-        data.showComments = !data.showComments;
+    function toggleStats() {
+        data.showStats = !data.showStats;
+    }
+
+    function toggleNotifications() {
+        data.showNotifications = !data.showNotifications;
+    }
+
+    function showModal() {
+        data.showModal = true;
+    }
+
+    function closeModal() {
+        data.showModal = false;
     }
 }
 ```
@@ -43,23 +69,45 @@ component extends="cbwire.models.Component" {
 {% tabs %}
 {% tab title="BoxLang" %}
 ```html
-<!-- wires/blogPost.bxm -->
+<!-- wires/dashboard.bxm -->
 <bx:output>
-<div>
-    <h1>#post.title#</h1>
-    <p>#post.content#</p>
+<div class="dashboard">
+    <h1>Dashboard</h1>
+    
+    <div class="controls">
+        <button wire:click="toggleStats">
+            <bx:if showStats>Hide<bx:else>Show</bx:if> Stats
+        </button>
+        <button wire:click="toggleNotifications">Notifications</button>
+        <button wire:click="showModal">Open Modal</button>
+    </div>
 
-    <button wire:click="toggleComments">Show Comments</button>
+    <!-- Basic transition with default fade and scale -->
+    <bx:if showStats>
+        <div wire:transition class="stats-panel">
+            <h3>Statistics</h3>
+            <p>Users: 1,234 | Sales: $56,789</p>
+        </div>
+    </bx:if>
 
-    <bx:if showComments>
-        <div wire:transition>
-            <h3>Comments</h3>
-            <bx:loop array="#post.comments#" index="comment">
-                <div class="comment">
-                    <strong>#comment.author#:</strong>
-                    <p>#comment.text#</p>
-                </div>
-            </bx:loop>
+    <!-- Opacity-only transition with custom duration -->
+    <bx:if showNotifications>
+        <div wire:transition.opacity.duration.300ms class="notifications">
+            <h3>Recent Notifications</h3>
+            <div class="notification">New user registered</div>
+            <div class="notification">Payment received</div>
+        </div>
+    </bx:if>
+
+    <!-- Modal with scale transition from top -->
+    <bx:if showModal>
+        <div class="modal-backdrop">
+            <div wire:transition.scale.origin.top.duration.250ms class="modal">
+                <h3>Confirm Action</h3>
+                <p>Are you sure you want to proceed?</p>
+                <button wire:click="closeModal">Cancel</button>
+                <button wire:click="closeModal">Confirm</button>
+            </div>
         </div>
     </bx:if>
 </div>
@@ -69,23 +117,45 @@ component extends="cbwire.models.Component" {
 
 {% tab title="CFML" %}
 ```html
-<!-- wires/blogPost.cfm -->
+<!-- wires/dashboard.cfm -->
 <cfoutput>
-<div>
-    <h1>#post.title#</h1>
-    <p>#post.content#</p>
+<div class="dashboard">
+    <h1>Dashboard</h1>
+    
+    <div class="controls">
+        <button wire:click="toggleStats">
+            <cfif showStats>Hide<cfelse>Show</cfif> Stats
+        </button>
+        <button wire:click="toggleNotifications">Notifications</button>
+        <button wire:click="showModal">Open Modal</button>
+    </div>
 
-    <button wire:click="toggleComments">Show Comments</button>
+    <!-- Basic transition with default fade and scale -->
+    <cfif showStats>
+        <div wire:transition class="stats-panel">
+            <h3>Statistics</h3>
+            <p>Users: 1,234 | Sales: $56,789</p>
+        </div>
+    </cfif>
 
-    <cfif showComments>
-        <div wire:transition>
-            <h3>Comments</h3>
-            <cfloop array="#post.comments#" index="comment">
-                <div class="comment">
-                    <strong>#comment.author#:</strong>
-                    <p>#comment.text#</p>
-                </div>
-            </cfloop>
+    <!-- Opacity-only transition with custom duration -->
+    <cfif showNotifications>
+        <div wire:transition.opacity.duration.300ms class="notifications">
+            <h3>Recent Notifications</h3>
+            <div class="notification">New user registered</div>
+            <div class="notification">Payment received</div>
+        </div>
+    </cfif>
+
+    <!-- Modal with scale transition from top -->
+    <cfif showModal>
+        <div class="modal-backdrop">
+            <div wire:transition.scale.origin.top.duration.250ms class="modal">
+                <h3>Confirm Action</h3>
+                <p>Are you sure you want to proceed?</p>
+                <button wire:click="closeModal">Cancel</button>
+                <button wire:click="closeModal">Confirm</button>
+            </div>
         </div>
     </cfif>
 </div>
@@ -94,98 +164,24 @@ component extends="cbwire.models.Component" {
 {% endtab %}
 {% endtabs %}
 
-## Default Transition Style
+## What wire:transition Does
 
-By default, elements with `wire:transition` will fade (change opacity) and slightly scale:
+When you add `wire:transition` to an element, CBWIRE automatically:
 
-* **Fading in:** Opacity transitions from 0 to 100%
-* **Scaling in:** Transforms from slightly smaller to full size
+- **Fades in/out**: Changes opacity from 0 to 100% (and vice versa)
+- **Scales**: Transforms from slightly smaller to full size by default
+- **Smooths interactions**: Makes show/hide operations feel polished instead of abrupt
 
-## Transition Modifiers
+## Available Modifiers
 
-CBWIRE allows you to customize these transitions to fit your needs:
+You can customize transitions with these modifiers:
 
-### Directional Control
+- **Directional**: `.in` (appear only), `.out` (disappear only)
+- **Duration**: `.duration.[?ms]` (e.g., `.duration.300ms`)
+- **Effects**: `.opacity` (fade only), `.scale` (scale only)
+- **Origins**: `.origin.top|bottom|left|right` (scale origin point)
 
-* **`.in`**: Only apply when the element appears
-* **`.out`**: Only apply when the element disappears
-
-```html
-<!-- Only animate when appearing -->
-<div wire:transition.in>
-    Content appears with transition, disappears instantly
-</div>
-
-<!-- Only animate when disappearing -->
-<div wire:transition.out>
-    Content appears instantly, disappears with transition  
-</div>
-```
-
-### Duration Control
-
-* **`.duration.[?ms]`**: Set how long the transition takes in milliseconds
-
-```html
-<!-- Quick transition -->
-<div wire:transition.duration.100ms>
-    Fast appearing content
-</div>
-
-<!-- Slower transition -->
-<div wire:transition.duration.500ms>
-    Slowly appearing content
-</div>
-```
-
-### Effect Types
-
-* **`.opacity`**: Only use the opacity transition for a simple fade effect without scaling
-* **`.scale`**: Apply a scaling effect
-
-```html
-<!-- Fade only -->
-<div wire:transition.opacity>
-    Simple fade in/out
-</div>
-
-<!-- Scale only -->
-<div wire:transition.scale>
-    Scaling effect
-</div>
-```
-
-### Scale Origins
-
-* **`.origin.[top|bottom|left|right]`**: Set the origin point for the scale effect, useful for dropdowns or popups
-
-```html
-<!-- Scale from top - perfect for dropdowns -->
-<div wire:transition.scale.origin.top>
-    Dropdown menu content
-</div>
-
-<!-- Scale from bottom -->
-<div wire:transition.scale.origin.bottom>
-    Bottom popup content
-</div>
-```
-
-## Combining Modifiers
-
-You can combine multiple modifiers to create the exact transition you need:
-
-```html
-<!-- Fade out only, taking 300ms -->
-<div wire:transition.opacity.out.duration.300ms>
-    Fades out slowly when hidden
-</div>
-
-<!-- Scale from top when appearing, quick duration -->
-<div wire:transition.scale.origin.top.in.duration.150ms>
-    Quick dropdown entrance
-</div>
-```
+Combine modifiers as needed: `wire:transition.opacity.out.duration.300ms`
 
 ## Troubleshooting
 
