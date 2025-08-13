@@ -2,11 +2,17 @@
 
 Components are sections of your application that you want to be reactive to user input.
 
+Components are the fundamental building blocks of CBWIRE applications. They encapsulate both the data and behavior needed to create interactive user interface elements that respond to user actions without requiring full page refreshes. Think of components as self-contained, reusable pieces of functionality that manage their own state and handle their own user interactions.
+
 {% hint style="info" %}
 **Components can be as big or small as you like.** For example, you may have a Signup form component that covers multiple steps or a simple button component that you reuse throughout your application.
 {% endhint %}
 
-Components are made up of [data properties](properties.md), [computed properties](computed-properties.md), [actions](actions.md), and a [template. ](templates.md)
+Each CBWIRE component is a ColdBox component (CFC) that extends the base `cbwire.models.Component` class. This inheritance provides all the reactive functionality and lifecycle methods needed to create dynamic user interfaces. Components follow a clear structure and naming convention, making them easy to organize and maintain as your application grows.
+
+Components are made up of [data properties](properties.md), [computed properties](computed-properties.md), [actions](actions.md), and a [template. ](templates.md) This separation of concerns keeps your code organized and maintainable while providing the flexibility to create complex interactive experiences.
+
+When a component is rendered, CBWIRE automatically handles the initial setup, manages the component's lifecycle, and coordinates communication between the server and client. This abstraction allows you to focus on your application's business logic rather than the underlying mechanics of creating reactive interfaces.
 
 {% tabs %}
 {% tab title="BoxLang" %}
