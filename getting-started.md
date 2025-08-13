@@ -1,27 +1,40 @@
 # Getting Started
 
-You can get started with CBWIRE with a few initial steps.
+CBWIRE brings reactive UI capabilities to your BoxLang and CFML applications, making it easy to build dynamic interfaces without complex JavaScript frameworks. This guide will help you set up CBWIRE and create your first reactive component.
 
-## Requirements
+## System Requirements
 
-* BoxLang or CFML Server
-  * BoxLang 1.0+
-    * Currently requires [bx-compat-cfml](https://forgebox.io/view/bx-compat-cfml) and [bx-esapi](https://forgebox.io/view/bx-esapi) modules
-  * Adobe ColdFusion 2021+
-  * Lucee 5+
-* ColdBox 6+
+Before installing CBWIRE, ensure your system meets these requirements:
+
+### BoxLang Requirements
+- **BoxLang 1.0+**
+- **OpenJDK 21** (required for BoxLang)
+- **ColdBox 6+**
+- **Required modules:**
+  - [bx-compat-cfml](https://forgebox.io/view/bx-compat-cfml) - CFML compatibility layer
+  - [bx-esapi](https://forgebox.io/view/bx-esapi) - Security encoding functions
+
+### CFML Requirements
+- **Adobe ColdFusion 2021+** or **Lucee 5+**
+- **ColdBox 6+**
 
 ## Installation
 
-Install [CommandBox](https://www.ortussolutions.com/products/commandbox).
+CBWIRE is distributed through ForgeBox and can be installed using CommandBox.
 
-Within the root of your project, run:
+### Install CommandBox
+
+If you don't have CommandBox installed, download it from [ortussolutions.com/products/commandbox](https://www.ortussolutions.com/products/commandbox).
+
+### Install CBWIRE
+
+Navigate to your ColdBox application root and run:
 
 ```bash
 box install cbwire@4
 ```
 
-If you want the latest bleeding edge, run:
+For the latest development version:
 
 ```bash
 box install cbwire@be
@@ -29,99 +42,98 @@ box install cbwire@be
 
 ## BoxLang Setup
 
-When using BoxLang with CBWIRE, you need to ensure that the required compatibility modules are installed. BoxLang requires the [bx-compat-cfml](https://forgebox.io/view/bx-compat-cfml) and [bx-esapi](https://forgebox.io/view/bx-esapi) modules to work with CBWIRE.
-
-If you're launching your server using CommandBox, you can create a `server.json` file in your project root to automatically install these dependencies and configure your server:
+BoxLang applications require additional configuration to work with CBWIRE. The easiest way to set this up is by creating a `server.json` file in your project root:
 
 ```json
 {
-    "app":{
-        "cfengine":"boxlang",
-        "serverHomeDirectory":".engine/boxlang"
+    "app": {
+        "cfengine": "boxlang",
+        "serverHomeDirectory": ".engine/boxlang"
     },
-    "web":{
-        "rewrites":{
-            "enable":"true"
+    "web": {
+        "rewrites": {
+            "enable": "true"
         }
     },
-    "JVM":{
-        "javaVersion":"openjdk21_jdk"
+    "JVM": {
+        "javaVersion": "openjdk21_jdk"
     },
-    "scripts":{
-        "onServerInitialInstall":"install bx-compat-cfml,bx-esapi"
+    "scripts": {
+        "onServerInitialInstall": "install bx-compat-cfml,bx-esapi"
     }
 }
 ```
 
-This configuration will:
-- Set BoxLang as the CFML engine
-- Configure URL rewrites (recommended for ColdBox)
-- Use OpenJDK 21 (required for BoxLang)
-- Automatically install the required compatibility modules when the server starts for the first time
+This configuration automatically:
+- Sets BoxLang as the CFML engine
+- Enables URL rewrites (recommended for ColdBox applications)
+- Uses OpenJDK 21 (required for BoxLang)
+- Installs required compatibility modules on first server start
 
-## Livewire Assets <a href="#layout-setup" id="layout-setup"></a>
+Start your server with:
 
-For CBWIRE to work, your layout must include Livewire's CSS and JavaScript assets. CBWIRE 4 automatically adds these assets to your layout.
+```bash
+box start
+```
+
+{% hint style="info" %}
+The compatibility modules are only required for BoxLang applications. CFML applications using Adobe ColdFusion or Lucee don't need these additional modules.
+{% endhint %}
+
+## Asset Integration
+
+CBWIRE requires CSS and JavaScript assets to function properly. By default, CBWIRE 4 automatically injects these assets into your application's layout, so no manual configuration is needed.
+
+### Automatic Asset Injection (Default)
+
+When automatic asset injection is enabled (default), CBWIRE will automatically include the necessary CSS in your page's `<head>` and JavaScript before the closing `</body>` tag. Your layout will automatically include content similar to this:
 
 ```html
 <!doctype html>
 <html>
 <head>
-	<!-- Livewire Styles -->
-	<style >[wire\:loading][wire\:loading], [wire\:loading\.delay][wire\:loading\.delay], [wire\:loading\.inline-block][wire\:loading\.inline-block], [wire\:loading\.inline][wire\:loading\.inline], [wire\:loading\.block][wire\:loading\.block], [wire\:loading\.flex][wire\:loading\.flex], [wire\:loading\.table][wire\:loading\.table], [wire\:loading\.grid][wire\:loading\.grid], [wire\:loading\.inline-flex][wire\:loading\.inline-flex] {display: none;}[wire\:loading\.delay\.none][wire\:loading\.delay\.none], [wire\:loading\.delay\.shortest][wire\:loading\.delay\.shortest], [wire\:loading\.delay\.shorter][wire\:loading\.delay\.shorter], [wire\:loading\.delay\.short][wire\:loading\.delay\.short], [wire\:loading\.delay\.default][wire\:loading\.delay\.default], [wire\:loading\.delay\.long][wire\:loading\.delay\.long], [wire\:loading\.delay\.longer][wire\:loading\.delay\.longer], [wire\:loading\.delay\.longest][wire\:loading\.delay\.longest] {display: none;}[wire\:offline][wire\:offline] {display: none;}[wire\:dirty]:not(textarea):not(input):not(select) {display: none;}:root {--livewire-progress-bar-color: #2299dd;}[x-cloak] {display: none !important;}</style>
+    <!-- CBWIRE CSS (automatically injected) -->
+    <style>[wire\:loading] { display: none; } /* ... more styles ... */</style>
 </head>
 <body>
-	<!-- Livewire SCRIPTS -->
-	<script src="/modules/cbwire/includes/js/livewire.js?id=239a5c52" data-csrf="IwMh5yVu4bmvvh3krQjW50jdNHLPBQ6Ln7QLWEyc" data-update-uri="/cbwire/update" data-navigate-once="true"></script>
+    <!-- Your content -->
+    
+    <!-- CBWIRE JavaScript (automatically injected) -->
+    <script src="/modules/cbwire/includes/js/livewire.js" data-csrf="..." data-update-uri="/cbwire/update"></script>
 </body>
 </html>
 ```
 
-{% hint style="info" %}
-Previous versions of CBWIRE required you to do this manually.
-{% endhint %}
+### Manual Asset Management
 
-If you want to disable this functionality and manually include the CSS and JavaScript yourself, you can set the **autoInjectAssets** setting to **false** in your **ColdBox.bx or ColdBox.cfc**.
+If you prefer to control when and how assets are loaded, you can disable automatic injection:
 
-{% tabs %}
-{% tab title="BoxLang" %}
 ```javascript
-// config/ColdBox.bx
+// config/ColdBox.bx (BoxLang) or config/ColdBox.cfc (CFML)
 moduleSettings = {
-    "cbwire" : {
+    "cbwire": {
         "autoInjectAssets": false
     }
 };
 ```
-{% endtab %}
 
-{% tab title="CFML" %}
-```python
-// config/ColdBox.cfc
-moduleSettings = {
-    "cbwire" : {
-        "autoInjectAssets": false
-    }
-};
-```
-{% endtab %}
-{% endtabs %}
-
-Then, you can manually add the CSS and JavaScript using the **wireStyles()** and **wireScripts()** methods in your layout file.
+Then manually include the assets in your layout:
 
 {% tabs %}
 {% tab title="BoxLang" %}
 ```html
-<!--- ./layouts/Main.bxm --->
+<!-- layouts/Main.bxm -->
 <bx:output>
 <!DOCTYPE html>
 <html>
     <head>
-        <!--- CBWIRE CSS --->
+        <!-- CBWIRE CSS -->
         #wireStyles()#
     </head>
     <body>
-        <!--- CBWIRE JS --->
+        <!-- Your application content -->
+        
+        <!-- CBWIRE JavaScript -->
         #wireScripts()#
     </body>
 </html>
@@ -131,16 +143,18 @@ Then, you can manually add the CSS and JavaScript using the **wireStyles()** and
 
 {% tab title="CFML" %}
 ```html
-<!--- ./layouts/Main.cfm --->
+<!-- layouts/Main.cfm -->
 <cfoutput>
 <!DOCTYPE html>
 <html>
     <head>
-        <!--- CBWIRE CSS --->
+        <!-- CBWIRE CSS -->
         #wireStyles()#
     </head>
     <body>
-        <!--- CBWIRE JS --->
+        <!-- Your application content -->
+        
+        <!-- CBWIRE JavaScript -->
         #wireScripts()#
     </body>
 </html>
@@ -149,6 +163,122 @@ Then, you can manually add the CSS and JavaScript using the **wireStyles()** and
 {% endtab %}
 {% endtabs %}
 
+## Creating Your First Component
+
+Let's create a simple counter component to verify your installation is working correctly.
+
+### 1. Create the Component
+
+Create a new file in your `wires` directory:
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```javascript
+// wires/Counter.bx
+class extends="cbwire.models.Component" {
+    
+    data = {
+        "count": 0
+    };
+    
+    function increment() {
+        variables.data.count++;
+    }
+    
+    function decrement() {
+        variables.data.count--;
+    }
+}
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```javascript
+// wires/Counter.cfc
+component extends="cbwire.models.Component" {
+    
+    data = {
+        "count" = 0
+    };
+    
+    function increment() {
+        variables.data.count++;
+    }
+    
+    function decrement() {
+        variables.data.count--;
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+
+### 2. Create the Template
+
+Create the corresponding template file:
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```html
+<!-- wires/counter.bxm -->
+<bx:output>
+<div>
+    <h2>Counter: #data.count#</h2>
+    <button wire:click="increment">+</button>
+    <button wire:click="decrement">-</button>
+</div>
+</bx:output>
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```html
+<!-- wires/counter.cfm -->
+<cfoutput>
+<div>
+    <h2>Counter: #data.count#</h2>
+    <button wire:click="increment">+</button>
+    <button wire:click="decrement">-</button>
+</div>
+</cfoutput>
+```
+{% endtab %}
+{% endtabs %}
+
+### 3. Use the Component
+
+Add the component to any view or layout:
+
+```html
+<wire:counter />
+```
+
+### 4. Test Your Component
+
+Start your server and navigate to a page that includes your counter component. Click the + and - buttons to verify the counter updates without a page refresh.
+
+## Next Steps
+
+Congratulations! You've successfully set up CBWIRE and created your first reactive component. Here are some recommended next steps:
+
+- **Learn the Essentials**: Explore [Components](the-essentials/components.md), [Templates](the-essentials/templates.md), and [Data Binding](the-essentials/properties.md)
+- **Explore Actions**: Understand how [Actions](the-essentials/actions.md) work and handle user interactions
+- **Master Template Directives**: Learn about [wire:click](template-directives/wire-click.md), [wire:model](template-directives/wire-model.md), and other directives
+- **Advanced Features**: Discover [Events](the-essentials/events.md), [File Uploads](features/file-uploads.md), and [Alpine.js Integration](features/alpine-js.md)
+
+## Troubleshooting
+
+If you encounter issues:
+
+1. **Verify assets are loaded**: Check your browser's developer tools to ensure CBWIRE CSS and JavaScript are present
+2. **Check server logs**: Look for any CBWIRE-related errors in your application logs  
+3. **Validate requirements**: Ensure all system requirements are met, especially for BoxLang applications
+4. **Review configuration**: Double-check your ColdBox configuration if using custom settings
+
 {% hint style="warning" %}
-Your template must include Livewire's CSS and JavaScript; otherwise, CBWIRE will not work. If you are trying to use CBWIRE and it's not working as expected, this is the first place to check.
+CBWIRE requires its CSS and JavaScript assets to function. If components aren't responding to interactions, verify that assets are properly loaded in your browser's developer tools.
+{% endhint %}
+
+{% hint style="info" %}
+Previous versions of CBWIRE required manual asset inclusion. CBWIRE 4 automatically handles this by default, making setup much simpler.
 {% endhint %}
