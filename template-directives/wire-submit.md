@@ -165,15 +165,6 @@ Use `wire:submit.prevent` to explicitly prevent the default form submission (tho
 </form>
 ```
 
-### Self Modifier
-
-Target the current element with `wire:submit.self`:
-
-```html
-<form wire:submit.self="handleSubmit">
-    <!-- Only triggers when the form itself is submitted, not child elements -->
-</form>
-```
 
 ## Practical Examples
 
