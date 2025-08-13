@@ -168,8 +168,8 @@ class extends="cbwire.models.Component" {
     };
     
     function addTodo() {
-        if (len(trim(data.newTodo))) {
-            arrayAppend(data.todos, {
+        if (data.newTodo.trim().len()) {
+            data.todos.append({
                 "id": createUUID(),
                 "text": data.newTodo,
                 "completed": false
@@ -188,7 +188,7 @@ class extends="cbwire.models.Component" {
     }
     
     function removeTodo(todoId) {
-        data.todos = arrayFilter(data.todos, function(todo) {
+        data.todos = data.todos.filter(function(todo) {
             return todo.id != todoId;
         });
     }
@@ -206,8 +206,8 @@ component extends="cbwire.models.Component" {
     };
     
     function addTodo() {
-        if (len(trim(data.newTodo))) {
-            arrayAppend(data.todos, {
+        if (data.newTodo.trim().len()) {
+            data.todos.append({
                 "id" = createUUID(),
                 "text" = data.newTodo,
                 "completed" = false
@@ -226,7 +226,7 @@ component extends="cbwire.models.Component" {
     }
     
     function removeTodo(todoId) {
-        data.todos = arrayFilter(data.todos, function(todo) {
+        data.todos = data.todos.filter(function(todo) {
             return todo.id != todoId;
         });
     }
