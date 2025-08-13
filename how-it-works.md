@@ -179,12 +179,11 @@ class extends="cbwire.models.Component" {
     }
     
     function toggleTodo(todoId) {
-        for (var todo in data.todos) {
+        data.todos.each(function(todo) {
             if (todo.id == arguments.todoId) {
                 todo.completed = !todo.completed;
-                break;
             }
-        }
+        });
     }
     
     function removeTodo(todoId) {
@@ -217,12 +216,11 @@ component extends="cbwire.models.Component" {
     }
     
     function toggleTodo(todoId) {
-        for (var todo in data.todos) {
+        data.todos.each(function(todo) {
             if (todo.id == arguments.todoId) {
                 todo.completed = !todo.completed;
-                break;
             }
-        }
+        });
     }
     
     function removeTodo(todoId) {
@@ -235,21 +233,51 @@ component extends="cbwire.models.Component" {
 {% endtab %}
 {% endtabs %}
 
+{% tabs %}
+{% tab title="BoxLang" %}
 ```html
 <!-- Template calling various action methods -->
+<bx:output>
 <div>
     <input type="text" wire:model="newTodo" placeholder="Add a todo...">
     <button wire:click="addTodo">Add</button>
     
     <ul>
-        <li wire:key="todo-#todo.id#" wire:each="todo in todos">
-            <input type="checkbox" wire:click="toggleTodo('#todo.id#')" #todo.completed ? 'checked' : ''#>
-            <span class="#todo.completed ? 'completed' : ''#">#todo.text#</span>
-            <button wire:click="removeTodo('#todo.id#')">Delete</button>
-        </li>
+        <bx:loop array="#data.todos#" index="todo">
+            <li wire:key="todo-#todo.id#">
+                <input type="checkbox" wire:click="toggleTodo('#todo.id#')" #todo.completed ? 'checked' : ''#>
+                <span class="#todo.completed ? 'completed' : ''#">#todo.text#</span>
+                <button wire:click="removeTodo('#todo.id#')">Delete</button>
+            </li>
+        </bx:loop>
     </ul>
 </div>
+</bx:output>
 ```
+{% endtab %}
+
+{% tab title="CFML" %}
+```html
+<!-- Template calling various action methods -->
+<cfoutput>
+<div>
+    <input type="text" wire:model="newTodo" placeholder="Add a todo...">
+    <button wire:click="addTodo">Add</button>
+    
+    <ul>
+        <cfloop array="#data.todos#" index="todo">
+            <li wire:key="todo-#todo.id#">
+                <input type="checkbox" wire:click="toggleTodo('#todo.id#')" #todo.completed ? 'checked' : ''#>
+                <span class="#todo.completed ? 'completed' : ''#">#todo.text#</span>
+                <button wire:click="removeTodo('#todo.id#')">Delete</button>
+            </li>
+        </cfloop>
+    </ul>
+</div>
+</cfoutput>
+```
+{% endtab %}
+{% endtabs %}
 
 ## State Management
 
