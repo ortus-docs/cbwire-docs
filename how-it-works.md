@@ -168,18 +168,18 @@ class extends="cbwire.models.Component" {
     };
     
     function addTodo() {
-        if (len(trim(variables.data.newTodo))) {
-            arrayAppend(variables.data.todos, {
+        if (len(trim(data.newTodo))) {
+            arrayAppend(data.todos, {
                 "id": createUUID(),
-                "text": variables.data.newTodo,
+                "text": data.newTodo,
                 "completed": false
             });
-            variables.data.newTodo = "";
+            data.newTodo = "";
         }
     }
     
     function toggleTodo(todoId) {
-        for (var todo in variables.data.todos) {
+        for (var todo in data.todos) {
             if (todo.id == arguments.todoId) {
                 todo.completed = !todo.completed;
                 break;
@@ -188,7 +188,7 @@ class extends="cbwire.models.Component" {
     }
     
     function removeTodo(todoId) {
-        variables.data.todos = arrayFilter(variables.data.todos, function(todo) {
+        data.todos = arrayFilter(data.todos, function(todo) {
             return todo.id != todoId;
         });
     }
@@ -206,18 +206,18 @@ component extends="cbwire.models.Component" {
     };
     
     function addTodo() {
-        if (len(trim(variables.data.newTodo))) {
-            arrayAppend(variables.data.todos, {
+        if (len(trim(data.newTodo))) {
+            arrayAppend(data.todos, {
                 "id" = createUUID(),
-                "text" = variables.data.newTodo,
+                "text" = data.newTodo,
                 "completed" = false
             });
-            variables.data.newTodo = "";
+            data.newTodo = "";
         }
     }
     
     function toggleTodo(todoId) {
-        for (var todo in variables.data.todos) {
+        for (var todo in data.todos) {
             if (todo.id == arguments.todoId) {
                 todo.completed = !todo.completed;
                 break;
@@ -226,7 +226,7 @@ component extends="cbwire.models.Component" {
     }
     
     function removeTodo(todoId) {
-        variables.data.todos = arrayFilter(variables.data.todos, function(todo) {
+        data.todos = arrayFilter(data.todos, function(todo) {
             return todo.id != todoId;
         });
     }
