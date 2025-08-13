@@ -181,81 +181,52 @@ Use `wire:submit.prevent` to explicitly prevent the default form submission (tho
 {% endtab %}
 {% endtabs %}
 
-## Practical Example
+## Basic Usage
 
-This user registration form demonstrates multiple `wire:submit` features including form handling, validation using cbValidation, error display, loading states, and success handling:
+This simple form demonstrates `wire:submit` with form handling, validation, error display, and loading states:
 
 {% tabs %}
 {% tab title="BoxLang" %}
 ```javascript
-// wires/UserRegistration.bx
+// wires/ContactForm.bx
 class extends="cbwire.models.Component" {
     data = {
-        "firstName": "",
-        "lastName": "",
+        "name": "",
         "email": "",
-        "password": "",
-        "confirmPassword": "",
-        "isRegistering": false
+        "message": "",
+        "isSubmitting": false
     };
     
     constraints = {
-        "firstName": {
+        "name": {
             "required": true,
-            "requiredMessage": "First name is required"
-        },
-        "lastName": {
-            "required": true,
-            "requiredMessage": "Last name is required"
+            "requiredMessage": "Name is required"
         },
         "email": {
             "required": true,
             "type": "email",
-            "requiredMessage": "Email is required",
-            "typeMessage": "Please enter a valid email address"
-        },
-        "password": {
-            "required": true,
-            "size": "6..",
-            "requiredMessage": "Password is required",
-            "sizeMessage": "Password must be at least 6 characters"
-        },
-        "confirmPassword": {
-            "required": true,
-            "sameAs": "password",
-            "requiredMessage": "Please confirm your password",
-            "sameAsMessage": "Passwords must match"
+            "requiredMessage": "Email is required"
         }
     };
 
-    function register() {
-        data.isRegistering = true;
+    function submitContact() {
+        data.isSubmitting = true;
         
         // Validate using cbValidation
         if (!validateOrFail()) {
-            data.isRegistering = false;
+            data.isSubmitting = false;
             return;
         }
         
-        // Register the user
-        userService = getInstance("UserService");
-        result = userService.createUser({
-            "firstName": data.firstName,
-            "lastName": data.lastName,
-            "email": data.email,
-            "password": data.password
-        });
+        // Process the form
+        // (simulate processing time)
+        sleep(1000);
         
-        if (result.success) {
-            // Redirect to login page
-            redirect("/login");
-        } else {
-            // Handle server-side errors
-            data.isRegistering = false;
-            return;
-        }
-        
-        data.isRegistering = false;
+        // Reset form
+        data.name = "";
+        data.email = "";
+        data.message = "";
+        data.isSubmitting = false;
     }
 }
 ```
@@ -263,74 +234,45 @@ class extends="cbwire.models.Component" {
 
 {% tab title="CFML" %}
 ```javascript
-// wires/UserRegistration.cfc
+// wires/ContactForm.cfc
 component extends="cbwire.models.Component" {
     data = {
-        "firstName" = "",
-        "lastName" = "",
+        "name" = "",
         "email" = "",
-        "password" = "",
-        "confirmPassword" = "",
-        "isRegistering" = false
+        "message" = "",
+        "isSubmitting" = false
     };
     
     constraints = {
-        "firstName" = {
+        "name" = {
             "required" = true,
-            "requiredMessage" = "First name is required"
-        },
-        "lastName" = {
-            "required" = true,
-            "requiredMessage" = "Last name is required"
+            "requiredMessage" = "Name is required"
         },
         "email" = {
             "required" = true,
             "type" = "email",
-            "requiredMessage" = "Email is required",
-            "typeMessage" = "Please enter a valid email address"
-        },
-        "password" = {
-            "required" = true,
-            "size" = "6..",
-            "requiredMessage" = "Password is required",
-            "sizeMessage" = "Password must be at least 6 characters"
-        },
-        "confirmPassword" = {
-            "required" = true,
-            "sameAs" = "password",
-            "requiredMessage" = "Please confirm your password",
-            "sameAsMessage" = "Passwords must match"
+            "requiredMessage" = "Email is required"
         }
     };
 
-    function register() {
-        data.isRegistering = true;
+    function submitContact() {
+        data.isSubmitting = true;
         
         // Validate using cbValidation
         if (!validateOrFail()) {
-            data.isRegistering = false;
+            data.isSubmitting = false;
             return;
         }
         
-        // Register the user
-        userService = getInstance("UserService");
-        result = userService.createUser({
-            "firstName" = data.firstName,
-            "lastName" = data.lastName,
-            "email" = data.email,
-            "password" = data.password
-        });
+        // Process the form
+        // (simulate processing time)
+        sleep(1000);
         
-        if (result.success) {
-            // Redirect to login page
-            redirect("/login");
-        } else {
-            // Handle server-side errors
-            data.isRegistering = false;
-            return;
-        }
-        
-        data.isRegistering = false;
+        // Reset form
+        data.name = "";
+        data.email = "";
+        data.message = "";
+        data.isSubmitting = false;
     }
 }
 ```
@@ -340,18 +282,12 @@ component extends="cbwire.models.Component" {
 {% tabs %}
 {% tab title="BoxLang" %}
 ```html
-<!-- wires/userRegistration.bxm -->
+<!-- wires/contactForm.bxm -->
 <bx:output>
-<form wire:submit="register" class="registration-form">
-    
+<form wire:submit="submitContact">
     <div>
-        <input type="text" wire:model="firstName" placeholder="First Name" required>
-        <bx:if hasError("firstName")><span class="error">#getError("firstName")#</span></bx:if>
-    </div>
-    
-    <div>
-        <input type="text" wire:model="lastName" placeholder="Last Name" required>
-        <bx:if hasError("lastName")><span class="error">#getError("lastName")#</span></bx:if>
+        <input type="text" wire:model="name" placeholder="Your Name" required>
+        <bx:if hasError("name")><span class="error">#getError("name")#</span></bx:if>
     </div>
     
     <div>
@@ -360,17 +296,11 @@ component extends="cbwire.models.Component" {
     </div>
     
     <div>
-        <input type="password" wire:model="password" placeholder="Password" required>
-        <bx:if hasError("password")><span class="error">#getError("password")#</span></bx:if>
-    </div>
-    
-    <div>
-        <input type="password" wire:model="confirmPassword" placeholder="Confirm Password" required>
-        <bx:if hasError("confirmPassword")><span class="error">#getError("confirmPassword")#</span></bx:if>
+        <textarea wire:model="message" placeholder="Your message" rows="4"></textarea>
     </div>
     
     <button type="submit">
-        <bx:if isRegistering>Creating Account...<bx:else>Create Account</bx:if>
+        <bx:if isSubmitting>Sending...<bx:else>Send Message</bx:if>
     </button>
 </form>
 </bx:output>
@@ -379,18 +309,12 @@ component extends="cbwire.models.Component" {
 
 {% tab title="CFML" %}
 ```html
-<!-- wires/userRegistration.cfm -->
+<!-- wires/contactForm.cfm -->
 <cfoutput>
-<form wire:submit="register" class="registration-form">
-    
+<form wire:submit="submitContact">
     <div>
-        <input type="text" wire:model="firstName" placeholder="First Name" required>
-        <cfif hasError("firstName")><span class="error">#getError("firstName")#</span></cfif>
-    </div>
-    
-    <div>
-        <input type="text" wire:model="lastName" placeholder="Last Name" required>
-        <cfif hasError("lastName")><span class="error">#getError("lastName")#</span></cfif>
+        <input type="text" wire:model="name" placeholder="Your Name" required>
+        <cfif hasError("name")><span class="error">#getError("name")#</span></cfif>
     </div>
     
     <div>
@@ -399,17 +323,11 @@ component extends="cbwire.models.Component" {
     </div>
     
     <div>
-        <input type="password" wire:model="password" placeholder="Password" required>
-        <cfif hasError("password")><span class="error">#getError("password")#</span></cfif>
-    </div>
-    
-    <div>
-        <input type="password" wire:model="confirmPassword" placeholder="Confirm Password" required>
-        <cfif hasError("confirmPassword")><span class="error">#getError("confirmPassword")#</span></cfif>
+        <textarea wire:model="message" placeholder="Your message" rows="4"></textarea>
     </div>
     
     <button type="submit">
-        <cfif isRegistering>Creating Account...<cfelse>Create Account</cfif>
+        <cfif isSubmitting>Sending...<cfelse>Send Message</cfif>
     </button>
 </form>
 </cfoutput>
