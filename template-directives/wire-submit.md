@@ -13,20 +13,16 @@ This contact form demonstrates `wire:submit` with form handling and loading stat
 class extends="cbwire.models.Component" {
     data = {
         "name": "",
-        "email": "",
-        "isSubmitting": false
+        "email": ""
     };
 
     function submit() {
-        data.isSubmitting = true;
-        
         // Process form (simulate processing)
         sleep(1000);
         
-        // Reset and complete
+        // Reset form
         data.name = "";
         data.email = "";
-        data.isSubmitting = false;
     }
 }
 ```
@@ -38,20 +34,16 @@ class extends="cbwire.models.Component" {
 component extends="cbwire.models.Component" {
     data = {
         "name" = "",
-        "email" = "",
-        "isSubmitting" = false
+        "email" = ""
     };
 
     function submit() {
-        data.isSubmitting = true;
-        
         // Process form (simulate processing)
         sleep(1000);
         
-        // Reset and complete
+        // Reset form
         data.name = "";
         data.email = "";
-        data.isSubmitting = false;
     }
 }
 ```
@@ -68,7 +60,8 @@ component extends="cbwire.models.Component" {
     <input type="email" wire:model="email" placeholder="Email">
     
     <button type="submit">
-        <bx:if isSubmitting>Sending...<bx:else>Send</bx:if>
+        Send
+        <span wire:loading>ing...</span>
     </button>
 </form>
 </bx:output>
@@ -84,7 +77,8 @@ component extends="cbwire.models.Component" {
     <input type="email" wire:model="email" placeholder="Email">
     
     <button type="submit">
-        <cfif isSubmitting>Sending...<cfelse>Send</cfif>
+        Send
+        <span wire:loading>ing...</span>
     </button>
 </form>
 </cfoutput>
