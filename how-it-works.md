@@ -253,35 +253,128 @@ component extends="cbwire.models.Component" {
 
 ## State Management
 
-CBWIRE automatically manages component state across requests:
+CBWIRE's state management is where the magic happens - it seamlessly maintains your component's data across user interactions while keeping everything secure and performant.
 
-### State Serialization
-- Component data is serialized and sent with each request
-- Only public data properties are included in the state
-- Private variables and computed properties are not persisted
+### State Serialization: The Journey of Your Data
 
-### State Security
-- A checksum is generated to prevent tampering
-- Modified checksums result in request rejection
-- Sensitive data should be stored server-side (session, cache, database)
+Every time a user interacts with your component, CBWIRE performs an intricate dance of data serialization. Your component's `data` struct becomes a JSON payload that travels between client and server, maintaining perfect synchronization.
 
-### State Optimization
 ```javascript
-// Exclude large or sensitive data from client state
-excludeFromClientState = ["largeDataSet", "sensitiveInfo"];
+// Your component data...
+data = {
+    "user": {"name": "Sarah", "role": "admin"},
+    "products": [
+        {"id": 1, "name": "Widget", "price": 29.99},
+        {"id": 2, "name": "Gadget", "price": 49.99}
+    ],
+    "cartTotal": 0
+};
+
+// Becomes this serialized state
+{
+    "data": {
+        "user": {"name": "Sarah", "role": "admin"},
+        "products": [...],
+        "cartTotal": 0
+    },
+    "checksum": "abc123def456"
+}
 ```
 
-## Performance Considerations
+But here's the clever part: **only your public data properties make the journey**. Private variables, computed properties, and sensitive information stay safely on the server where they belong.
 
-### Request Optimization
-- CBWIRE only sends changed data properties
-- DOM diffing updates only modified elements
-- Multiple rapid interactions are debounced
+```javascript
+// This travels to the client
+data = {"publicInfo": "visible"};
 
-### Memory Management
-- Component instances are created fresh for each request
-- No server-side state is maintained between requests
-- Use appropriate caching strategies for expensive operations
+// These stay on the server
+variables.secretKey = "hidden";
+variables.expensiveCalculation = computeComplexData();
+```
+
+### State Security: Fort Knox for Your Data
+
+CBWIRE doesn't just send your data into the wild west of the internet unprotected. Every state payload includes a cryptographic checksum - think of it as a tamper-evident seal on your data.
+
+When a request comes back to the server, CBWIRE immediately verifies this checksum. If someone has tried to modify the data in transit or inject malicious content, the checksum won't match and the request gets rejected faster than you can say "security breach."
+
+```javascript
+// Client tries to modify data maliciously
+{
+    "data": {"isAdmin": true}, // ← Nice try, hacker!
+    "checksum": "originalChecksum" // ← This won't match anymore
+}
+// Result: Request rejected, component stays safe
+```
+
+**Pro tip**: Never store sensitive information like passwords, API keys, or financial data in your component's `data` struct. Use server-side storage instead:
+
+```javascript
+// ❌ Bad - exposed to client
+data = {
+    "userName": "john",
+    "creditCard": "4111-1111-1111-1111" // Yikes!
+};
+
+// ✅ Good - sensitive data stays server-side
+data = {
+    "userName": "john",
+    "hasPaymentMethod": true
+};
+// Store credit card in encrypted session or database
+session.encryptedPaymentInfo = encryptData(creditCardNumber);
+```
+
+### State Optimization: Speed Through Smart Design
+
+The beauty of CBWIRE's state management lies in its efficiency. Unlike traditional frameworks that might send entire page worth of data, CBWIRE only transmits what's actually changed.
+
+Here's how to keep your components lightning-fast:
+
+**Keep it lean**: Your component data should be focused and minimal. Think of it as packing for a trip - only bring what you absolutely need.
+
+```javascript
+// ❌ Heavy - will slow down every request
+data = {
+    "allUsers": getUserService().getAllUsers(), // 10,000 users!
+    "fullProductCatalog": getProductService().getAll(), // Another 5,000 items!
+    "searchTerm": ""
+};
+
+// ✅ Light - fast and focused
+data = {
+    "searchResults": [], // Empty until needed
+    "searchTerm": "",
+    "currentPage": 1
+};
+
+function search() {
+    // Load data only when needed
+    data.searchResults = getUserService().search(data.searchTerm);
+}
+```
+
+**Smart storage strategies**: Use the right tool for the job. Component state is for UI-related data that changes frequently. Everything else belongs in more appropriate storage.
+
+```javascript
+// Component state: UI-focused, changes often
+data = {
+    "currentStep": 1,
+    "isLoading": false,
+    "selectedItems": []
+};
+
+// Session: User-specific, persists across requests
+session.userPreferences = {"theme": "dark", "language": "en"};
+
+// Cache: Expensive computations, shared across users  
+cache.put("popularProducts", getExpensiveProductList(), 60);
+
+// Database: Permanent data, complex relationships
+productService.save(productData);
+```
+
+This thoughtful approach to state management is what makes CBWIRE applications feel instantly responsive while maintaining the security and reliability you expect from server-side code.
 
 ## Security Model
 
