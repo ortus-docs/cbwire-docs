@@ -250,7 +250,9 @@ class extends="cbwire.models.Component" {
             // Redirect to login page
             redirect("/login");
         } else {
-            addError("general", result.message);
+            // Handle server-side errors
+            data.isRegistering = false;
+            return;
         }
         
         data.isRegistering = false;
@@ -323,7 +325,9 @@ component extends="cbwire.models.Component" {
             // Redirect to login page
             redirect("/login");
         } else {
-            addError("general", result.message);
+            // Handle server-side errors
+            data.isRegistering = false;
+            return;
         }
         
         data.isRegistering = false;
@@ -339,7 +343,6 @@ component extends="cbwire.models.Component" {
 <!-- wires/userRegistration.bxm -->
 <bx:output>
 <form wire:submit="register" class="registration-form">
-    <bx:if hasError("general")><div class="error">#getError("general")#</div></bx:if>
     
     <div>
         <input type="text" wire:model="firstName" placeholder="First Name" required>
@@ -379,7 +382,6 @@ component extends="cbwire.models.Component" {
 <!-- wires/userRegistration.cfm -->
 <cfoutput>
 <form wire:submit="register" class="registration-form">
-    <cfif hasError("general")><div class="error">#getError("general")#</div></cfif>
     
     <div>
         <input type="text" wire:model="firstName" placeholder="First Name" required>
@@ -567,10 +569,14 @@ function submitForm() {
             // Success handling
             redirect("/success");
         } else {
-            addError("general", result.message);
+            // Handle server-side errors appropriately
+            data.isSubmitting = false;
+            return;
         }
     } catch (any e) {
-        addError("general", "An unexpected error occurred. Please try again.");
+        // Log the error and handle gracefully
+        logError(e);
+        data.isSubmitting = false;
     }
     
     data.isSubmitting = false;
