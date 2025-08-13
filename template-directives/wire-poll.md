@@ -4,38 +4,25 @@ The `wire:poll` directive provides an easy way to automatically refresh content 
 
 ## Basic Usage
 
-This dashboard component demonstrates `wire:poll` for real-time data updates, including custom intervals, background throttling, and viewport-based polling:
+This simple component demonstrates `wire:poll` with default intervals, custom timing, background polling, and viewport polling:
 
 {% tabs %}
 {% tab title="BoxLang" %}
 ```javascript
-// wires/LiveDashboard.bx
+// wires/PollDemo.bx
 class extends="cbwire.models.Component" {
     data = {
-        "subscriberCount": 0,
-        "activeUsers": 0,
-        "systemStatus": "operational",
-        "notifications": []
+        "counter": 0,
+        "timestamp": ""
     };
 
-    function updateSubscribers() {
-        // Fetch latest subscriber count
-        data.subscriberCount = subscriberService.getCount();
+    function updateCounter() {
+        data.counter++;
+        data.timestamp = dateTimeFormat(now(), "HH:mm:ss");
     }
 
-    function updateActiveUsers() {
-        // Update active user count
-        data.activeUsers = userService.getActiveCount();
-    }
-
-    function checkSystemStatus() {
-        // Check system health
-        data.systemStatus = systemService.getStatus();
-    }
-
-    function refreshNotifications() {
-        // Get recent notifications
-        data.notifications = notificationService.getRecent(5);
+    function updateStatus() {
+        data.timestamp = dateTimeFormat(now(), "HH:mm:ss");
     }
 }
 ```
@@ -43,33 +30,20 @@ class extends="cbwire.models.Component" {
 
 {% tab title="CFML" %}
 ```javascript
-// wires/LiveDashboard.cfc
+// wires/PollDemo.cfc
 component extends="cbwire.models.Component" {
     data = {
-        "subscriberCount" = 0,
-        "activeUsers" = 0,
-        "systemStatus" = "operational",
-        "notifications" = []
+        "counter" = 0,
+        "timestamp" = ""
     };
 
-    function updateSubscribers() {
-        // Fetch latest subscriber count
-        data.subscriberCount = subscriberService.getCount();
+    function updateCounter() {
+        data.counter++;
+        data.timestamp = dateTimeFormat(now(), "HH:mm:ss");
     }
 
-    function updateActiveUsers() {
-        // Update active user count
-        data.activeUsers = userService.getActiveCount();
-    }
-
-    function checkSystemStatus() {
-        // Check system health
-        data.systemStatus = systemService.getStatus();
-    }
-
-    function refreshNotifications() {
-        // Get recent notifications
-        data.notifications = notificationService.getRecent(5);
+    function updateStatus() {
+        data.timestamp = dateTimeFormat(now(), "HH:mm:ss");
     }
 }
 ```
@@ -79,41 +53,31 @@ component extends="cbwire.models.Component" {
 {% tabs %}
 {% tab title="BoxLang" %}
 ```html
-<!-- wires/liveDashboard.bxm -->
+<!-- wires/pollDemo.bxm -->
 <bx:output>
-<div class="dashboard">
-    <h1>Live Dashboard</h1>
-    
+<div>
     <!-- Basic polling every 2.5 seconds (default) -->
-    <div wire:poll="updateSubscribers" class="metric-card">
-        <h3>Subscribers</h3>
-        <span class="count">#subscriberCount#</span>
+    <div wire:poll="updateCounter">
+        <h3>Auto Counter: #counter#</h3>
+        <p>Last updated: #timestamp#</p>
     </div>
     
-    <!-- Custom polling interval (every 5 seconds) -->
-    <div wire:poll.5s="updateActiveUsers" class="metric-card">
-        <h3>Active Users</h3>
-        <span class="count">#activeUsers#</span>
+    <!-- Custom polling interval -->
+    <div wire:poll.5s="updateStatus">
+        <h3>5-Second Updates</h3>
+        <p>Current time: #timestamp#</p>
     </div>
     
-    <!-- Continuous polling even when tab is inactive -->
-    <div wire:poll.10s.keep-alive="checkSystemStatus" class="status-card">
-        <h3>System Status</h3>
-        <span class="status #systemStatus#">#uCase(systemStatus)#</span>
+    <!-- Keep polling when tab is inactive -->
+    <div wire:poll.10s.keep-alive="updateStatus">
+        <h3>Background Polling</h3>
+        <p>Polls even when tab inactive</p>
     </div>
     
-    <!-- Poll only when visible on screen -->
-    <div wire:poll.15s.visible="refreshNotifications" class="notifications-card">
-        <h3>Recent Notifications</h3>
-        <bx:if notifications.len()>
-            <ul>
-                <bx:loop array="#notifications#" index="notification">
-                    <li>#notification.message#</li>
-                </bx:loop>
-            </ul>
-        <bx:else>
-            <p>No recent notifications</p>
-        </bx:if>
+    <!-- Poll only when visible -->
+    <div wire:poll.15s.visible="updateStatus">
+        <h3>Visible Polling</h3>
+        <p>Only polls when on screen</p>
     </div>
 </div>
 </bx:output>
@@ -122,41 +86,31 @@ component extends="cbwire.models.Component" {
 
 {% tab title="CFML" %}
 ```html
-<!-- wires/liveDashboard.cfm -->
+<!-- wires/pollDemo.cfm -->
 <cfoutput>
-<div class="dashboard">
-    <h1>Live Dashboard</h1>
-    
+<div>
     <!-- Basic polling every 2.5 seconds (default) -->
-    <div wire:poll="updateSubscribers" class="metric-card">
-        <h3>Subscribers</h3>
-        <span class="count">#subscriberCount#</span>
+    <div wire:poll="updateCounter">
+        <h3>Auto Counter: #counter#</h3>
+        <p>Last updated: #timestamp#</p>
     </div>
     
-    <!-- Custom polling interval (every 5 seconds) -->
-    <div wire:poll.5s="updateActiveUsers" class="metric-card">
-        <h3>Active Users</h3>
-        <span class="count">#activeUsers#</span>
+    <!-- Custom polling interval -->
+    <div wire:poll.5s="updateStatus">
+        <h3>5-Second Updates</h3>
+        <p>Current time: #timestamp#</p>
     </div>
     
-    <!-- Continuous polling even when tab is inactive -->
-    <div wire:poll.10s.keep-alive="checkSystemStatus" class="status-card">
-        <h3>System Status</h3>
-        <span class="status #systemStatus#">#uCase(systemStatus)#</span>
+    <!-- Keep polling when tab is inactive -->
+    <div wire:poll.10s.keep-alive="updateStatus">
+        <h3>Background Polling</h3>
+        <p>Polls even when tab inactive</p>
     </div>
     
-    <!-- Poll only when visible on screen -->
-    <div wire:poll.15s.visible="refreshNotifications" class="notifications-card">
-        <h3>Recent Notifications</h3>
-        <cfif arrayLen(notifications)>
-            <ul>
-                <cfloop array="#notifications#" index="notification">
-                    <li>#notification.message#</li>
-                </cfloop>
-            </ul>
-        <cfelse>
-            <p>No recent notifications</p>
-        </cfif>
+    <!-- Poll only when visible -->
+    <div wire:poll.15s.visible="updateStatus">
+        <h3>Visible Polling</h3>
+        <p>Only polls when on screen</p>
     </div>
 </div>
 </cfoutput>
