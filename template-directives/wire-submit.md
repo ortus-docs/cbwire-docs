@@ -105,7 +105,7 @@ component extends="cbwire.models.Component" {
         <textarea id="message" wire:model="message" rows="4"></textarea>
     </div>
     
-    <button type="submit" <bx:if isSubmitting>disabled</bx:if>>
+    <button type="submit">
         <bx:if isSubmitting>Sending...<bx:else>Send Message</bx:if>
     </button>
 </form>
@@ -133,7 +133,7 @@ component extends="cbwire.models.Component" {
         <textarea id="message" wire:model="message" rows="4"></textarea>
     </div>
     
-    <button type="submit" <cfif isSubmitting>disabled</cfif>>
+    <button type="submit">
         <cfif isSubmitting>Sending...<cfelse>Send Message</cfif>
     </button>
 </form>
@@ -148,8 +148,8 @@ When you add `wire:submit` to a form, CBWIRE automatically:
 
 - **Prevents Default Submission**: Stops the browser from submitting the form traditionally
 - **Calls Your Method**: Executes the specified component method when the form is submitted
+- **Disables Form Elements**: Automatically disables submit buttons and marks form inputs as readonly during processing
 - **Maintains State**: Keeps all your component data intact during the submission process
-- **Provides Feedback**: Allows you to show loading states and disable buttons during processing
 
 ## Submit Modifiers
 
@@ -182,9 +182,9 @@ Use `wire:submit.prevent` to explicitly prevent the default form submission (tho
 {% endtabs %}
 
 
-## Practical Examples
+## Practical Example
 
-### User Registration Form
+This user registration form demonstrates multiple `wire:submit` features including form handling, validation, error display, loading states, and success handling:
 
 {% tabs %}
 {% tab title="BoxLang" %}
@@ -337,7 +337,7 @@ component extends="cbwire.models.Component" {
         <bx:if errors.keyExists("confirmPassword")><span class="error">#errors.confirmPassword#</span></bx:if>
     </div>
     
-    <button type="submit" <bx:if isRegistering>disabled</bx:if>>
+    <button type="submit">
         <bx:if isRegistering>Creating Account...<bx:else>Create Account</bx:if>
     </button>
 </form>
@@ -375,78 +375,10 @@ component extends="cbwire.models.Component" {
         <cfif structKeyExists(errors, "confirmPassword")><span class="error">#errors.confirmPassword#</span></cfif>
     </div>
     
-    <button type="submit" <cfif isRegistering>disabled</cfif>>
+    <button type="submit">
         <cfif isRegistering>Creating Account...<cfelse>Create Account</cfif>
     </button>
 </form>
-</cfoutput>
-```
-{% endtab %}
-{% endtabs %}
-
-### Product Search Form
-
-{% tabs %}
-{% tab title="BoxLang" %}
-```html
-<bx:output>
-<form wire:submit="searchProducts" class="search-form">
-    <div class="search-inputs">
-        <input type="text" wire:model="searchTerm" placeholder="Search products...">
-        <select wire:model="category">
-            <option value="">All Categories</option>
-            <bx:loop array="#categories#" index="cat">
-                <option value="#cat.id#">#cat.name#</option>
-            </bx:loop>
-        </select>
-    </div>
-    
-    <button type="submit">Search</button>
-</form>
-
-<bx:if searchResults.len()>
-    <div class="search-results">
-        <bx:loop array="#searchResults#" index="product">
-            <div class="product-card">
-                <h3>#product.name#</h3>
-                <p>#product.description#</p>
-                <span class="price">$#product.price#</span>
-            </div>
-        </bx:loop>
-    </div>
-</bx:if>
-</bx:output>
-```
-{% endtab %}
-
-{% tab title="CFML" %}
-```html
-<cfoutput>
-<form wire:submit="searchProducts" class="search-form">
-    <div class="search-inputs">
-        <input type="text" wire:model="searchTerm" placeholder="Search products...">
-        <select wire:model="category">
-            <option value="">All Categories</option>
-            <cfloop array="#categories#" index="cat">
-                <option value="#cat.id#">#cat.name#</option>
-            </cfloop>
-        </select>
-    </div>
-    
-    <button type="submit">Search</button>
-</form>
-
-<cfif arrayLen(searchResults)>
-    <div class="search-results">
-        <cfloop array="#searchResults#" index="product">
-            <div class="product-card">
-                <h3>#product.name#</h3>
-                <p>#product.description#</p>
-                <span class="price">$#product.price#</span>
-            </div>
-        </cfloop>
-    </div>
-</cfif>
 </cfoutput>
 ```
 {% endtab %}
@@ -509,14 +441,14 @@ component extends="cbwire.models.Component" {
 
 ## Best Practices
 
-### Prevent Double Submissions
+### Automatic Form Protection
 
-Always disable the submit button during processing:
+CBWIRE automatically prevents double submissions by disabling form elements during processing. You don't need to manually add `disabled` attributes - just provide visual feedback about the current state:
 
 {% tabs %}
 {% tab title="BoxLang" %}
 ```html
-<button type="submit" <bx:if isProcessing>disabled</bx:if>>
+<button type="submit">
     <bx:if isProcessing>Processing...<bx:else>Submit</bx:if>
 </button>
 ```
@@ -524,7 +456,7 @@ Always disable the submit button during processing:
 
 {% tab title="CFML" %}
 ```html
-<button type="submit" <cfif isProcessing>disabled</cfif>>
+<button type="submit">
     <cfif isProcessing>Processing...<cfelse>Submit</cfif>
 </button>
 ```
@@ -551,8 +483,8 @@ Show clear loading states and progress indicators:
         </div>
     </bx:if>
     
-    <button type="submit" <bx:if isProcessing>disabled</bx:if>>
-        Place Order
+    <button type="submit">
+        <bx:if isProcessing>Processing Order...<bx:else>Place Order</bx:if>
     </button>
 </form>
 </bx:output>
@@ -574,8 +506,8 @@ Show clear loading states and progress indicators:
         </div>
     </cfif>
     
-    <button type="submit" <cfif isProcessing>disabled</cfif>>
-        Place Order
+    <button type="submit">
+        <cfif isProcessing>Processing Order...<cfelse>Place Order</cfif>
     </button>
 </form>
 </cfoutput>
