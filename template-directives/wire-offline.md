@@ -4,65 +4,23 @@ The `wire:offline` directive enables you to create responsive user interfaces th
 
 ## Basic Usage
 
-This network status component demonstrates `wire:offline` for handling connectivity states, including content visibility, class toggling, and user messaging:
+This simple component demonstrates `wire:offline` for showing content when offline, adding CSS classes, and removing CSS classes:
 
 {% tabs %}
 {% tab title="BoxLang" %}
 ```javascript
-// wires/NetworkStatus.bx
+// wires/OfflineDemo.bx
 class extends="cbwire.models.Component" {
-    data = {
-        "lastSyncTime": "",
-        "pendingChanges": false,
-        "userMessage": ""
-    };
-
-    function onMount() {
-        data.lastSyncTime = dateTimeFormat(now(), "medium");
-    }
-
-    function syncData() {
-        // Simulate data sync when back online
-        data.lastSyncTime = dateTimeFormat(now(), "medium");
-        data.pendingChanges = false;
-        data.userMessage = "Data synced successfully!";
-    }
-
-    function saveOffline() {
-        // Handle offline saves
-        data.pendingChanges = true;
-        data.userMessage = "Changes saved locally. Will sync when online.";
-    }
+    data = {};
 }
 ```
 {% endtab %}
 
 {% tab title="CFML" %}
 ```javascript
-// wires/NetworkStatus.cfc
+// wires/OfflineDemo.cfc
 component extends="cbwire.models.Component" {
-    data = {
-        "lastSyncTime" = "",
-        "pendingChanges" = false,
-        "userMessage" = ""
-    };
-
-    function onMount() {
-        data.lastSyncTime = dateTimeFormat(now(), "medium");
-    }
-
-    function syncData() {
-        // Simulate data sync when back online
-        data.lastSyncTime = dateTimeFormat(now(), "medium");
-        data.pendingChanges = false;
-        data.userMessage = "Data synced successfully!";
-    }
-
-    function saveOffline() {
-        // Handle offline saves
-        data.pendingChanges = true;
-        data.userMessage = "Changes saved locally. Will sync when online.";
-    }
+    data = {};
 }
 ```
 {% endtab %}
@@ -71,60 +29,25 @@ component extends="cbwire.models.Component" {
 {% tabs %}
 {% tab title="BoxLang" %}
 ```html
-<!-- wires/networkStatus.bxm -->
+<!-- wires/offlineDemo.bxm -->
 <bx:output>
-<div class="app-container">
-    <header class="app-header">
-        <h1>My Application</h1>
-        
-        <!-- Connection status indicator with class toggling -->
-        <div wire:offline.class="offline" wire:offline.class.remove="online" 
-             class="status-indicator online">
-            <span class="status-dot"></span>
-            <span class="status-text">Connected</span>
-        </div>
-    </header>
-
-    <!-- Offline banner - only shows when offline -->
-    <div wire:offline class="offline-banner">
-        <h3>You're currently offline</h3>
-        <p>Changes will be saved locally and synced when you reconnect.</p>
+<div class="app">
+    <!-- Connection status indicator -->
+    <div wire:offline.class="offline" wire:offline.class.remove="online" 
+         class="status-indicator online">
+        <span class="status-text">Connected</span>
     </div>
 
-    <!-- Main content area -->
-    <main class="content">
-        <div class="sync-info">
-            <p>Last sync: #lastSyncTime#</p>
-            <bx:if pendingChanges>
-                <span class="pending-badge">Changes pending sync</span>
-            </bx:if>
-        </div>
+    <!-- Offline message - only shows when offline -->
+    <div wire:offline class="offline-banner">
+        <h3>You're currently offline</h3>
+        <p>Some features may be unavailable.</p>
+    </div>
 
-        <div class="user-actions">
-            <!-- Button behavior changes based on connection -->
-            <button wire:offline.class="disabled" 
-                    wire:click="syncData" 
-                    class="sync-button">
-                Sync Now
-            </button>
-            
-            <button wire:click="saveOffline" class="save-button">
-                Save Changes
-            </button>
-        </div>
-
-        <!-- Status messages -->
-        <bx:if userMessage.len()>
-            <div class="message-box">
-                #userMessage#
-            </div>
-        </bx:if>
-    </main>
-
-    <!-- Footer with connectivity-dependent content -->
-    <footer wire:offline.class.remove="connected" class="app-footer connected">
-        <p>Real-time updates enabled</p>
-    </footer>
+    <!-- Button that gets disabled when offline -->
+    <button wire:offline.class="disabled" class="sync-button">
+        Sync Data
+    </button>
 </div>
 </bx:output>
 ```
@@ -132,60 +55,25 @@ component extends="cbwire.models.Component" {
 
 {% tab title="CFML" %}
 ```html
-<!-- wires/networkStatus.cfm -->
+<!-- wires/offlineDemo.cfm -->
 <cfoutput>
-<div class="app-container">
-    <header class="app-header">
-        <h1>My Application</h1>
-        
-        <!-- Connection status indicator with class toggling -->
-        <div wire:offline.class="offline" wire:offline.class.remove="online" 
-             class="status-indicator online">
-            <span class="status-dot"></span>
-            <span class="status-text">Connected</span>
-        </div>
-    </header>
-
-    <!-- Offline banner - only shows when offline -->
-    <div wire:offline class="offline-banner">
-        <h3>You're currently offline</h3>
-        <p>Changes will be saved locally and synced when you reconnect.</p>
+<div class="app">
+    <!-- Connection status indicator -->
+    <div wire:offline.class="offline" wire:offline.class.remove="online" 
+         class="status-indicator online">
+        <span class="status-text">Connected</span>
     </div>
 
-    <!-- Main content area -->
-    <main class="content">
-        <div class="sync-info">
-            <p>Last sync: #lastSyncTime#</p>
-            <cfif pendingChanges>
-                <span class="pending-badge">Changes pending sync</span>
-            </cfif>
-        </div>
+    <!-- Offline message - only shows when offline -->
+    <div wire:offline class="offline-banner">
+        <h3>You're currently offline</h3>
+        <p>Some features may be unavailable.</p>
+    </div>
 
-        <div class="user-actions">
-            <!-- Button behavior changes based on connection -->
-            <button wire:offline.class="disabled" 
-                    wire:click="syncData" 
-                    class="sync-button">
-                Sync Now
-            </button>
-            
-            <button wire:click="saveOffline" class="save-button">
-                Save Changes
-            </button>
-        </div>
-
-        <!-- Status messages -->
-        <cfif len(userMessage)>
-            <div class="message-box">
-                #userMessage#
-            </div>
-        </cfif>
-    </main>
-
-    <!-- Footer with connectivity-dependent content -->
-    <footer wire:offline.class.remove="connected" class="app-footer connected">
-        <p>Real-time updates enabled</p>
-    </footer>
+    <!-- Button that gets disabled when offline -->
+    <button wire:offline.class="disabled" class="sync-button">
+        Sync Data
+    </button>
 </div>
 </cfoutput>
 ```
