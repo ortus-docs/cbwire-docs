@@ -6,7 +6,7 @@ Components are the fundamental building blocks of CBWIRE applications. They enca
 **Components can be as big or small as you like.** For example, you may have a Signup form component that covers multiple steps or a simple button component that you reuse throughout your application.
 {% endhint %}
 
-Each CBWIRE component is a ColdBox component (CFC) that extends the base `cbwire.models.Component` class. This inheritance provides all the reactive functionality and lifecycle methods needed to create dynamic user interfaces. Components follow a clear structure and naming convention, making them easy to organize and maintain as your application grows.
+Each CBWIRE component is a ColdBox component (.bx for BoxLang, .cfc for CFML) that extends the base `cbwire.models.Component` class. This inheritance provides all the reactive functionality and lifecycle methods needed to create dynamic user interfaces. Components follow a clear structure and naming convention, making them easy to organize and maintain as your application grows.
 
 Components are made up of [data properties](properties.md), [computed properties](computed-properties.md), [actions](actions.md), and a [template. ](templates.md) This separation of concerns keeps your code organized and maintainable while providing the flexibility to create complex interactive experiences.
 
