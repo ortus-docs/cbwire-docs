@@ -208,15 +208,15 @@ component extends="cbwire.models.Component" {
 {% endtab %}
 {% endtabs %}
 
+{% hint style="warning" %}
+Changing the `wiresLocation` after components have been created will require updating your component references and possibly your routing configuration.
+{% endhint %}
+
 ### throwOnMissingSetterMethod
 
 Controls whether CBWIRE throws an exception when trying to set a property that doesn't have a corresponding setter method. When disabled, missing setters are silently ignored.
 
 **Default:** `false`
-
-{% hint style="warning" %}
-Changing the `wiresLocation` after components have been created will require updating your component references and possibly your routing configuration.
-{% endhint %}
 
 ## Request Handling
 
