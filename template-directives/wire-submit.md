@@ -159,11 +159,27 @@ Customize form submission behavior with modifiers:
 
 Use `wire:submit.prevent` to explicitly prevent the default form submission (though this is the default behavior):
 
+{% tabs %}
+{% tab title="BoxLang" %}
 ```html
+<bx:output>
 <form wire:submit.prevent="saveUser">
     <!-- Form fields -->
 </form>
+</bx:output>
 ```
+{% endtab %}
+
+{% tab title="CFML" %}
+```html
+<cfoutput>
+<form wire:submit.prevent="saveUser">
+    <!-- Form fields -->
+</form>
+</cfoutput>
+```
+{% endtab %}
+{% endtabs %}
 
 
 ## Practical Examples
