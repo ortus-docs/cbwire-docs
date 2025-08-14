@@ -86,11 +86,11 @@ class extends="cbwire.models.Component" {
     };
 
     function increment() {
-        variables.data.counter++;
+        data.counter++;
     }
     
     function decrement() {
-        variables.data.counter--;
+        data.counter--;
     }
 }
 ```
@@ -106,11 +106,11 @@ component extends="cbwire.models.Component" {
     };
 
     function increment() {
-        variables.data.counter++;
+        data.counter++;
     }
     
     function decrement() {
-        variables.data.counter--;
+        data.counter--;
     }
 }
 ```
