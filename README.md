@@ -127,7 +127,7 @@ Define the counter [template](the-essentials/templates.md):
 <!-- wires/counter.bxm -->
 <bx:output>
 <div>
-    <h2>Counter: #data.counter#</h2>
+    <h1>Count: #counter#</h1>
     <button wire:click="increment">+</button>
     <button wire:click="decrement">-</button>
 </div>
@@ -140,7 +140,7 @@ Define the counter [template](the-essentials/templates.md):
 <!-- wires/counter.cfm -->
 <cfoutput>
 <div>
-    <h2>Counter: #data.counter#</h2>
+    <h1>Count: #counter#</h1>
     <button wire:click="increment">+</button>
     <button wire:click="decrement">-</button>
 </div>
