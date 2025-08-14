@@ -194,7 +194,7 @@ class extends="cbwire.models.Component" {
     };
 
     function onMount() {
-        variables.data.counter = session.counter ?: 0;
+        data.counter = session.counter ?: 0;
     }
     
     function save(counter) {
@@ -214,7 +214,7 @@ component extends="cbwire.models.Component" {
     };
 
     function onMount() {
-        variables.data.counter = session.counter ?: 0;
+        data.counter = session.counter ?: 0;
     }
     
     function save(counter) {
@@ -241,7 +241,7 @@ component extends="cbwire.models.Component" {
     }"
     wire:ignore.self>
     
-    <h2>Counter: <span x-text="counter"></span></h2>
+    <h1>Count: <span x-text="counter"></span></h1>
     <button @click="increment">+</button>
     <button @click="decrement">-</button>
     <button @click="save">Save</button>
@@ -265,7 +265,7 @@ component extends="cbwire.models.Component" {
     }"
     wire:ignore.self>
     
-    <h2>Counter: <span x-text="counter"></span></h2>
+    <h1>Count: <span x-text="counter"></span></h1>
     <button @click="increment">+</button>
     <button @click="decrement">-</button>
     <button @click="save">Save</button>
