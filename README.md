@@ -9,9 +9,9 @@ coverY: 0
 
 # Introduction
 
-CBWIRE revolutionizes BoxLang and CFML web development by bringing reactive UI capabilities directly to your server-side code. Build dynamic, interactive interfaces without writing JavaScript, managing APIs, or dealing with complex frontend frameworks.
+<figure><img src=".gitbook/assets/CBWIRE-Logo.png" alt=""><figcaption></figcaption></figure>
 
-<figure><img src=".gitbook/assets/logo (1).png" alt=""><figcaption></figcaption></figure>
+CBWIRE revolutionizes BoxLang and CFML web development by bringing reactive UI capabilities directly to your server-side code. Build dynamic, interactive interfaces without writing JavaScript, managing APIs, or dealing with complex frontend frameworks.
 
 ## CFSummit 2025 2-Day Workshop
 
@@ -171,11 +171,11 @@ This approach gives you the responsiveness of modern JavaScript frameworks while
 
 Building our reactive counter with CBWIRE meant we:
 
-- ✅ **Developed a responsive interface** without writing JavaScript
-- ✅ **Avoided creating backend APIs** - everything stays in your ColdBox application
-- ✅ **Eliminated page refreshes** while maintaining server-side control
-- ✅ **Skipped complex build processes** like webpack or JavaScript compilation
-- ✅ **Stayed in our BoxLang/CFML environment** using familiar syntax and patterns
+* ✅ **Developed a responsive interface** without writing JavaScript
+* ✅ **Avoided creating backend APIs** - everything stays in your ColdBox application
+* ✅ **Eliminated page refreshes** while maintaining server-side control
+* ✅ **Skipped complex build processes** like webpack or JavaScript compilation
+* ✅ **Stayed in our BoxLang/CFML environment** using familiar syntax and patterns
 
 ## Better With Alpine.js
 
@@ -283,12 +283,12 @@ This combination gives you complete control: instant UI feedback when needed, an
 
 Ready to dive deeper? Explore these essential concepts:
 
-- **[Getting Started](getting-started.md)**: Complete installation and setup guide
-- **[Components](the-essentials/components.md)**: Learn how to build and organize CBWIRE components
-- **[Templates](the-essentials/templates.md)**: Master template syntax and data binding
-- **[Actions](the-essentials/actions.md)**: Handle user interactions and component methods
-- **[Properties](the-essentials/properties.md)**: Understand data binding and reactivity
-- **[Events](the-essentials/events.md)**: Communicate between components and handle lifecycle events
+* [**Getting Started**](getting-started.md): Complete installation and setup guide
+* [**Components**](the-essentials/components.md): Learn how to build and organize CBWIRE components
+* [**Templates**](the-essentials/templates.md): Master template syntax and data binding
+* [**Actions**](the-essentials/actions.md): Handle user interactions and component methods
+* [**Properties**](the-essentials/properties.md): Understand data binding and reactivity
+* [**Events**](the-essentials/events.md): Communicate between components and handle lifecycle events
 
 ## Credits
 
