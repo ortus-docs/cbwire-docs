@@ -1,27 +1,28 @@
 # wire:model
 
-You can use **wire:model** in your [templates](../the-essentials/templates.md) to bind to [data properties](../the-essentials/properties.md) with form inputs.
+The `wire:model` directive creates two-way data binding between form inputs and component data properties. As users type or interact with form elements, the values are automatically synchronized with your server-side data, enabling reactive forms without manual event handling.
+
+## Basic Usage
+
+This user profile form demonstrates `wire:model` with various input types and live updating:
 
 {% tabs %}
 {% tab title="BoxLang" %}
 ```javascript
-// ./wires/ContactForm.bx
+// wires/UserProfile.bx
 class extends="cbwire.models.Component" {
     data = {
-        // default values
-        "submitted": false,
         "name": "",
-        "message": ""
+        "email": "",
+        "bio": "",
+        "notifications": true,
+        "preferences": [],
+        "country": ""
     };
-    function sendMessage() {
-        data.submitted = true;
-        bx:mail
-            to="user@somedomain.com",
-            from="user@anotherdomain.com",
-            subject="Message from " & data.name
-        {
-            writeOutput( data.message )
-        }
+
+    function save() {
+        // Save user profile
+        sleep(1000);
     }
 }
 ```
@@ -29,23 +30,20 @@ class extends="cbwire.models.Component" {
 
 {% tab title="CFML" %}
 ```javascript
-// ./wires/ContactForm.cfc
+// wires/UserProfile.cfc
 component extends="cbwire.models.Component" {
     data = {
-        // default values
-        "submitted": false,
-        "name": "",
-        "message": ""
+        "name" = "",
+        "email" = "",
+        "bio" = "",
+        "notifications" = true,
+        "preferences" = [],
+        "country" = ""
     };
-    function sendMessage() {
-        data.submitted = true;
-        cfmail(
-            to="user@somedomain.com",
-            from="user@anotherdomain.com",
-            subject="Message from " & data.name
-        ) {
-            writeOutput( data.message )
-        }
+
+    function save() {
+        // Save user profile
+        sleep(1000);
     }
 }
 ```
@@ -55,122 +53,106 @@ component extends="cbwire.models.Component" {
 {% tabs %}
 {% tab title="BoxLang" %}
 ```html
-<!--- ./wires/contactform.bxm --->
+<!-- wires/userProfile.bxm -->
 <bx:output>
-    <form wire:submit="sendMessage">
-        <label>
-            <span>Name</span>
-            <input type="text" wire:model="name"> 
-        </label>
-        <label>
-            <span>Message</span>
-            <textarea wire:model="message"></textarea> 
-        </label>
-        <button type="submit">Send Message</button>
-        <cfif submitted>
-            Sent
-        </cfif>
-    </form>
+<form wire:submit="save">
+    <input type="text" wire:model.live.debounce.300ms="name" placeholder="Name">
+    <input type="email" wire:model.blur="email" placeholder="Email">
+    <textarea wire:model="bio" placeholder="Bio"></textarea>
+    
+    <input type="checkbox" wire:model="notifications"> Email notifications
+    
+    <input type="checkbox" value="updates" wire:model="preferences"> Product updates
+    <input type="checkbox" value="marketing" wire:model="preferences"> Marketing
+    
+    <select wire:model.change="country">
+        <option value="">Select country</option>
+        <option value="US">United States</option>
+        <option value="CA">Canada</option>
+    </select>
+    
+    <button type="submit">Save Profile</button>
+</form>
 </bx:output>
 ```
 {% endtab %}
 
 {% tab title="CFML" %}
 ```html
-<!--- ./wires/contactform.cfm --->
+<!-- wires/userProfile.cfm -->
 <cfoutput>
-    <form wire:submit="sendMessage">
-        <label>
-            <span>Name</span>
-            <input type="text" wire:model="name"> 
-        </label>
-        <label>
-            <span>Message</span>
-            <textarea wire:model="message"></textarea> 
-        </label>
-        <button type="submit">Send Message</button>
-        <cfif submitted>
-            Sent
-        </cfif>
-    </form>
+<form wire:submit="save">
+    <input type="text" wire:model.live.debounce.300ms="name" placeholder="Name">
+    <input type="email" wire:model.blur="email" placeholder="Email">
+    <textarea wire:model="bio" placeholder="Bio"></textarea>
+    
+    <input type="checkbox" wire:model="notifications"> Email notifications
+    
+    <input type="checkbox" value="updates" wire:model="preferences"> Product updates
+    <input type="checkbox" value="marketing" wire:model="preferences"> Marketing
+    
+    <select wire:model.change="country">
+        <option value="">Select country</option>
+        <option value="US">United States</option>
+        <option value="CA">Canada</option>
+    </select>
+    
+    <button type="submit">Save Profile</button>
+</form>
 </cfoutput>
 ```
 {% endtab %}
 {% endtabs %}
 
-When the user submits the form, the server receives a request with the updated data property values from the inputs. An email is sent, and the template is re-rendered with the updated values.
+## What wire:model Does
 
-{% hint style="info" %}
-When using **wire:model**, Livewire will only send a network request when an action is performed, like with [**wire:click**](wire-click.md) or [**wire:submit**](wire-submit.md)**.** However, you may want to update the server more frequently for things like real-time validation. In those instances, use **wire:model.live**.
-{% endhint %}
+When you add `wire:model` to an input, CBWIRE automatically:
 
-## Live Updating
+- **Binds Data**: Creates two-way binding between input values and component properties
+- **Syncs Changes**: Updates server data when users interact with form elements
+- **Preserves State**: Maintains input values across component re-renders
+- **Handles Types**: Automatically manages different input types (text, checkbox, select, etc.)
 
-You can use **wire:model.live** to send property updates to the server as a user types.
+## Available Modifiers
 
-```html
-<input type="text" wire:model.live="name">
-```
+The `wire:model` directive supports these modifiers:
 
-{% hint style="info" %}
-By default, Livewire adds a 150-millisecond debounce to server updates. If the user is continually typing, Livewire will wait until the user stops typing for 150 milliseconds before sending a request.
-{% endhint %}
+- **Live**: `.live` - Sends updates as user types (with 150ms debounce)
+- **Blur**: `.blur` - Only sends updates when input loses focus
+- **Change**: `.change` - Only sends updates on change event
+- **Lazy**: `.lazy` - Alias for `.change`
+- **Debounce**: `.debounce.Xms` - Customizes debounce timing (e.g., `.debounce.500ms`)
+- **Throttle**: `.throttle.Xms` - Throttles network requests by X milliseconds
+- **Number**: `.number` - Casts text input to integer on server
+- **Boolean**: `.boolean` - Casts text input to boolean on server
+- **Fill**: `.fill` - Uses initial HTML `value` attribute during page load
 
-You can customize the debounce using **wire:model.live.debounce.Xms**.
+Combine modifiers as needed: `wire:model.live.debounce.500ms="username"`
 
-```html
-<input type="text" wire:model.live.debounce.500ms="name">
-```
+## Input Types
 
-## Modifiers
-
-Livewire provides various modifiers to control when server requests are sent.
-
-```html
-<!--- Update onBlur(), great for validation --->
-<input type="text" wire:model.blur="title">
-
-<!--- Update onChange() --->
-<select wire:model.change="option">
-    ...
-</select> 
-```
-
-Below are all the available modifiers:
-
-| Modifier      | Description                                                                 |
-| ------------- | --------------------------------------------------------------------------- |
-| .live         | Send updates as user types                                                  |
-| .blur         | Only send updates on blur event                                             |
-| .change       | Only send updates on the change event                                       |
-| .lazy         | Alias for .change                                                           |
-| .debounce.Xms | Debounce sending updates for X milliseconds                                 |
-| .throttle.Xms | Throttle network request updates by X milliseconds                          |
-| .number       | Cast text input to an integer on the server                                 |
-| .boolean      | Cast text input to a boolean on the server                                  |
-| .fill         | Use the initial value the "value" HTML attribute provides during page load. |
-
-## Input Fields
-
-Below shows how to bind various input fields with your [data properties](../the-essentials/properties.md).
-
-### Text inputs
+### Text Inputs
 
 ```html
 <input type="text" wire:model="name">
+<input type="email" wire:model="email">
+<input type="password" wire:model="password">
 ```
 
-### Textarea inputs
+### Textarea
 
 ```html
-<textarea type="text" wire:model="content"></textarea>
+<textarea wire:model="content"></textarea>
 ```
 
 {% hint style="warning" %}
-If the **content** data property is initialized with a string, Livewire will fill the textarea with its value. Don't do this.
-
+Don't initialize textarea content with the property value in the template:
 ```html
-<textarea type="text" wire:model="content">#content#</textarea>
+<!-- ❌ Don't do this -->
+<textarea wire:model="content">#content#</textarea>
+
+<!-- ✅ Do this instead -->
+<textarea wire:model="content"></textarea>
 ```
 {% endhint %}
 
@@ -180,92 +162,88 @@ If the **content** data property is initialized with a string, Livewire will fil
 <input type="checkbox" wire:model="receiveUpdates">
 ```
 
-{% hint style="info" %}
-If the **receiveUpdates** data property is **false**, the checkbox will be unchecked. If **true**, it will be checked.
-{% endhint %}
+The checkbox will be checked if the data property is `true`, unchecked if `false`.
 
 ### Multiple Checkboxes
-
-Checkboxes with multiple inputs are stored as an array.
 
 {% tabs %}
 {% tab title="BoxLang" %}
 ```javascript
-// ./wires/Options.bx
-class extends="cbwire.models.Component" {
-    data = {
-        "selections": []
-    };
-}
+// Component data
+data = {
+    "selections": []
+};
 ```
 {% endtab %}
 
 {% tab title="CFML" %}
 ```javascript
-// ./wires/Options.cfc
-component extends="cbwire.models.Component" {
-    data = {
-        "selections": []
-    };
-}
+// Component data
+data = {
+    "selections" = []
+};
 ```
 {% endtab %}
 {% endtabs %}
 
 ```html
-<div>
-    <input type="checkbox" value="email" wire:model="selections">
-    <input type="checkbox" value="sms" wire:model="selections">
-    <input type="checkbox" value="notification" wire:model="selections">
-</div>
+<input type="checkbox" value="email" wire:model="selections">
+<input type="checkbox" value="sms" wire:model="selections">
+<input type="checkbox" value="notification" wire:model="selections">
 ```
 
-### Radio buttons
+### Radio Buttons
 
 ```html
 <input type="radio" value="yes" wire:model="sendEmail">
 <input type="radio" value="no" wire:model="sendEmail">
 ```
 
-### Select dropdowns
+### Select Dropdowns
 
 ```html
 <select wire:model="state">
     <option value="AL">Alabama</option>
     <option value="AK">Alaska</option>
     <option value="AZ">Arizona</option>
-    ...
 </select>
 ```
 
-{% hint style="info" %}
-Livewire automatically adds a **selected** attribute to the option that matches the data property value.
-{% endhint %}
+Livewire automatically adds the `selected` attribute to the matching option.
 
-You can dynamically populate these with values.
+### Dynamic Select Options
 
 {% tabs %}
 {% tab title="BoxLang" %}
 ```javascript
-class extends="cbwire.models.Component" {
-    function getStates() {
-        return queryExecute( "select id, label from states" );
-    }
+function getStates() {
+    return queryExecute("select id, label from states");
 }
 ```
 {% endtab %}
 
 {% tab title="CFML" %}
 ```javascript
-component extends="cbwire.models.Component" {
-    function getStates() {
-        return queryExecute( "select id, label from states" );
-    }
+function getStates() {
+    return queryExecute("select id, label from states");
 }
 ```
 {% endtab %}
 {% endtabs %}
 
+{% tabs %}
+{% tab title="BoxLang" %}
+```html
+<select wire:model="state">
+    <option disabled value="">Select a state</option>
+    <bx:loop array="#getStates()#" index="state">
+        <option value="#state.id#">#state.label#</option>
+    </bx:loop>
+</select>
+```
+{% endtab %}
+
+{% tab title="CFML" %}
 ```html
 <select wire:model="state">
     <option disabled value="">Select a state</option>
@@ -274,35 +252,65 @@ component extends="cbwire.models.Component" {
     </cfloop>
 </select>
 ```
+{% endtab %}
+{% endtabs %}
 
-### Dependent select dropdowns
+### Dependent Dropdowns
 
-If you have a dropdown that is dependent on the value of another dropdown and needs to update, you can use [**wire:key**](wire-key.md) to ensure it updates.
+Use `wire:key` to ensure dependent dropdowns update properly:
 
+{% tabs %}
+{% tab title="BoxLang" %}
 ```html
-<!--- Select your state --->
+<!-- State selector -->
+<select wire:model.live="state">
+    <option disabled value="">Select a state</option>
+    <bx:loop array="#getStates()#" index="state">
+        <option value="#state.id#">#state.label#</option>
+    </bx:loop>
+</select>
+
+<!-- City selector (depends on state) -->
+<select wire:model.live="city" wire:key="#state#">
+    <option disabled value="">Select a city</option>
+    <bx:loop array="#getCities(state)#" index="city">
+        <option value="#city.id#">#city.label#</option>
+    </bx:loop>
+</select>
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```html
+<!-- State selector -->
 <select wire:model.live="state">
     <option disabled value="">Select a state</option>
     <cfloop array="#getStates()#" index="state">
         <option value="#state.id#">#state.label#</option>
     </cfloop>
 </select>
-<!--- Select city based on state --->
+
+<!-- City selector (depends on state) -->
 <select wire:model.live="city" wire:key="#state#">
     <option disabled value="">Select a city</option>
-    <cfloop array="#getCities( state )#" index="city">
+    <cfloop array="#getCities(state)#" index="city">
         <option value="#city.id#">#city.label#</option>
     </cfloop>
 </select>
 ```
+{% endtab %}
+{% endtabs %}
 
-### Multi-select dropdowns
+### Multi-Select Dropdowns
 
 ```html
 <select wire:model="states" multiple>
     <option value="AL">Alabama</option>
     <option value="AK">Alaska</option>
     <option value="AZ">Arizona</option>
-    ...
 </select>
 ```
+
+{% hint style="info" %}
+By default, `wire:model` only sends updates when actions are performed. Use `wire:model.live` for real-time validation or immediate server updates as users type.
+{% endhint %}
