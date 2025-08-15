@@ -1,18 +1,27 @@
 # wire:click
 
-You can listen for click events within your [templates](../the-essentials/templates.md) using **wire:click** and provide an [action](../the-essentials/actions.md) to run when clicked.
+The `wire:click` directive transforms any HTML element into an interactive control that triggers server-side actions. Instead of traditional page refreshes or complex JavaScript event handling, `wire:click` lets you respond to user clicks by calling component methods directly, creating smooth, dynamic user experiences.
+
+## Basic Usage
+
+This counter component demonstrates `wire:click` with basic actions and parameter passing:
 
 {% tabs %}
 {% tab title="BoxLang" %}
 ```javascript
-// ./wires/MyForm.bx
+// wires/ClickDemo.bx
 class extends="cbwire.models.Component" {
     data = {
-        "sent": false
+        "count": 0,
+        "message": ""
     };
-    function sendEmails(){
-        sleep( 2000 ); // pretend this takes a while
-        data.sent = true;
+
+    function increment() {
+        data.count++;
+    }
+
+    function setMessage(text) {
+        data.message = arguments.text;
     }
 }
 ```
@@ -20,14 +29,19 @@ class extends="cbwire.models.Component" {
 
 {% tab title="CFML" %}
 ```javascript
-// ./wires/MyForm.cfc
+// wires/ClickDemo.cfc
 component extends="cbwire.models.Component" {
     data = {
-        "sent": false
+        "count" = 0,
+        "message" = ""
     };
-    function sendEmails(){
-        sleep( 2000 ); // pretend this takes a while
-        data.sent = true;
+
+    function increment() {
+        data.count++;
+    }
+
+    function setMessage(text) {
+        data.message = arguments.text;
     }
 }
 ```
@@ -37,37 +51,53 @@ component extends="cbwire.models.Component" {
 {% tabs %}
 {% tab title="BoxLang" %}
 ```html
-<!--- ./wires/myform.bxm --->
+<!-- wires/clickDemo.bxm -->
+<bx:output>
 <div>
-    <button type="button" wire:click="sendEmail">Send Important Emails</button>
-    <cfif sent>
-        <div>Check your spam folder. We spammed you.</div>
-    </cfif>
+    <h1>Count: #count#</h1>
+    <button wire:click="increment">+</button>
+    <button wire:click="setMessage('Hello!')">Say Hello</button>
+    <a href="#home" wire:click.prevent="setMessage('Link clicked!')">Click Link</a>
+    <p>#message#</p>
 </div>
+</bx:output>
 ```
 {% endtab %}
 
 {% tab title="CFML" %}
 ```html
-<!--- ./wires/myform.cfm --->
+<!-- wires/clickDemo.cfm -->
+<cfoutput>
 <div>
-    <button type="button" wire:click="sendEmail">Send Important Emails</button>
-    <cfif sent>
-        <div>Check your spam folder. We spammed you.</div>
-    </cfif>
+    <h1>Count: #count#</h1>
+    <button wire:click="increment">+</button>
+    <button wire:click="setMessage('Hello!')">Say Hello</button>
+    <a href="##home" wire:click.prevent="setMessage('Link clicked!')">Click Link</a>
+    <p>#message#</p>
 </div>
+</cfoutput>
 ```
 {% endtab %}
 {% endtabs %}
 
-{% hint style="success" %}
-Add **wire:click** on any HTML elements, not just buttons and links.
+## What wire:click Does
+
+When you add `wire:click` to an element, CBWIRE automatically:
+
+- **Captures Click Events**: Listens for click events on the element without requiring JavaScript
+- **Calls Component Methods**: Executes the specified action method in your component
+- **Passes Parameters**: Supports passing arguments to your action methods using parentheses syntax
+- **Updates UI**: Re-renders the component with any data changes from your action
+- **Provides Loading States**: Integrates with `wire:loading` for visual feedback during actions
+
+## Available Modifiers
+
+The `wire:click` directive supports one modifier:
+
+- **Prevent**: `.prevent` - Prevents default browser behavior (essential for links)
+
+Example: `wire:click.prevent="sendEmail"`
+
+{% hint style="info" %}
+Use `wire:click` on any HTML element - buttons, links, divs, images, or any clickable element - making it incredibly versatile for building interactive interfaces.
 {% endhint %}
-
-## Using on links
-
-When adding **wire:click** to links, you need to include the **.prevent** modifier to stop the default handling of a link in the browser. Otherwise, the browser will load the link and update the page's URL.
-
-```html
-<a href="#" wire:click.prevent="sendEmail">Click</a>
-```
