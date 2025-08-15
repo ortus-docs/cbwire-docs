@@ -1,19 +1,28 @@
 # wire:key
 
-Using **wire:key** is essential, especially when looping over elements, to ensure that Livewire's DOM diffing correctly identifies what has changed and needs updating in the browser.
+The `wire:key` directive helps Livewire's DOM diffing engine accurately track elements across re-renders. By providing unique identifiers for dynamic content, especially in loops, `wire:key` ensures that updates, removals, and reordering work correctly and efficiently.
 
-Consider this listing of posts.
+## Basic Usage
+
+This simple list demonstrates `wire:key` for proper DOM tracking in loops:
 
 {% tabs %}
 {% tab title="BoxLang" %}
 ```javascript
-// ./wires/Posts.bx
+// wires/ItemList.bx
 class extends="cbwire.models.Component" {
-    function posts() {
-        return queryExecute( "select id,title from posts" );
-    }
-    function remove( postId ) {
-        queryExecute( "delete from posts where id = :id", { id = postId } );
+    data = {
+        "items": [
+            {"id": 1, "name": "Apple"},
+            {"id": 2, "name": "Banana"},
+            {"id": 3, "name": "Cherry"}
+        ]
+    };
+
+    function removeItem(itemId) {
+        data.items = data.items.filter(function(item) {
+            return item.id != arguments.itemId;
+        });
     }
 }
 ```
@@ -21,13 +30,20 @@ class extends="cbwire.models.Component" {
 
 {% tab title="CFML" %}
 ```javascript
-// ./wires/Posts.cfc
+// wires/ItemList.cfc
 component extends="cbwire.models.Component" {
-    function posts() {
-        return queryExecute( "select id,title from posts" );
-    }
-    function remove( postId ) {
-        queryExecute( "delete from posts where id = :id", { id = postId } );
+    data = {
+        "items" = [
+            {"id" = 1, "name" = "Apple"},
+            {"id" = 2, "name" = "Banana"},
+            {"id" = 3, "name" = "Cherry"}
+        ]
+    };
+
+    function removeItem(itemId) {
+        data.items = data.items.filter(function(item) {
+            return item.id != arguments.itemId;
+        });
     }
 }
 ```
@@ -37,72 +53,54 @@ component extends="cbwire.models.Component" {
 {% tabs %}
 {% tab title="BoxLang" %}
 ```html
-<!--- ./wires/posts.bxm --->
+<!-- wires/itemList.bxm -->
+<bx:output>
 <div>
-    <bx:loop array="#posts()#" index="post">
-        <div>
-            <h2>#post.title#</h2>
-            <button wire:click="remove( #post.id# )">Remove</button>
+    <bx:loop array="#items#" index="item">
+        <div wire:key="item-#item.id#">
+            #item.name#
+            <button wire:click="removeItem(#item.id#)">Remove</button>
         </div>
     </bx:loop>
 </div>
+</bx:output>
 ```
 {% endtab %}
 
 {% tab title="CFML" %}
 ```html
-<!--- ./wires/posts.cfm --->
+<!-- wires/itemList.cfm -->
+<cfoutput>
 <div>
-    <cfloop array="#posts()#" index="post">
-        <div>
-            <h2>#post.title#</h2>
-            <button wire:click="remove( #post.id# )">Remove</button>
+    <cfloop array="#items#" index="item">
+        <div wire:key="item-#item.id#">
+            #item.name#
+            <button wire:click="removeItem(#item.id#)">Remove</button>
         </div>
     </cfloop>
 </div>
+</cfoutput>
 ```
 {% endtab %}
 {% endtabs %}
 
-As posts are removed, CBWIRE re-renders our template, and then Livewire must figure out how to update the DOM. **We can help Livewire know exactly what has changed using wire:key.**
+## What wire:key Does
 
-```html
-<div wire:key="post-#post.id#">
-    <h2>#post.title</h2>
-    ....
-</div>
-```
+When you add `wire:key` to an element, CBWIRE automatically:
 
-{% tabs %}
-{% tab title="BoxLang" %}
-```html
-<!--- ./wires/posts.bxm --->
-<div>
-    <bx:loop array="#posts()#" index="post">
-        <div wire:key="post-#post.id#">
-            <h2>#post.title#</h2>
-            <button wire:click="remove( #post.id# )">Remove</button>
-        </div>
-    </bx:loop>
-</div>
-```
-{% endtab %}
+- **Tracks Element Identity**: Provides unique identifiers for DOM diffing across re-renders
+- **Prevents Rendering Issues**: Ensures proper updates when elements are added, removed, or reordered
+- **Optimizes Performance**: Helps Livewire efficiently update only changed elements
+- **Maintains State**: Preserves element state and event listeners during DOM updates
 
-{% tab title="CFML" %}
-```html
-<!--- ./wires/posts.cfm --->
-<div>
-    <cfloop array="#posts()#" index="post">
-        <div wire:key="post-#post.id#">
-            <h2>#post.title#</h2>
-            <button wire:click="remove( #post.id# )">Remove</button>
-        </div>
-    </cfloop>
-</div>
-```
-{% endtab %}
-{% endtabs %}
+## Available Modifiers
+
+The `wire:key` directive does not support any modifiers.
 
 {% hint style="warning" %}
-It's important to ensure your key names are unique throughout the page, not just within your template. Otherwise, you may encounter weird rendering issues.
+Ensure your key names are unique throughout the entire page, not just within your component template. Duplicate keys can cause rendering issues.
+{% endhint %}
+
+{% hint style="info" %}
+Use `wire:key` especially in loops and dynamic content where elements can be added, removed, or reordered to ensure proper DOM tracking.
 {% endhint %}
