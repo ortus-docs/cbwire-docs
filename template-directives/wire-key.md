@@ -102,5 +102,5 @@ Ensure your key names are unique throughout the entire page, not just within you
 {% endhint %}
 
 {% hint style="info" %}
-Use `wire:key` especially in loops and dynamic content where elements can be added, removed, or reordered to ensure proper DOM tracking.
+Use `wire:key` in loops and dynamic content where elements can be added, removed, or reordered. Also use it in conditional blocks when Livewire has trouble detecting DOM changes within if/else statements.
 {% endhint %}
