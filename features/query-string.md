@@ -1,5 +1,3 @@
----
-
 # Query String
 
 Synchronize component data properties with URL query parameters to create shareable, bookmarkable URLs that reflect your component's state. When users modify data properties, the URL automatically updates, and when they visit URLs with query parameters, your component initializes with those values.
