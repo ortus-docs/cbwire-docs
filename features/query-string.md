@@ -19,11 +19,11 @@ class extends="cbwire.models.Component" {
     
     queryString = ["search", "category"];
     
-    function mount() {
+    function onMount() {
         performSearch();
     }
     
-    function updated() {
+    function onUpdate() {
         performSearch();
     }
     
@@ -54,11 +54,11 @@ component extends="cbwire.models.Component" {
     
     queryString = ["search", "category"];
     
-    function mount() {
+    function onMount() {
         performSearch();
     }
     
-    function updated() {
+    function onUpdate() {
         performSearch();
     }
     
