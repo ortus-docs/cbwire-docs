@@ -65,7 +65,7 @@ component extends="cbwire.models.Component" {
     <input type="checkbox" value="updates" wire:model="preferences"> Product updates
     <input type="checkbox" value="marketing" wire:model="preferences"> Marketing
     
-    <select wire:model.change="country">
+    <select wire:model="country">
         <option value="">Select country</option>
         <option value="US">United States</option>
         <option value="CA">Canada</option>
@@ -91,7 +91,7 @@ component extends="cbwire.models.Component" {
     <input type="checkbox" value="updates" wire:model="preferences"> Product updates
     <input type="checkbox" value="marketing" wire:model="preferences"> Marketing
     
-    <select wire:model.change="country">
+    <select wire:model="country">
         <option value="">Select country</option>
         <option value="US">United States</option>
         <option value="CA">Canada</option>
