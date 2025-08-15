@@ -250,12 +250,13 @@ component extends="cbwire.models.Component" {
 
 ### validateOrFail()
 
-Automatically validates and prevents further action execution if validation fails:
+Validates data and silently stops function execution if validation fails (does not throw an exception):
 
 ```javascript
 function register() {
-    validateOrFail(); // Stops execution if validation fails
+    validateOrFail(); // Stops execution here if validation fails
     
+    // This code only runs if validation passes
     // Save user data
     redirect("/dashboard");
 }
