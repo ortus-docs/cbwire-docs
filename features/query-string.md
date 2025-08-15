@@ -1,6 +1,4 @@
 ---
-description: Set your data properties with incoming query string values.
----
 
 # Query String
 
