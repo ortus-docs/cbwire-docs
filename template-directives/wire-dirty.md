@@ -1,18 +1,26 @@
 # wire:dirty
 
-You can use **wire:dirty** with [wire:model](wire-model.md) to display elements when [data properties](../the-essentials/properties.md) have been updated on the client side but not the server side.
+The `wire:dirty` directive shows or hides elements based on whether form data has been modified but not yet synced to the server. This provides instant visual feedback to users about unsaved changes, helping prevent data loss and improving the form experience.
+
+## Basic Usage
+
+This contact form demonstrates `wire:dirty` with unsaved change indicators and targeted property tracking:
 
 {% tabs %}
 {% tab title="BoxLang" %}
 ```javascript
-// ./wires/MyForm.bx
+// wires/ContactForm.bx
 class extends="cbwire.models.Component" {
     data = {
         "name": "",
-        "email": ""
+        "email": "",
+        "message": ""
     };
+
     function submit() {
-        // Do something useful here
+        // Save form data
+        sleep(1000);
+        // Form is now synced
     }
 }
 ```
@@ -20,62 +28,86 @@ class extends="cbwire.models.Component" {
 
 {% tab title="CFML" %}
 ```javascript
-// ./wires/MyForm.cfc
+// wires/ContactForm.cfc
 component extends="cbwire.models.Component" {
     data = {
-        "name": "",
-        "email": ""
+        "name" = "",
+        "email" = "",
+        "message" = ""
     };
+
     function submit() {
-        // Do something useful here
+        // Save form data
+        sleep(1000);
+        // Form is now synced
     }
 }
 ```
 {% endtab %}
 {% endtabs %}
 
+{% tabs %}
+{% tab title="BoxLang" %}
 ```html
-<!--- ./wires/myform.bxm|cfm --->
+<!-- wires/contactForm.bxm -->
+<bx:output>
 <form wire:submit="submit">
-    <input type="text" wire:model="name">
-    <input type="email" wire:model="email">
+    <input type="text" wire:model="name" wire:dirty.class="border-yellow-500" placeholder="Name">
+    <div wire:dirty wire:target="name">Name has unsaved changes...</div>
+    
+    <input type="email" wire:model="email" placeholder="Email">
+    
+    <textarea wire:model="message" placeholder="Message"></textarea>
+    
     <button type="submit">Submit</button>
-    <div wire:dirty>
-        Be sure to click submit. 👀
-    </div> 
+    
+    <div wire:dirty>You have unsaved changes. Click submit to save.</div>
+    <div wire:dirty.remove>All changes saved!</div>
 </form>
+</bx:output>
 ```
+{% endtab %}
 
-As the user begins typing in the name or email field, CBWIRE will detect the data properties that have changed on the client side and display a reminder to click submit. **After the user clicks submit, the data properties are synchronized, and the reminder is removed.**
-
-## Removing Elements
-
-You can invert the behavior of **wire:dirty** by using the **.remove** modifier:
-
+{% tab title="CFML" %}
 ```html
-<div>
-    <div wire:dirty.remove>Data is synced.</div>
-</div>
-```
-
-## Targeting Properties
-
-You can target specific data properties using **wire:dirty** and **wire:target**.
-
-```html
+<!-- wires/contactForm.cfm -->
+<cfoutput>
 <form wire:submit="submit">
-    <input type="text" wire:model="name">
-    <div wire:dirty wire:target="name">Unsaved name changes...</div>
-    <button type="submit">Update</button>
+    <input type="text" wire:model="name" wire:dirty.class="border-yellow-500" placeholder="Name">
+    <div wire:dirty wire:target="name">Name has unsaved changes...</div>
+    
+    <input type="email" wire:model="email" placeholder="Email">
+    
+    <textarea wire:model="message" placeholder="Message"></textarea>
+    
+    <button type="submit">Submit</button>
+    
+    <div wire:dirty>You have unsaved changes. Click submit to save.</div>
+    <div wire:dirty.remove>All changes saved!</div>
 </form>
+</cfoutput>
 ```
+{% endtab %}
+{% endtabs %}
 
-## Toggling Classes
+## What wire:dirty Does
 
-You can toggle classes on elements using **wire:dirty.class**.
+When you add `wire:dirty` to an element, CBWIRE automatically:
 
-```html
-<input wire:model="name" wire:dirty.class="border-yellow-500">
-```
+- **Tracks Form Changes**: Monitors when form inputs differ from server-side values
+- **Shows Elements**: Displays elements when data properties have unsaved changes
+- **Hides When Synced**: Removes elements after data is synchronized with the server
+- **Integrates with wire:model**: Works seamlessly with two-way data binding
 
-When the user types into the name field, a yellow border is displayed, letting the user know the changes have not been saved.
+## Available Modifiers
+
+The `wire:dirty` directive supports these modifiers:
+
+- **Remove**: `.remove` - Inverts behavior, showing element when data is synced
+- **Class**: `.class` - Toggles CSS classes instead of showing/hiding elements
+
+Combine with `wire:target` to track specific properties: `wire:dirty wire:target="name"`
+
+{% hint style="info" %}
+Use `wire:dirty` with forms to provide clear feedback about unsaved changes and prevent accidental data loss.
+{% endhint %}
