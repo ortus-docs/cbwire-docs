@@ -189,6 +189,8 @@ Combine modifiers as needed: `wire:transition.opacity.out.duration.300ms`
 
 If you're not seeing transition effects, it may be because Livewire is having trouble with DOM diffing. You can often fix this by adding `wire:key` to the same element that has `wire:transition`:
 
+{% tabs %}
+{% tab title="BoxLang" %}
 ```html
 <!-- If this doesn't transition properly -->
 <bx:if showPanel>
@@ -204,6 +206,26 @@ If you're not seeing transition effects, it may be because Livewire is having tr
     </div>
 </bx:if>
 ```
+{% endtab %}
+
+{% tab title="CFML" %}
+```html
+<!-- If this doesn't transition properly -->
+<cfif showPanel>
+    <div wire:transition>
+        Panel content
+    </div>
+</cfif>
+
+<!-- Try adding wire:key -->
+<cfif showPanel>
+    <div wire:transition wire:key="panel-content">
+        Panel content
+    </div>
+</cfif>
+```
+{% endtab %}
+{% endtabs %}
 
 This helps Livewire properly track the element across updates and apply transitions correctly.
 
@@ -211,6 +233,8 @@ This helps Livewire properly track the element across updates and apply transiti
 
 Currently, `wire:transition` should be applied to a single conditional element and doesn't work as expected with a list of dynamic elements, like individual comments in a loop. This is due to the limitations of how transitions are handled in the underlying framework.
 
+{% tabs %}
+{% tab title="BoxLang" %}
 ```html
 <!-- ✅ Works well -->
 <bx:if showPanel>
@@ -222,6 +246,22 @@ Currently, `wire:transition` should be applied to a single conditional element a
     <div wire:transition>Item content</div>
 </bx:loop>
 ```
+{% endtab %}
+
+{% tab title="CFML" %}
+```html
+<!-- ✅ Works well -->
+<cfif showPanel>
+    <div wire:transition>Panel content</div>
+</cfif>
+
+<!-- ❌ Not recommended -->
+<cfloop array="#items#" index="item">
+    <div wire:transition>Item content</div>
+</cfloop>
+```
+{% endtab %}
+{% endtabs %}
 
 {% hint style="info" %}
 Use `wire:transition` for show/hide scenarios on single elements rather than complex list animations for the best results.
