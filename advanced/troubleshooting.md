@@ -242,7 +242,69 @@ component extends="cbwire.models.Component" {
 {% endtab %}
 {% endtabs %}
 
-**Solution**: Add conditional block markers to help Livewire track dynamic sections.
+**Primary Solution**: Add `wire:key` to conditional elements (recommended approach).
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```html
+<!-- wires/userForm.bxm -->
+<bx:output>
+<div>
+    <h1>User Registration</h1>
+    
+    <!-- ✅ Using wire:key (recommended) -->
+    <bx:if errorList.len()>
+        <div class="alert alert-danger" role="alert" wire:key="error-alert">
+            <p>Please fix the following errors:</p>
+            <ul>
+                <bx:loop array="#errorList#" index="error">
+                    <li>#error#</li>
+                </bx:loop>
+            </ul>
+        </div>
+    </bx:if>
+    
+    <form wire:submit="submit">
+        <input type="text" wire:model="name" placeholder="Name">
+        <input type="email" wire:model="email" placeholder="Email">
+        <button type="submit">Register</button>
+    </form>
+</div>
+</bx:output>
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```html
+<!-- wires/userForm.cfm -->
+<cfoutput>
+<div>
+    <h1>User Registration</h1>
+    
+    <!-- ✅ Using wire:key (recommended) -->
+    <cfif arrayLen(errorList)>
+        <div class="alert alert-danger" role="alert" wire:key="error-alert">
+            <p>Please fix the following errors:</p>
+            <ul>
+                <cfloop array="#errorList#" index="error">
+                    <li>#error#</li>
+                </cfloop>
+            </ul>
+        </div>
+    </cfif>
+    
+    <form wire:submit="submit">
+        <input type="text" wire:model="name" placeholder="Name">
+        <input type="email" wire:model="email" placeholder="Email">
+        <button type="submit">Register</button>
+    </form>
+</div>
+</cfoutput>
+```
+{% endtab %}
+{% endtabs %}
+
+**Alternative Solution**: If `wire:key` doesn't solve the issue, add conditional block markers.
 
 {% tabs %}
 {% tab title="BoxLang" %}
