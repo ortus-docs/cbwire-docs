@@ -120,7 +120,7 @@ The `wire:model` directive supports these modifiers:
 - **Live**: `.live` - Sends updates as user types (with 150ms debounce)
 - **Blur**: `.blur` - Only sends updates when input loses focus
 - **Change**: `.change` - Only sends updates on change event
-- **Lazy**: `.lazy` - Alias for `.change`
+- **Lazy**: `.lazy` - Prevents server updates until an action is called
 - **Debounce**: `.debounce.Xms` - Customizes debounce timing (e.g., `.debounce.500ms`)
 - **Throttle**: `.throttle.Xms` - Throttles network requests by X milliseconds
 - **Number**: `.number` - Casts text input to integer on server
