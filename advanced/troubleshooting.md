@@ -1,53 +1,24 @@
 # Troubleshooting
 
-As you use CBWIRE, you are likely to run into issues from time to time. The most common issues are rendering issues. Here, we try to address the most common problems and show how to solve them.
+CBWIRE integrates complex technologies like Livewire's DOM diffing, Alpine.js reactivity, and server-side rendering. This guide addresses the most common issues you'll encounter and provides practical solutions with detailed examples.
 
-## CBWIRE
+## CBWIRE Component Issues
 
-### Lazy-loaded components with placeholders don't render
+### Lazy-Loaded Components with Placeholders Don't Render
 
-Consider the following widget example.
+**Problem**: You get a "Snapshot missing on Livewire component" error when using lazy loading with placeholders.
 
-<pre class="language-javascript"><code class="lang-javascript"><strong>// ./wires/Widget.cfc
-</strong>component extends="cbwire.models.Component" {
-    function placeholder() {
-        return "&#x3C;section>put spinner here...&#x3C;/section>";
-    }
-}
-</code></pre>
+**Root Cause**: Mismatch between placeholder and template outer elements confuses Livewire's DOM diffing engine.
 
-```html
-<!--- ./wires/widget.cfm --->
-<cfoutput>
-    <div>
-        <h1>My Widget</h1>
-    </div>
-</cfoutput>
-```
-
-Let's include our widget somewhere on our site and add lazy loading.
-
-```html
-<cfoutput>#wire( name="Widget", lazy=true )#</cfoutput>
-```
-
-What should happen on page load is our placeholder is shown first, and then our widget renders to the page. Instead, we get a weird error like this.
-
-**`Snapshot missing on Livewire component with id K8SDFLSDF902KSDFLASKJFASDFLJ.`**
-
-The Livewire JavaScript error isn't super helpful in identifying the problem because **the real issue is a mismatch between your widget's outer element and its placeholder's outer element**.
-
-Notice our widget's template above has an outer **\<div>** but our placeholder has an outer **\<section>** element. This will not work. **Your placeholder and your corresponding template must have the same outer element. Otherwise, Livewire's DOM diffing engine gets confused.**
-
-The fix would be to make them both have outer \<div> tags.
+**Example Problem**:
 
 {% tabs %}
 {% tab title="BoxLang" %}
 ```javascript
-// ./wires/Widget.bx
+// wires/Widget.bx
 class extends="cbwire.models.Component" {
     function placeholder() {
-        return "<div>put spinner here...</div>";
+        return "<section>put spinner here...</section>"; // ❌ Wrong outer element
     }
 }
 ```
@@ -55,37 +26,174 @@ class extends="cbwire.models.Component" {
 
 {% tab title="CFML" %}
 ```javascript
-// ./wires/Widget.cfc
+// wires/Widget.cfc
 component extends="cbwire.models.Component" {
     function placeholder() {
-        return "<div>put spinner here...</div>";
+        return "<section>put spinner here...</section>"; // ❌ Wrong outer element
     }
 }
 ```
 {% endtab %}
 {% endtabs %}
 
+{% tabs %}
+{% tab title="BoxLang" %}
 ```html
-<!--- ./wires/widget.bxm|cfm --->
-<div>
+<!-- wires/widget.bxm -->
+<bx:output>
+<div> <!-- ❌ Different from placeholder's <section> -->
     <h1>My Widget</h1>
 </div>
+</bx:output>
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```html
+<!-- wires/widget.cfm -->
+<cfoutput>
+<div> <!-- ❌ Different from placeholder's <section> -->
+    <h1>My Widget</h1>
+</div>
+</cfoutput>
+```
+{% endtab %}
+{% endtabs %}
+
+**Usage**:
+```html
+#wire(name="Widget", lazy=true)#
 ```
 
-### Fix Rendering Conditionals with \<!---\[if BLOCK]>
+**Error**: 
+```
+Snapshot missing on Livewire component with id K8SDFLSDF902KSDFLASKJFASDFLJ.
+```
 
-When an [Action](../the-essentials/actions.md) is executed on your components, the component is re-rendered, and then it's Livewire's job to figure out how to update the DOM. For the most part, the DOM updates are completed without issue. However, you may run into problems with conditional areas ( if-else statements ) in your [Templat](../the-essentials/templates.md)[es](../the-essentials/templates.md).
+**Solution**: Match outer elements exactly between placeholder and template.
 
-Consider the following:
+{% tabs %}
+{% tab title="BoxLang" %}
+```javascript
+// wires/Widget.bx
+class extends="cbwire.models.Component" {
+    function placeholder() {
+        return "<div>put spinner here...</div>"; // ✅ Matches template
+    }
+}
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```javascript
+// wires/Widget.cfc
+component extends="cbwire.models.Component" {
+    function placeholder() {
+        return "<div>put spinner here...</div>"; // ✅ Matches template
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
 
 {% tabs %}
 {% tab title="BoxLang" %}
 ```html
+<!-- wires/widget.bxm -->
+<bx:output>
+<div> <!-- ✅ Matches placeholder's <div> -->
+    <h1>My Widget</h1>
+</div>
+</bx:output>
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```html
+<!-- wires/widget.cfm -->
+<cfoutput>
+<div> <!-- ✅ Matches placeholder's <div> -->
+    <h1>My Widget</h1>
+</div>
+</cfoutput>
+```
+{% endtab %}
+{% endtabs %}
+
+### Conditional Rendering Issues
+
+**Problem**: Livewire fails to detect conditional sections appearing/disappearing, causing rendering glitches.
+
+**Root Cause**: Complex nested conditionals can confuse Livewire's DOM diffing algorithm.
+
+**Example Problem**:
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```javascript
+// wires/UserForm.bx
+class extends="cbwire.models.Component" {
+    data = {
+        "errorList": [],
+        "name": "",
+        "email": ""
+    };
+
+    function submit() {
+        data.errorList = [];
+        
+        if (!data.name.len()) {
+            data.errorList.append("Name is required");
+        }
+        
+        if (!data.email.len()) {
+            data.errorList.append("Email is required");
+        }
+    }
+}
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```javascript
+// wires/UserForm.cfc
+component extends="cbwire.models.Component" {
+    data = {
+        "errorList" = [],
+        "name" = "",
+        "email" = ""
+    };
+
+    function submit() {
+        data.errorList = [];
+        
+        if (!len(data.name)) {
+            arrayAppend(data.errorList, "Name is required");
+        }
+        
+        if (!len(data.email)) {
+            arrayAppend(data.errorList, "Email is required");
+        }
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+
+**Problematic Template**:
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```html
+<!-- wires/userForm.bxm -->
+<bx:output>
 <div>
-    <h1>My Form</h1>
+    <h1>User Registration</h1>
+    
+    <!-- ❌ Conditional block without markers -->
     <bx:if errorList.len()>
         <div class="alert alert-danger" role="alert">
-            <p>An error occurred.</p>
+            <p>Please fix the following errors:</p>
             <ul>
                 <bx:loop array="#errorList#" index="error">
                     <li>#error#</li>
@@ -93,51 +201,62 @@ Consider the following:
             </ul>
         </div>
     </bx:if>
-    ....
+    
+    <form wire:submit="submit">
+        <input type="text" wire:model="name" placeholder="Name">
+        <input type="email" wire:model="email" placeholder="Email">
+        <button type="submit">Register</button>
+    </form>
 </div>
+</bx:output>
 ```
 {% endtab %}
 
 {% tab title="CFML" %}
-<pre class="language-html"><code class="lang-html"><strong>&#x3C;div>
-</strong>    &#x3C;h1>My Form&#x3C;/h1>
-    &#x3C;cfif ArrayLen( errorList )>
-        &#x3C;div class="alert alert-danger" role="alert">
-            &#x3C;p>An error occured.&#x3C;/p>
-            &#x3C;ul>
-                &#x3C;cfloop array="#errorList#" index="error">
-                    &#x3C;li>#error#&#x3C;/li>
-                &#x3C;/cfloop>
-            &#x3C;/ul>
-        &#x3C;/div>
-    &#x3C;/cfif>
-    ....
-&#x3C;/div>
-</code></pre>
+```html
+<!-- wires/userForm.cfm -->
+<cfoutput>
+<div>
+    <h1>User Registration</h1>
+    
+    <!-- ❌ Conditional block without markers -->
+    <cfif arrayLen(errorList)>
+        <div class="alert alert-danger" role="alert">
+            <p>Please fix the following errors:</p>
+            <ul>
+                <cfloop array="#errorList#" index="error">
+                    <li>#error#</li>
+                </cfloop>
+            </ul>
+        </div>
+    </cfif>
+    
+    <form wire:submit="submit">
+        <input type="text" wire:model="name" placeholder="Name">
+        <input type="email" wire:model="email" placeholder="Email">
+        <button type="submit">Register</button>
+    </form>
+</div>
+</cfoutput>
+```
 {% endtab %}
 {% endtabs %}
 
-Notice we have an alert that is displayed when there are errors in our `errorList`variable.&#x20;
-
-Depending on the additional sections within your page and how deeply nested each section is, Livewire might have difficulty detecting the alert has been added on re-rendering and that a DOM update is required.&#x20;
-
-We can let Livewire know there is a conditional section by adding an if-BLOCK comment.
-
-```html
-<!--[if BLOCK]><![endif]-->
-....
-<!--[if ENDBLOCK]><![endif]-->
-```
+**Solution**: Add conditional block markers to help Livewire track dynamic sections.
 
 {% tabs %}
 {% tab title="BoxLang" %}
 ```html
+<!-- wires/userForm.bxm -->
+<bx:output>
 <div>
-    <h1>My Form</h1>
+    <h1>User Registration</h1>
+    
+    <!-- ✅ Wrapped conditional with block markers -->
     <!--[if BLOCK]><![endif]-->
     <bx:if errorList.len()>
         <div class="alert alert-danger" role="alert">
-            <p>An error occurred.</p>
+            <p>Please fix the following errors:</p>
             <ul>
                 <bx:loop array="#errorList#" index="error">
                     <li>#error#</li>
@@ -146,19 +265,29 @@ We can let Livewire know there is a conditional section by adding an if-BLOCK co
         </div>
     </bx:if>
     <!--[if ENDBLOCK]><![endif]-->
-    ....
+    
+    <form wire:submit="submit">
+        <input type="text" wire:model="name" placeholder="Name">
+        <input type="email" wire:model="email" placeholder="Email">
+        <button type="submit">Register</button>
+    </form>
 </div>
+</bx:output>
 ```
 {% endtab %}
 
 {% tab title="CFML" %}
 ```html
+<!-- wires/userForm.cfm -->
+<cfoutput>
 <div>
-    <h1>My Form</h1>
+    <h1>User Registration</h1>
+    
+    <!-- ✅ Wrapped conditional with block markers -->
     <!--[if BLOCK]><![endif]-->
-    <cfif ArrayLen( errorList )>
+    <cfif arrayLen(errorList)>
         <div class="alert alert-danger" role="alert">
-            <p>An error occured.</p>
+            <p>Please fix the following errors:</p>
             <ul>
                 <cfloop array="#errorList#" index="error">
                     <li>#error#</li>
@@ -167,83 +296,254 @@ We can let Livewire know there is a conditional section by adding an if-BLOCK co
         </div>
     </cfif>
     <!--[if ENDBLOCK]><![endif]-->
-    ....
+    
+    <form wire:submit="submit">
+        <input type="text" wire:model="name" placeholder="Name">
+        <input type="email" wire:model="email" placeholder="Email">
+        <button type="submit">Register</button>
+    </form>
 </div>
+</cfoutput>
 ```
 {% endtab %}
 {% endtabs %}
 
-## Alpine.js
+**Block Marker Syntax**:
+```html
+<!--[if BLOCK]><![endif]-->
+<!-- Your conditional content here -->
+<!--[if ENDBLOCK]><![endif]-->
+```
 
-### Nothing is working
+## Alpine.js Integration Issues
 
-While Alpine is lightweight and simple to use, it's easy to get tripped up when getting started.
+### Quote Syntax Errors in x-data
 
-See if you can spot what is wrong with this code.
+**Problem**: JavaScript errors when using double quotes inside `x-data` attributes.
+
+**Root Cause**: HTML attribute already uses double quotes, creating syntax conflicts.
+
+**Example Problem**:
 
 ```html
-<div
-    x-data="{
-        name: "CBWIRE"
-    }">
+<!-- ❌ Will cause JavaScript error -->
+<div x-data="{
+    name: "CBWIRE",           // ❌ Double quotes conflict
+    message: "Welcome user"   // ❌ Double quotes conflict
+}">
     <div>Name: <span x-text="name"></span></div>
+    <div>Message: <span x-text="message"></span></div>
 </div>
 ```
 
-{% hint style="danger" %}
-The code above will result in a JavaScript error.&#x20;
-{% endhint %}
+**Error**: JavaScript syntax error in browser console.
 
-**The problem is our use of double quotes for our name property.** Because our **x-data** block is surrounded by double quotes, using double quotes inside the block isn't proper syntax.
-
-Change to using single quotes instead, and all is well again.
+**Solution**: Use single quotes inside `x-data` blocks.
 
 ```html
-<div
-    x-data="{
-        name: 'CBWIRE'
-    }">
+<!-- ✅ Correct syntax -->
+<div x-data="{
+    name: 'CBWIRE',           // ✅ Single quotes work properly
+    message: 'Welcome user',  // ✅ Single quotes work properly
+    count: 0,
+    increment() { this.count++ }
+}">
     <div>Name: <span x-text="name"></span></div>
+    <div>Message: <span x-text="message"></span></div>
+    <div>Count: <span x-text="count"></span></div>
+    <button @click="increment">Increment</button>
 </div>
 ```
 
-{% hint style="info" %}
-We recommend always using single quotes inside your x-data block.
-{% endhint %}
+### Component Removal with Alpine x-if
 
-### Unable to find component error
+**Problem**: "Unable to find component" errors when using `x-if` with CBWIRE components.
 
-You can run into rendering issues when using Alpine's **\<template>** tag with an **x-if** if you are also including a component within the tag using wire().
+**Root Cause**: Alpine's `x-if` completely removes/recreates DOM elements, breaking Livewire's component tracking.
 
-For example:
+**Example Problem**:
 
+{% tabs %}
+{% tab title="BoxLang" %}
+```javascript
+// wires/Dashboard.bx
+class extends="cbwire.models.Component" {
+    data = {
+        "loading": false
+    };
+
+    function loadData() {
+        data.loading = true;
+        sleep(2000); // Simulate slow operation
+        data.loading = false;
+    }
+}
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```javascript
+// wires/Dashboard.cfc
+component extends="cbwire.models.Component" {
+    data = {
+        "loading" = false
+    };
+
+    function loadData() {
+        data.loading = true;
+        sleep(2000); // Simulate slow operation
+        data.loading = false;
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+
+**Problematic Template**:
+
+{% tabs %}
+{% tab title="BoxLang" %}
 ```html
+<!-- wires/dashboard.bxm -->
+<bx:output>
 <div x-data="{
     loading: false,
     async init() {
-        this.loading = true
-        await $wire.someAction()
-        this.loading = false
+        this.loading = true;
+        await $wire.loadData();
+        this.loading = false;
     }
 }">
+    <h1>Dashboard</h1>
+    
+    <!-- ❌ x-if completely removes/recreates DOM -->
     <template x-if="loading">
-        #wire( "Spinner" )#
+        #wire("Spinner")#  <!-- ❌ Component gets lost during recreation -->
     </template>
+    
+    <div x-show="!loading">
+        <p>Dashboard content loaded!</p>
+    </div>
 </div>
+</bx:output>
 ```
+{% endtab %}
 
-As you toggle the loading value from true to false, you may see a JavaScript error similar to this. The component ID will be different
-
-**`Unable to find component K8SDFLSDF902KSDFLASKJFASDFLJ.`**
-
-The issue above is that Alpine.js' x-if directive completely removes the contents inside from the DOM and recreates them when true. Livewire.js' DOM diffing engine is expecting the spinner to be there, and it can't find it, hence the error.
-
-Luckily, the simple fix is to change your **\<template x-if>** to something like a **\<div>** and use **x-show** instead.
-
+{% tab title="CFML" %}
 ```html
-<div x-show="loading">
-    #wire( "Spinner" )
+<!-- wires/dashboard.cfm -->
+<cfoutput>
+<div x-data="{
+    loading: false,
+    async init() {
+        this.loading = true;
+        await $wire.loadData();
+        this.loading = false;
+    }
+}">
+    <h1>Dashboard</h1>
+    
+    <!-- ❌ x-if completely removes/recreates DOM -->
+    <template x-if="loading">
+        #wire("Spinner")#  <!-- ❌ Component gets lost during recreation -->
+    </template>
+    
+    <div x-show="!loading">
+        <p>Dashboard content loaded!</p>
+    </div>
 </div>
+</cfoutput>
+```
+{% endtab %}
+{% endtabs %}
+
+**Error**: 
+```
+Unable to find component K8SDFLSDF902KSDFLASKJFASDFLJ.
 ```
 
-You'll still achieve the desired result and Livewire.js can track the spinner accurately.
+**Solution**: Replace `x-if` with `x-show` to preserve DOM elements.
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```html
+<!-- wires/dashboard.bxm -->
+<bx:output>
+<div x-data="{
+    loading: false,
+    async init() {
+        this.loading = true;
+        await $wire.loadData();
+        this.loading = false;
+    }
+}">
+    <h1>Dashboard</h1>
+    
+    <!-- ✅ x-show preserves DOM elements -->
+    <div x-show="loading">
+        #wire("Spinner")#  <!-- ✅ Component stays tracked -->
+    </div>
+    
+    <div x-show="!loading">
+        <p>Dashboard content loaded!</p>
+    </div>
+</div>
+</bx:output>
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```html
+<!-- wires/dashboard.cfm -->
+<cfoutput>
+<div x-data="{
+    loading: false,
+    async init() {
+        this.loading = true;
+        await $wire.loadData();
+        this.loading = false;
+    }
+}">
+    <h1>Dashboard</h1>
+    
+    <!-- ✅ x-show preserves DOM elements -->
+    <div x-show="loading">
+        #wire("Spinner")#  <!-- ✅ Component stays tracked -->
+    </div>
+    
+    <div x-show="!loading">
+        <p>Dashboard content loaded!</p>
+    </div>
+</div>
+</cfoutput>
+```
+{% endtab %}
+{% endtabs %}
+
+## Key Differences: x-if vs x-show
+
+| Directive | Behavior | Use with CBWIRE |
+|-----------|----------|-----------------|
+| `x-if` | Removes/recreates DOM elements | ❌ Breaks component tracking |
+| `x-show` | Toggles CSS `display` property | ✅ Preserves component tracking |
+
+## Quick Reference
+
+### Essential Rules
+
+1. **Placeholder-Template Matching**: Outer elements must be identical
+2. **Conditional Blocks**: Wrap complex conditionals with `<!--[if BLOCK]><![endif]-->` markers
+3. **Alpine Quotes**: Always use single quotes inside `x-data` attributes
+4. **Component Visibility**: Use `x-show` instead of `x-if` with CBWIRE components
+
+### Common Error Messages
+
+| Error | Likely Cause | Solution |
+|-------|--------------|----------|
+| "Snapshot missing" | Placeholder/template mismatch | Match outer elements exactly |
+| "Unable to find component" | Alpine `x-if` removing components | Use `x-show` instead |
+| JavaScript syntax error | Double quotes in `x-data` | Use single quotes |
+
+{% hint style="info" %}
+When in doubt, add `wire:key` to dynamic elements and wrap conditionals with block markers. These techniques help Livewire's DOM diffing engine track changes accurately.
+{% endhint %}
