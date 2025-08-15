@@ -1,28 +1,33 @@
----
-description: >-
-  Provide your users with file uploads and thumbnail previews without page
-  refreshes.
----
-
 # File Uploads
 
-CBWIRE makes uploading and storing files easy.
+Handle file uploads with automatic temporary storage, validation, and processing. CBWIRE automatically converts uploaded files into FileUpload objects with methods for accessing content, metadata, and preview URLs.
 
-Here's an example of a simple Wire that handles uploading a photo:
+## Basic Usage
+
+Create a photo upload component with save functionality:
 
 {% tabs %}
 {% tab title="BoxLang" %}
 ```javascript
-// ./wires/UploadForm.bx
+// wires/PhotoUpload.bx
 class extends="cbwire.models.Component" {
     data = {
-        "photo": ""
+        "photo": "",
+        "isUploading": false
     };
     
     function save() {
-        // data.photo is now an instance of FileUpload ( see below )
-        fileWrite( expandPath( "./somewhere.jpg" ), data.photo.get() );       
-        data.photo.destroy();
+        if (data.photo != "") {
+            // Save file to permanent location
+            var uploadPath = expandPath("./uploads/#createUUID()#.jpg");
+            fileWrite(uploadPath, data.photo.get());
+            
+            // Clean up temporary file
+            data.photo.destroy();
+            
+            // Reset form
+            data.photo = "";
+        }
     }
 }
 ```
@@ -30,69 +35,181 @@ class extends="cbwire.models.Component" {
 
 {% tab title="CFML" %}
 ```javascript
-// ./wires/UploadForm.cfc
+// wires/PhotoUpload.cfc
 component extends="cbwire.models.Component" {
     data = {
-        "photo": ""
+        "photo" = "",
+        "isUploading" = false
     };
     
     function save() {
-        // data.photo is now an instance of FileUpload ( see below )
-        fileWrite( expandPath( "./somewhere.jpg" ), data.photo.get() );       
-        data.photo.destroy();
+        if (data.photo != "") {
+            // Save file to permanent location
+            var uploadPath = expandPath("./uploads/#createUUID()#.jpg");
+            fileWrite(uploadPath, data.photo.get());
+            
+            // Clean up temporary file
+            data.photo.destroy();
+            
+            // Reset form
+            data.photo = "";
+        }
     }
 }
 ```
 {% endtab %}
 {% endtabs %}
 
+{% tabs %}
+{% tab title="BoxLang" %}
 ```html
-<!--- ./wires/UploadForm.bxm|cfm --->
-<form wire:submit.prevent="save">
-    File: <input type="file" wire:model="photo">
-    <div><button type="submit">Save</button></div>
-</form>
+<!-- wires/photoUpload.bxm -->
+<bx:output>
+<div>
+    <h1>Upload Photo</h1>
+    
+    <form wire:submit.prevent="save">
+        <div>
+            <label for="photo">Select Photo:</label>
+            <input type="file" 
+                   id="photo" 
+                   wire:model="photo" 
+                   accept="image/*">
+        </div>
+        
+        <!-- Loading indicator -->
+        <div wire:loading wire:target="photo">
+            Uploading photo...
+        </div>
+        
+        <!-- Preview uploaded photo -->
+        <bx:if photo != "" AND photo.isImage()>
+            <div class="preview">
+                <h3>Preview:</h3>
+                <img src="#photo.getPreviewURL()#" 
+                     alt="Uploaded photo" 
+                     style="max-width: 200px;">
+                <p>Size: #photo.getSize()# bytes</p>
+            </div>
+        </bx:if>
+        
+        <button type="submit" 
+                wire:loading.attr="disabled">
+            Save Photo
+        </button>
+    </form>
+</div>
+</bx:output>
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```html
+<!-- wires/photoUpload.cfm -->
+<cfoutput>
+<div>
+    <h1>Upload Photo</h1>
+    
+    <form wire:submit.prevent="save">
+        <div>
+            <label for="photo">Select Photo:</label>
+            <input type="file" 
+                   id="photo" 
+                   wire:model="photo" 
+                   accept="image/*">
+        </div>
+        
+        <!-- Loading indicator -->
+        <div wire:loading wire:target="photo">
+            Uploading photo...
+        </div>
+        
+        <!-- Preview uploaded photo -->
+        <cfif photo != "" AND photo.isImage()>
+            <div class="preview">
+                <h3>Preview:</h3>
+                <img src="#photo.getPreviewURL()#" 
+                     alt="Uploaded photo" 
+                     style="max-width: 200px;">
+                <p>Size: #photo.getSize()# bytes</p>
+            </div>
+        </cfif>
+        
+        <button type="submit" 
+                wire:loading.attr="disabled">
+            Save Photo
+        </button>
+    </form>
+</div>
+</cfoutput>
+```
+{% endtab %}
+{% endtabs %}
+
+## How It Works
+
+CBWIRE handles file uploads through a multi-step process:
+
+1. **Request signed URL** - CBWIRE gets a temporary upload URL from the server
+2. **Upload file** - JavaScript uploads the file to temporary storage
+3. **Create FileUpload object** - The data property becomes a FileUpload instance
+4. **Process file** - Use FileUpload methods to save, validate, or manipulate the file
+
+## FileUpload Methods
+
+When a file is uploaded, CBWIRE creates a FileUpload object with the following methods:
+
+### File Content
+
+| Method                    | Description                                                        |
+| ------------------------- | ------------------------------------------------------------------ |
+| `get()`                   | Returns the binary content of the uploaded file                   |
+| `getBase64()`             | Returns base64 encoded string of the file                         |
+| `getBase64Src()`          | Returns base64 data URL for use in `<img>` tags                   |
+
+### File Information
+
+| Method                    | Description                                                        |
+| ------------------------- | ------------------------------------------------------------------ |
+| `getSize()`               | Returns file size in bytes                                         |
+| `getMimeType()`           | Returns the MIME type of the file                                  |
+| `getMeta()`               | Returns all metadata about the uploaded file                      |
+| `isImage()`               | Returns true if the file is an image                              |
+
+### File Locations
+
+| Method                    | Description                                                        |
+| ------------------------- | ------------------------------------------------------------------ |
+| `getTemporaryStoragePath()` | Returns the temporary file storage path                          |
+| `getMetaPath()`           | Returns path to file metadata                                      |
+| `getPreviewURL()`         | Returns URL for previewing images                                  |
+
+### Cleanup
+
+| Method                    | Description                                                        |
+| ------------------------- | ------------------------------------------------------------------ |
+| `destroy()`               | Deletes temporary file and metadata (call after saving)           |
+
+## Loading States
+
+Display upload progress using wire:loading directives:
+
+```html
+<input type="file" wire:model="document">
+
+<div wire:loading wire:target="document">
+    Uploading document...
+</div>
+
+<button type="submit" wire:loading.attr="disabled">
+    Save Document
+</button>
 ```
 
-Handling file inputs is no different than handling any other input type with CBWIRE. Add **wire:model** to the input tag and CBWIRE will take care of the rest.
+{% hint style="warning" %}
+Always call `destroy()` on FileUpload objects after saving to permanent storage to clean up temporary files.
+{% endhint %}
 
-Several things are happening under the hood to make file uploads work:
-
-1. CBWIRE makes an initial request to the server to get a temporary "signed" upload URL.
-2. Once the URL is received, JavaScript then does the actual "upload" to the signed URL, storing the upload in a temporary directory designated by CBWIRE and returning the new temporary file's unique hash ID.
-3. Once the file is uploaded, and the unique hash ID is generated, CBWIRE makes a final request to the server, telling it to "set" the desired data property to the upload file as an instance of FileUpload ( see below ).
-4. Now the data property (in this case, _photo_ ) is set to an instance of _FileUpload@cbwire_ and is ready to be stored or validated at any point.
-
-## FileUpload Object
-
-CBWIRE will automatically upload your files and set your associated data property to an instance of _FileUpload@cbwire_. Here are some of the methods you can use that are helpful.
-
-| Method                    | Description                                                                                                                                                                          |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| getComp()                 | Returns an instance of your current Wire.                                                                                                                                            |
-| getParams()               | Returns any params that are passed in, including the data property name.                                                                                                             |
-| get()                     | Returns the contents of the file uploaded.                                                                                                                                           |
-| getBase64()               | Returns base64 encoded string of the file.                                                                                                                                           |
-| getBase64Src()            | Returns a base64 src string that can be used with \<img tag>. It is recommended to use this carefully because with larger objects, this can slow down CBWIRE response times.         |
-| getTemporaryStoragePath() | Returns the temporary storage path where the file is stored by CBWIRE.                                                                                                               |
-| getMetaPath()             | Returns the file path to meta information of the uploaded file. You can find additional details here like the name of the file when it was uploaded, the client file extension, etc. |
-| getMeta()                 | Returns all captured meta information on the file upload.                                                                                                                            |
-| getSize()                 | Returns the size of the file upload.                                                                                                                                                 |
-| getMimeType()             | Returns the mime type of the file upload.                                                                                                                                            |
-| isImage()                 | Returns true if this is an image.                                                                                                                                                    |
-| getPreviewURL()           | Provides a URL to preview the file uploaded. It only works with image uploads.                                                                                                       |
-| destroy()                 | Deletes the temporary storage and metadata of the file upload. It's essential to use this after storing the file upload in permanent storage.                                        |
-
-## Loading Indicators
-
-You can display a loading indicator scoped to the file input during upload like so:
-
-```html
-<input type="file" wire:model="photo">
- 
-<div wire:loading wire:target="photo">Uploading...</div>
-```
-
-The "Uploading..." message will be shown as the file is uploading and then hidden when the upload is finished.
-
-This works with the entire [Loading States API](broken-reference).
+{% hint style="info" %}
+Image previews using `getPreviewURL()` only work with image file types. Use `isImage()` to check before displaying previews.
+{% endhint %}
