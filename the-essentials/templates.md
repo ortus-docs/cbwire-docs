@@ -2,7 +2,7 @@
 
 Templates define your component's HTML presentation layer using standard HTML/CFML tags. They're dynamic, reactive views that access your component's data properties and methods to create interactive user experiences.
 
-CBWIRE automatically looks for template files with the same name as your component. Templates can use CFML tags like `<cfif>`, `<cfloop>`, and `<cfoutput>` alongside wire directives for reactive behavior.
+CBWIRE automatically looks for template files with the same name as your component. Templates can use BoxLang tags like `<bx:if>`, `<bx:loop>`, and `<bx:output>` or CFML tags like `<cfif>`, `<cfloop>`, and `<cfoutput>` alongside wire directives for reactive behavior.
 
 {% tabs %}
 {% tab title="BoxLang" %}
