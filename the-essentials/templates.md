@@ -1,229 +1,267 @@
 # Templates
 
-Templates are your [components](components.md)' HTML and consist of valid HTML/CFML tags. This includes \<cfif>, \<cfloop>, etc.
+Templates define your component's HTML presentation layer using standard HTML/CFML tags. They're dynamic, reactive views that access your component's data properties and methods to create interactive user experiences.
+
+CBWIRE automatically looks for template files with the same name as your component. Templates can use CFML tags like `<cfif>`, `<cfloop>`, and `<cfoutput>` alongside wire directives for reactive behavior.
 
 {% tabs %}
 {% tab title="BoxLang" %}
 ```html
+<!-- wires/greeter.bxm -->
 <bx:output>
-    <!--- HTML template goes here --->
-    <div>
-        <button wire:click="doSomething">Click here</button>
-        <!-- Any valid CFML here -->
-        <bx:if datePart( 'h', now() ) lt 12>
-            <p>Good morning!</p>
-        <bx:else>
-            <p>Good afternoon!</p>
-        </bx:if>
-    </div>
+<div>
+    <h1>#greeting#</h1>
+    <button wire:click="updateGreeting">Update</button>
+    
+    <bx:if timeOfDay() EQ "morning">
+        <p>Good morning!</p>
+    <bx:else>
+        <p>Good day!</p>
+    </bx:if>
+</div>
 </bx:output>
 ```
 {% endtab %}
 
 {% tab title="CFML" %}
 ```html
+<!-- wires/greeter.cfm -->
 <cfoutput>
-    <!--- HTML template goes here --->
-    <div>
-        <button wire:click="doSomething">Click here</button>
-        <!-- Any valid CFML here -->
-        <cfif datePart( 'h', now() ) lt 12>
-            <p>Good morning!</p>
-        <cfelse>
-            <p>Good afternoon!</p>
-        </cfif>
-    </div>
+<div>
+    <h1>#greeting#</h1>
+    <button wire:click="updateGreeting">Update</button>
+    
+    <cfif timeOfDay() EQ "morning">
+        <p>Good morning!</p>
+    <cfelse>
+        <p>Good day!</p>
+    </cfif>
+</div>
 </cfoutput>
 ```
 {% endtab %}
 {% endtabs %}
+
+## File Structure
+
+CBWIRE uses automatic file matching for components and templates:
+
+```
+./wires/Counter.bx     <!-- BoxLang component -->
+./wires/Counter.cfc    <!-- CFML component -->
+./wires/counter.bxm    <!-- BoxLang template -->
+./wires/counter.cfm    <!-- CFML template -->
+```
+
+## Template Requirements
+
+Templates must have a single outer element for proper DOM binding:
+
+```html
+<!-- ✅ Good: Single outer element -->
+<div>
+    <h1>My Component</h1>
+    <p>Content here</p>
+</div>
+
+<!-- ❌ Bad: Multiple outer elements -->
+<div>Component header</div>
+<div>Component body</div>
+```
+
+## Data Properties
+
+Access component data properties directly by name:
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```javascript
+// wires/UserCard.bx
+class extends="cbwire.models.Component" {
+    data = {
+        "name": "John Doe",
+        "email": "john@example.com",
+        "isActive": true
+    };
+}
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```javascript
+// wires/UserCard.cfc
+component extends="cbwire.models.Component" {
+    data = {
+        "name" = "John Doe",
+        "email" = "john@example.com",
+        "isActive" = true
+    };
+}
+```
+{% endtab %}
+{% endtabs %}
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```html
+<!-- wires/userCard.bxm -->
+<bx:output>
+<div class="user-card">
+    <h2>#name#</h2>
+    <p>Email: #email#</p>
+    <bx:if isActive>
+        <span class="active">Active User</span>
+    </bx:if>
+</div>
+</bx:output>
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```html
+<!-- wires/userCard.cfm -->
+<cfoutput>
+<div class="user-card">
+    <h2>#name#</h2>
+    <p>Email: #email#</p>
+    <cfif isActive>
+        <span class="active">Active User</span>
+    </cfif>
+</div>
+</cfoutput>
+```
+{% endtab %}
+{% endtabs %}
+
+## Computed Properties
+
+Define computed properties with the `computed` annotation and call them as methods:
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```javascript
+// wires/Dashboard.bx
+class extends="cbwire.models.Component" {
+    data = {
+        "tasks": [
+            {"id": 1, "completed": true},
+            {"id": 2, "completed": false}
+        ]
+    };
+
+    function completedCount() computed {
+        return data.tasks.filter(function(task) {
+            return task.completed;
+        }).len();
+    }
+}
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```javascript
+// wires/Dashboard.cfc
+component extends="cbwire.models.Component" {
+    data = {
+        "tasks" = [
+            {"id" = 1, "completed" = true},
+            {"id" = 2, "completed" = false}
+        ]
+    };
+
+    function completedCount() computed {
+        return arrayFilter(data.tasks, function(task) {
+            return task.completed;
+        }).len();
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+
+```html
+<!-- Template usage -->
+<div>
+    <h1>Task Progress</h1>
+    <p>Completed: #completedCount()# of #tasks.len()#</p>
+</div>
+```
+
+## Explicit Templates
+
+Override default template location using the `onRender()` method:
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```javascript
+// wires/CustomComponent.bx
+class extends="cbwire.models.Component" {
+    function onRender() {
+        return template("shared.CustomLayout");
+    }
+    
+    // With parameters
+    function onRender() {
+        return template("shared.UserCard", {
+            "theme": "dark",
+            "showAvatar": true
+        });
+    }
+    
+    // Inline template
+    function onRender() {
+        return "<div><h1>Simple Component</h1></div>";
+    }
+}
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```javascript
+// wires/CustomComponent.cfc
+component extends="cbwire.models.Component" {
+    function onRender() {
+        return template("shared.CustomLayout");
+    }
+    
+    // With parameters
+    function onRender() {
+        return template("shared.UserCard", {
+            "theme" = "dark",
+            "showAvatar" = true
+        });
+    }
+    
+    // Inline template
+    function onRender() {
+        return "<div><h1>Simple Component</h1></div>";
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+
+## Helper Methods
+
+Access global helper methods from installed ColdBox modules:
+
+```html
+<!-- Using cbi18n module -->
+<div>
+    <h1>#$r("welcome.title")#</h1>
+    <p>#$r("welcome.message")#</p>
+</div>
+
+<!-- Using cbstorages module -->
+<div>
+    <p>Session ID: #getSessionStorage().getId()#</p>
+</div>
+```
 
 {% hint style="warning" %}
-Your templates must have a single outer element for CBWIRE to bind to your component and update the DOM properly. This can be any valid HTML element. Below, we are using a div element.
+Templates must have a single outer element for CBWIRE's DOM diffing to work correctly.
 {% endhint %}
 
-Below is a template with one outer element ( good ) and another with two outer elements ( bad ).
-
-```html
-<!--- GOOD: single outer element --->
-<div>
-    <p>My awesome component</p>
-</div>
-
-
-<!--- BAD: 2 outer elements --->
-<div>
-    My awesome component    
-</div>
-<div>
-    <p>This won't work.</p>
-</div>
-```
-
-## Implicit Rendering
-
-By default, CBWIRE will look in the **./wires** folder for a **.bxm or .cfm** file with the same name as your component.
-
-```
-./wires/Counter.bx <--- Boxlang class
-./wires/Counter.cfc <--- CFML class (component)
-./wires/Counter.bxm <--- Boxlang template file
-./wires/Counter.cfm <--- CFML template file
-```
-
 {% hint style="info" %}
-You can change this default location in the [configuration](../configuration.md) settings.
-{% endhint %}
-
-## Explicit Rendering
-
-To override the default implicit rendering, we can tell CBWIRE where our component template is by defining a **onRender()** method on our component and using the **template()** method.
-
-{% tabs %}
-{% tab title="BoxLang" %}
-```javascript
-// ./wires/MyTemplate.bx
-class extends="cbwire.models.Component" {
-    function onRender() {
-        return template( "someFolder.MyTemplate" ); // renders ./somefolder/MyTemplate.bxm    
-    }
-}
-```
-{% endtab %}
-
-{% tab title="CFML" %}
-```javascript
-// ./wires/MyTemplate.cfc
-component extends="cbwire.models.Component" {
-    function onRender() {
-        return template( "someFolder.MyTemplate" ); // renders ./somefolder/MyTemplate.cfm    
-    }
-}
-```
-{% endtab %}
-{% endtabs %}
-
-We can pass parameters when calling **template()**.
-
-```javascript
-function onRender() {
-    return template( "someFolder.MyTemplate", { "someVar": "value" } );
-}
-```
-
-In this case, **someVar** becomes available to our template.
-
-```html
-<!--- ./someFolder/MyTemplate.bxm|cfm --->
-<cfoutput>
-    <div>
-        Somevar: #someVar#
-    </div>
-</cfoutput>
-```
-
-You can also return your template inline like so:
-
-```javascript
-function onRender() {
-    return "<div>My component</div>";
-}
-```
-
-## Using Data Properties
-
-You can access your [data properties](templates.md#data-properties) from your template by calling **#propertyName#**.
-
-{% tabs %}
-{% tab title="BoxLang" %}
-```javascript
-// ./wires/Greeter.bx
-class extends="cbwire.models.Component" {
-    data = {
-        "greeting": "Hello from CBWIRE"
-    };
-}
-```
-{% endtab %}
-
-{% tab title="CFML" %}
-```javascript
-// ./wires/Greeter.cfc
-component extends="cbwire.models.Component" {
-    data = {
-        "greeting": "Hello from CBWIRE"
-    };
-}
-```
-{% endtab %}
-{% endtabs %}
-
-```html
-<!--- ./wires/greeter.bxm|cfm --->
-<cfoutput>
-    <div>
-        Greeting: #greeting#
-    </div>
-</cfoutput>
-```
-
-## Using Computed Properties
-
-You define [computed properties](templates.md#computed-properties) on your component by using the **computed** annotatio&#x6E;**.**&#x20;
-
-```javascript
-function greeting() computed {}
-```
-
-{% tabs %}
-{% tab title="BoxLang" %}
-```javascript
-// ./wires/Greeter.bx
-class extends="cbwire.models.Component" {
-    function greeting() computed {
-        return "Hello from CBWIRE";
-    }
-}
-```
-{% endtab %}
-
-{% tab title="CFML" %}
-```javascript
-// ./wires/Greeter.cfc
-component extends="cbwire.models.Component" {
-    function greeting() computed {
-        return "Hello from CBWIRE";
-    }
-}
-```
-{% endtab %}
-{% endtabs %}
-
-You access computed properties in your template by invoking the method.
-
-```html
-<!--- ./wires/greeter.bxm|cfm --->
-<div>
-    Greeting: #greeting()#
-</div>
-```
-
-{% hint style="info" %}
-Computed properties are cached are are executed when first called. See [Computed Properties](computed-properties.md).
-{% endhint %}
-
-## Using Helper Methods
-
-You can access any global helper methods defined in your ColdBox application and any modules you have installed.
-
-For example, suppose you've installed the cbi8n module ( an internalization module for ColdBox ). You can access its global helper methods in your template, such as the **$r()** method for displaying text in various languages.
-
-```html
-<div>
-    #$r( "greeting" )#
-</div>
-```
-
-{% hint style="info" %}
-Visit [ForgeBox](https://forgebox.io/) to find ColdBox modules for your application.
+Computed properties are cached and only executed when first called or when their dependencies change. See [Computed Properties](computed-properties.md) for details.
 {% endhint %}
