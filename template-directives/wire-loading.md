@@ -1,14 +1,32 @@
 # wire:loading
 
-Using **wire:loading**, you can show and hide elements in your [templates](../the-essentials/templates.md) while a request is sent to the server.
+The `wire:loading` directive shows and hides elements during server requests, providing instant visual feedback to users. When actions are processing, you can display loading indicators, disable buttons, or modify the interface to communicate that work is happening behind the scenes.
+
+## Basic Usage
+
+This form demonstrates `wire:loading` with various loading states and targeting options:
 
 {% tabs %}
 {% tab title="BoxLang" %}
 ```javascript
-// ./wires/MyForm.bx
+// wires/DocumentManager.bx
 class extends="cbwire.models.Component" {
+    data = {
+        "title": "",
+        "content": ""
+    };
+
     function save() {
-        sleep( 2000 ); // pretend we're saving to the database and it's slow
+        sleep(2000); // Simulate slow save
+    }
+
+    function delete() {
+        sleep(1500); // Simulate deletion
+    }
+
+    function reset() {
+        data.title = "";
+        data.content = "";
     }
 }
 ```
@@ -16,10 +34,24 @@ class extends="cbwire.models.Component" {
 
 {% tab title="CFML" %}
 ```javascript
-// ./wires/MyForm.cfc
+// wires/DocumentManager.cfc
 component extends="cbwire.models.Component" {
+    data = {
+        "title" = "",
+        "content" = ""
+    };
+
     function save() {
-        sleep( 2000 ); // pretend we're saving to the database
+        sleep(2000); // Simulate slow save
+    }
+
+    function delete() {
+        sleep(1500); // Simulate deletion
+    }
+
+    function reset() {
+        data.title = "";
+        data.content = "";
     }
 }
 ```
@@ -29,274 +61,90 @@ component extends="cbwire.models.Component" {
 {% tabs %}
 {% tab title="BoxLang" %}
 ```html
-<!--- ./wires/myform.bxm --->
-<div>
-    <form wire:submit="save">
-        <button type="submit">Save</button>
-        <span wire:loading>
-            Saving...
-        </span>
-    </form>
-</div>
+<!-- wires/documentManager.bxm -->
+<bx:output>
+<form wire:submit="save" wire:loading.class="opacity-50">
+    <input type="text" wire:model="title" placeholder="Title">
+    <textarea wire:model="content" placeholder="Content"></textarea>
+    
+    <button type="submit" wire:loading.attr="disabled">Save</button>
+    <button type="button" wire:click="delete" wire:loading.remove>Delete</button>
+    <button type="button" wire:click="reset">Reset</button>
+    
+    <div wire:loading wire:target="save" wire:loading.delay>Saving document...</div>
+    <div wire:loading wire:target="delete">Deleting...</div>
+</form>
+</bx:output>
 ```
 {% endtab %}
 
 {% tab title="CFML" %}
 ```html
-<!--- ./wires/myform.cfm --->
-<div>
-    <form wire:submit="save">
-        <button type="submit">Save</button>
-        <span wire:loading>
-            Saving...
-        </span>
-    </form>
-</div>
+<!-- wires/documentManager.cfm -->
+<cfoutput>
+<form wire:submit="save" wire:loading.class="opacity-50">
+    <input type="text" wire:model="title" placeholder="Title">
+    <textarea wire:model="content" placeholder="Content"></textarea>
+    
+    <button type="submit" wire:loading.attr="disabled">Save</button>
+    <button type="button" wire:click="delete" wire:loading.remove>Delete</button>
+    <button type="button" wire:click="reset">Reset</button>
+    
+    <div wire:loading wire:target="save" wire:loading.delay>Saving document...</div>
+    <div wire:loading wire:target="delete">Deleting...</div>
+</form>
+</cfoutput>
 ```
 {% endtab %}
 {% endtabs %}
 
-After clicking the save button, you will briefly see the saving loading indicator. Once the save completes, the loading indicator goes away.
+## What wire:loading Does
 
-## Removing Elements
+When you add `wire:loading` to an element, CBWIRE automatically:
 
-You can instead show elements by default and hide them during requests to the server using **wire:loading.remove**.
+- **Shows Elements**: Displays loading indicators during server requests
+- **Targets Actions**: Can target specific actions or all actions by default
+- **Modifies Appearance**: Toggles classes, attributes, and display properties
+- **Provides Feedback**: Gives users immediate visual confirmation that actions are processing
 
-```html
-<div>
-    <form wire:submit="save">
-        <button type="submit" wire:loading.remove>Save</button>
-        <span wire:loading>
-            Saving...
-        </span>
-    </form>
-</div>
-```
+## Available Modifiers
 
-Now the save button will disappear until the save completes.
+The `wire:loading` directive supports these modifiers:
 
-## Toggling Classes
-
-You can toggle classes using **wire:loading.class**.
-
-```html
-<div>
-    <form wire:submit="save" wire:loading.class="opacity-50">
-        <button type="submit">Save</button>
-    </form>
-</div>
-```
-
-You can also remove classes using **wire:loading.class.remove**.
-
-```html
-<div>
-    <form
-        wire:submit="save"
-        class="highlighted"
-        wire:loading.class.remove="highlighted">
-        <button type="submit">Save</button>
-    </form>
-</div>
-```
-
-## Toggling Attributes
-
-You can toggle attributes using **wire:loading.attr**.
-
-```html
-<div>
-    <button
-        type="button"
-        wire:click="save"
-        wire:loading.attr="disabled">
-        Save
-    </button>
-</div>
-```
+- **Remove**: `.remove` - Hides element during loading instead of showing it
+- **Class**: `.class` - Toggles CSS classes during loading
+- **Class Remove**: `.class.remove` - Removes specific classes during loading
+- **Attr**: `.attr` - Toggles attributes like `disabled` during loading
+- **Display Values**: `.block`, `.flex`, `.grid`, `.inline`, `.inline-block`, `.inline-flex`, `.table` - Sets specific display property
+- **Delay**: `.delay` - Delays showing indicator (200ms default)
+- **Delay Intervals**: `.delay.shortest` (50ms), `.delay.shorter` (100ms), `.delay.short` (150ms), `.delay.long` (300ms), `.delay.longer` (500ms), `.delay.longest` (1000ms)
 
 ## Targeting Actions
 
-By default, **wire:loading** will fire when ANY action is called. You can target specific actions using **wire:target**.
+Use `wire:target` to specify which actions trigger loading states:
 
 ```html
-<div>
-    <form wire:submit="save">
-        <button type="button" wire:click="reset">Reset</button>
-        <button type="submit">Save</button>
-        <span wire:loading wire:target="save">
-            Saving...
-        </span>
-    </form>
-</div>
+<!-- Target specific action -->
+<div wire:loading wire:target="save">Saving...</div>
+
+<!-- Target multiple actions -->
+<div wire:loading wire:target="save,delete">Processing...</div>
+
+<!-- Target action with parameters -->
+<div wire:loading wire:target="remove(123)">Removing item...</div>
+
+<!-- Exclude specific actions -->
+<div wire:loading wire:target.except="save">Working...</div>
+
+<!-- Target property updates -->
+<input wire:model.live="username">
+<div wire:loading wire:target="username">Checking availability...</div>
 ```
-
-The saving loading indicator is displayed when the save button is pressed and not when the reset button is pressed.
-
-You can provide multiple targets to **wire:target**.
-
-{% tabs %}
-{% tab title="BoxLang" %}
-```javascript
-// ./wires/MyForm.bx
-class extends="cbwire.models.Component" {
-    function save() {
-        sleep( 2000 ); // pretend we're saving to the database
-    }
-    function delete() {
-        sleep( 8000 ); // pretend deleting is stupid slow
-    }
-}
-```
-{% endtab %}
-
-{% tab title="CFML" %}
-```javascript
-// ./wires/MyForm.cfc
-component extends="cbwire.models.Component" {
-    function save() {
-        sleep( 2000 ); // pretend we're saving to the database
-    }
-    function delete() {
-        sleep( 8000 ); // pretend deleting is stupid slow
-    }
-}
-```
-{% endtab %}
-{% endtabs %}
-
-```html
-<div>
-    <form wire:submit="save">
-        <button type="button" wire:click="delete">Delete</button>
-        <button type="submit">Save</button>
-        <span wire:loading wire:target="save,delete">
-            Updating...
-        </span>
-    </form>
-</div>
-```
-
-## Targeting Parameters
-
-You can specify parameters to match against when using **wire:target="action(param)"**. &#x20;
-
-{% tabs %}
-{% tab title="BoxLang" %}
-```html
-<!--- ./wires/posts.bxm --->
-<div>
-    <bx:loop array="#posts#" index="post">
-        <div wire:key="post-#post.id#">
-            <h2>#post.title#</h2>
-            <button wire:click="remove( #post.id# )">Remove</button>
-            <div wire:loading wire:target="remove( #post.id# )">
-                Removing...
-            </div>
-        </div>
-    </bx:loop>
-</div>
-```
-{% endtab %}
-
-{% tab title="CFML" %}
-```html
-<!--- ./wires/posts.cfm --->
-<div>
-    <cfloop array="#posts#" index="post">
-        <div wire:key="post-#post.id#">
-            <h2>#post.title#</h2>
-            <button wire:click="remove( #post.id# )">Remove</button>
-            <div wire:loading wire:target="remove( #post.id# )">
-                Removing...
-            </div>
-        </div>
-    </cfloop>
-</div>
-```
-{% endtab %}
-{% endtabs %}
-
-Above, our loading indicator is only displayed for the post that is being removed.
 
 {% hint style="danger" %}
-Multiple action parameters are currently not supported. This will not work.
-
-```
-wire:target="remove(1),add(1)"
-```
+Multiple action parameters are not supported: `wire:target="remove(1),add(1)"` will not work.
 {% endhint %}
 
-## Targeting Property Updates
-
-You can use **wire:loading** with **wire:model.live** to display elements during data property updates.
-
-```html
-<form wire:submit="save">
-    <input type="text" wire:model.live="username">
-    <div wire:loading wire:target="username">
-        Checking username availability...
-    </div>
-</form>
-```
-
-## Excluding Targets
-
-You can exclude targets using **wire:target.except**.
-
-```html
-<div>
-    <form wire:submit="save">
-        <button type="button" wire:click="delete">Delete</button>
-        <button type="submit">Save</button>
-        <span wire:loading wire:target="save">
-            Updating...
-        </span>
-        <span wire:loading wire:target.except="save">
-            Deleting...
-        </span>
-    </form>
-
-</div>
-```
-
-## Customizing Display Values
-
-By default, CBWIRE uses **display: none** to hide elements and **display: inline-block** to show elements.
-
-When toggling elements with a display value other than inline-block, you can use **wire:loading.\[value]**.&#x20;
-
-Below are the available display values:
-
-```html
-<div wire:loading.inline-flex>...</div>
-<div wire:loading.inline>...</div>
-<div wire:loading.block>...</div>
-<div wire:loading.table>...</div>
-<div wire:loading.flex>...</div>
-<div wire:loading.grid>...</div>
-```
-
-## Delaying Loading Indicators
-
-Sometimes, loading indicators are so fast that they only display on the screen briefly before being removed. This can be jarring and distracting to users.
-
-You can delay showing an indicator using **wire:loading.delay**.
-
-```html
-<div wire:loading.delay>...</div>
-```
-
-**This will prevent the indicator from showing unless the server request takes 200ms or more.**
-
-There are built-in interval aliases you can use as well.
-
-```html
-<div wire:loading.delay.shortest>...</div> <!-- 50ms -->
-<div wire:loading.delay.shorter>...</div>  <!-- 100ms -->
-<div wire:loading.delay.short>...</div>    <!-- 150ms -->
-<div wire:loading.delay>...</div>          <!-- 200ms -->
-<div wire:loading.delay.long>...</div>     <!-- 300ms -->
-<div wire:loading.delay.longer>...</div>   <!-- 500ms -->
-<div wire:loading.delay.longest>...</div>  <!-- 1000ms -->
-```
+{% hint style="info" %}
+By default, `wire:loading` triggers for any action. Use `wire:target` to control exactly when loading states appear.
+{% endhint %}
