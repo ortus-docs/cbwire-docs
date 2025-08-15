@@ -47,7 +47,7 @@ CBWIRE automatically looks for template files with the same name as your compone
 CBWIRE uses automatic file matching for components and templates:
 
 ```
-./wires/Counter.bx     <!-- BoxLang component -->
+./wires/Counter.bx     <!-- BoxLang class -->
 ./wires/Counter.cfc    <!-- CFML component -->
 ./wires/counter.bxm    <!-- BoxLang template -->
 ./wires/counter.cfm    <!-- CFML template -->
