@@ -1,14 +1,8 @@
 # Data Properties
 
-Data Properties hold the state of our component and are defined with a **data** structure in your [component](components.md). Each data property is assigned a default value.
+Data Properties hold the state of your component and are defined with a **data** structure. Each data property is assigned a default value and is automatically synchronized between server and client.
 
-Data properties are the foundation of state management in CBWIRE components. They represent the dynamic data that your component works with and can change over time as users interact with your application. These properties are automatically synchronized between the server and client, ensuring that your user interface always reflects the current state of your data.
-
-When you define data properties in your component, CBWIRE makes them directly accessible in your templates without any special syntax - you can simply reference them by name. This creates a seamless development experience where your server-side data flows naturally into your presentation layer.
-
-Data properties can hold various types of values including strings, numbers, booleans, dates, arrays, and structures. CBWIRE automatically handles the serialization and deserialization of these properties when communicating between the client and server, so you can focus on your application logic rather than data transformation concerns.
-
-One of the most powerful aspects of data properties is their reactive nature. When an action method modifies a data property, CBWIRE automatically detects the change and re-renders only the parts of your template that depend on that property, creating an efficient and responsive user experience.
+Data properties are reactive - when an action modifies a property, CBWIRE automatically re-renders only the affected parts of your template. They can hold strings, numbers, booleans, dates, arrays, and structures, and are directly accessible in templates without special syntax.
 
 {% tabs %}
 {% tab title="BoxLang" %}
@@ -137,13 +131,9 @@ function resetForm() {
 
 ## Locked Properties
 
-Locked properties provide an additional layer of security by preventing specific data properties from being modified through client-side interactions like `wire:model`, form submissions, or other user inputs. This is particularly useful for protecting sensitive identifiers, user roles, permissions, or any data that should only be modified by server-side logic.
+Locked properties prevent client-side modifications to sensitive data like user IDs, roles, or permissions. Define a `locked` variable to protect specific properties from `wire:model` and other client interactions. CBWIRE throws an exception if locked properties are modified from the client.
 
-When you define a property as locked, CBWIRE will throw a "Locked properties cannot be updated" exception if any client-side action attempts to modify it. This ensures that critical data remains secure even if malicious clients attempt to manipulate the data.
-
-### Defining Locked Properties
-
-You can lock properties by defining a `locked` variable in your component. This variable can be either a single property name (string) or an array of property names.
+### Single Property
 
 {% tabs %}
 {% tab title="BoxLang" %}
@@ -191,9 +181,7 @@ component extends="cbwire.models.Component" {
 {% endtab %}
 {% endtabs %}
 
-### Locking Multiple Properties
-
-For components that need to protect multiple sensitive properties, you can define an array of locked property names:
+### Multiple Properties
 
 {% tabs %}
 {% tab title="BoxLang" %}
@@ -253,9 +241,9 @@ component extends="cbwire.models.Component" {
 {% endtab %}
 {% endtabs %}
 
-### Template Usage with Locked Properties
+### Template Usage
 
-In your templates, you can still display locked properties and bind unlocked properties to form inputs. Locked properties remain readable but cannot be modified through client interactions:
+Locked properties can be displayed but not modified through form inputs:
 
 {% tabs %}
 {% tab title="BoxLang" %}
@@ -333,28 +321,10 @@ In your templates, you can still display locked properties and bind unlocked pro
 
 ### Common Use Cases
 
-**User Management:**
-- Lock `userId`, `role`, `permissions` while allowing profile updates
-- Protect account type or subscription level from manipulation
-
-**E-commerce:**
-- Lock product IDs, prices, inventory counts in shopping cart components
-- Protect order status or payment information
-
-**Financial Applications:**
-- Lock account numbers, balances, transaction IDs
-- Protect audit trails and timestamps
-
-**Content Management:**
-- Lock author IDs, creation dates, publication status
-- Protect content approval workflows
-
-### Security Benefits
-
-1. **Prevents Client-Side Manipulation**: Even if malicious users inspect and modify the DOM or network requests, locked properties cannot be changed
-2. **Server-Side Validation**: CBWIRE validates locked properties on the server before processing any updates
-3. **Exception Throwing**: Clear error messages when locked property modification is attempted
-4. **Audit Trail Protection**: Ensures critical tracking data remains immutable from client interactions
+- **User Management**: Lock `userId`, `role`, `permissions`
+- **E-commerce**: Lock product IDs, prices, inventory counts  
+- **Financial**: Lock account numbers, balances, transaction IDs
+- **Content**: Lock author IDs, creation dates, publication status
 
 {% hint style="info" %}
 Locked properties only prevent client-side modifications. Server-side code in your action methods can still modify locked properties when necessary.
