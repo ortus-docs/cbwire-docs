@@ -4,6 +4,138 @@
 
 ## New Features
 
+### BoxLang Support
+
+CBWIRE 4.1 introduces full BoxLang support, allowing you to build components and templates using BoxLang's powerful, modular, and modern feature set. This opens up a whole new world of possibilities for CBWIRE development with BoxLang's enhanced syntax and capabilities.
+
+**Requirements:**
+- `bx-compat-cfml` BoxLang module
+- `bx-esapi` BoxLang module
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```javascript
+// wires/UserDashboard.bx
+class extends="cbwire.models.Component" {
+    data = {
+        "users": [],
+        "searchTerm": "",
+        "selectedRole": "all"
+    };
+    
+    function onMount() {
+        data.users = getUserService().getAllUsers();
+    }
+    
+    function filterUsers() {
+        var filteredUsers = data.users
+            .filter(function(user) {
+                return data.selectedRole == "all" || user.role == data.selectedRole;
+            })
+            .filter(function(user) {
+                return !data.searchTerm.len() || 
+                       user.name.findNoCase(data.searchTerm) || 
+                       user.email.findNoCase(data.searchTerm);
+            });
+        
+        return filteredUsers;
+    }
+}
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```javascript
+// wires/UserDashboard.cfc
+component extends="cbwire.models.Component" {
+    data = {
+        "users" = [],
+        "searchTerm" = "",
+        "selectedRole" = "all"
+    };
+    
+    function onMount() {
+        data.users = getUserService().getAllUsers();
+    }
+    
+    function filterUsers() {
+        var filteredUsers = data.users
+            .filter(function(user) {
+                return data.selectedRole == "all" || user.role == data.selectedRole;
+            })
+            .filter(function(user) {
+                return !len(data.searchTerm) || 
+                       findNoCase(data.searchTerm, user.name) || 
+                       findNoCase(data.searchTerm, user.email);
+            });
+        
+        return filteredUsers;
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```html
+<!-- wires/userDashboard.bxm -->
+<bx:output>
+<div class="user-dashboard">
+    <div class="filters">
+        <input wire:model.live="searchTerm" placeholder="Search users...">
+        <select wire:model.live="selectedRole">
+            <option value="all">All Roles</option>
+            <option value="admin">Admin</option>
+            <option value="user">User</option>
+        </select>
+    </div>
+    
+    <div class="users-grid">
+        <bx:loop array="#filterUsers()#" item="user">
+            <div class="user-card">
+                <h3>#user.name#</h3>
+                <p>#user.email#</p>
+                <span class="role">#user.role#</span>
+            </div>
+        </bx:loop>
+    </div>
+</div>
+</bx:output>
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```html
+<!-- wires/userDashboard.cfm -->
+<cfoutput>
+<div class="user-dashboard">
+    <div class="filters">
+        <input wire:model.live="searchTerm" placeholder="Search users...">
+        <select wire:model.live="selectedRole">
+            <option value="all">All Roles</option>
+            <option value="admin">Admin</option>
+            <option value="user">User</option>
+        </select>
+    </div>
+    
+    <div class="users-grid">
+        <cfloop array="#filterUsers()#" index="user">
+            <div class="user-card">
+                <h3>#user.name#</h3>
+                <p>#user.email#</p>
+                <span class="role">#user.role#</span>
+            </div>
+        </cfloop>
+    </div>
+</div>
+</cfoutput>
+```
+{% endtab %}
+{% endtabs %}
+
+BoxLang brings modern language features like enhanced member functions, improved syntax, and better type handling to your CBWIRE components.
+
 ### Assets Management
 
 CBWIRE 4.1 introduces `<cbwire:script>` and `<cbwire:assets>` functionality for better control over component-specific assets. These assets are automatically tracked throughout the request and appended to the `<head>` tag during page load.
