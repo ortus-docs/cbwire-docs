@@ -104,63 +104,6 @@ document.addEventListener('notifications-cleared', function(event) {
 });
 ```
 
-### Event Method Calls in Templates
-
-Templates now support `event.method()` calls, providing direct access to ColdBox event methods within your CBWIRE templates.
-
-```javascript
-// wires/TodoManager.cfc
-component extends="cbwire.models.Component" {
-    data = {
-        "todos" = [],
-        "newTodo" = ""
-    };
-    
-    function addTodo() {
-        if (len(data.newTodo)) {
-            arrayAppend(data.todos, {
-                "id" = createUUID(),
-                "text" = data.newTodo,
-                "completed" = false
-            });
-            data.newTodo = "";
-        }
-    }
-    
-    function toggleTodo(todoId) {
-        for (var todo in data.todos) {
-            if (todo.id == todoId) {
-                todo.completed = !todo.completed;
-            }
-        }
-    }
-}
-```
-
-```html
-<!-- wires/todoManager.cfm -->
-<cfoutput>
-<div class="todo-app">
-    <form wire:submit="addTodo">
-        <input wire:model="newTodo" placeholder="Add new todo" required>
-        <button type="submit">Add Todo</button>
-    </form>
-    
-    <div class="todo-list">
-        <cfloop array="#todos#" index="todo">
-            <div class="todo-item #todo.completed ? 'completed' : ''#">
-                <input 
-                    type="checkbox" 
-                    #todo.completed ? 'checked' : ''#
-                    wire:click="event.toggleTodo('#todo.id#')"
-                >
-                <span>#todo.text#</span>
-            </div>
-        </cfloop>
-    </div>
-</div>
-</cfoutput>
-```
 
 ## Enhancements
 
