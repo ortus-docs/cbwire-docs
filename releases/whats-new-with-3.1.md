@@ -197,20 +197,23 @@ component extends="cbwire.models.Component" {
 
 ### Template Helper Access
 
-Templates can now access ColdBox.cfc application helpers and module helpers directly.
+Templates can now access ColdBox application helpers and module helpers directly.
 
-```javascript
-// ColdBox.cfc
-function applicationHelper() {
-    return {
-        "formatDate" = function(date) {
-            return dateFormat(date, "mm/dd/yyyy");
-        },
-        "truncateText" = function(text, length = 50) {
-            return left(text, length) & (len(text) > length ? "..." : "");
-        }
-    };
+```html
+<!-- applicationHelper.cfm -->
+<cfscript>
+function formatDate(date) {
+    return dateFormat(date, "mm/dd/yyyy");
 }
+
+function truncateText(text, length = 50) {
+    return left(text, length) & (len(text) > length ? "..." : "");
+}
+
+function formatCurrency(amount) {
+    return dollarFormat(amount);
+}
+</cfscript>
 ```
 
 ```html
