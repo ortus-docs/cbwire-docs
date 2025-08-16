@@ -271,24 +271,35 @@ component extends="cbwire.models.Component" {
 
 ### Smooth Transitions with wire:transition
 
-Add smooth animations and transitions to your UI updates using the `wire:transition` directive.
+Add smooth animations and transitions to your UI updates using the `wire:transition` directive. This feature enhances user experience by making elements transition in and out smoothly, rather than just popping into view.
 
 ```html
-<!-- Fade transition -->
-<div wire:transition.fade>
-    <p>This content will fade in/out</p>
+<!-- Basic transition (default fade and scale) -->
+<div wire:transition>
+    <p>This content will fade and scale in/out</p>
 </div>
 
-<!-- Scale transition with duration -->
-<div wire:transition.scale.500ms>
-    <p>This content will scale with 500ms duration</p>
+<!-- Opacity-only transition with custom duration -->
+<div wire:transition.opacity.duration.300ms>
+    <p>This content will fade with 300ms duration</p>
 </div>
 
-<!-- Slide transition -->
-<div wire:transition.slide.left>
-    <p>This content will slide from the left</p>
+<!-- Scale transition from top origin -->
+<div wire:transition.scale.origin.top.duration.250ms>
+    <p>This content will scale from the top</p>
+</div>
+
+<!-- Out-only transition -->
+<div wire:transition.out.duration.500ms>
+    <p>This content will only animate when disappearing</p>
 </div>
 ```
+
+Available modifiers include:
+- **Directional**: `.in` (appear only), `.out` (disappear only)
+- **Duration**: `.duration.[?ms]` (e.g., `.duration.300ms`)
+- **Effects**: `.opacity` (fade only), `.scale` (scale only)
+- **Origins**: `.origin.top|bottom|left|right` (scale origin point)
 
 ### Request Bundling
 
