@@ -8,6 +8,7 @@ Before installing CBWIRE, ensure your system meets these requirements:
 
 ### BoxLang Requirements
 - **BoxLang 1.0+**
+- **CBWIRE 4.1+** (BoxLang support was introduced in version 4.1)
 - **OpenJDK 21** (required for BoxLang)
 - **ColdBox 6+**
 - **Required modules:**
