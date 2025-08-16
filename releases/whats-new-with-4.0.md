@@ -60,7 +60,23 @@ component extends="cbwire.models.Component" {
 
 ### Lazy Loading Components
 
-Improve application performance with lazy loading capabilities. Components can now be loaded on-demand, reducing initial page load times.
+Improve application performance with lazy loading capabilities. Components can now be loaded on-demand, reducing initial page load times. While the component loads, a placeholder is displayed to provide visual feedback to users.
+
+```html
+<!-- Lazy load a component using wire() with lazy=true -->
+#wire("Dashboard", {}, "", true)#
+
+<!-- Lazy load with parameters -->
+#wire("UserProfile", { "userId": 123 }, "", true)#
+
+<!-- Lazy load with key and parameters -->
+#wire("UserProfile", { "userId": 123 }, "user-profile-key", true)#
+
+<!-- Lazy load with isolated set to false -->
+#wire("SharedComponent", {}, "", true, false)#
+```
+
+Components can define a `placeholder()` method that returns HTML content to display while the component is loading. This provides a better user experience during the loading process.
 
 {% tabs %}
 {% tab title="BoxLang" %}
