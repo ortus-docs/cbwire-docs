@@ -214,7 +214,7 @@ Passed-in properties must have a data type of string, boolean, numeric, date, ar
 ## Nesting Components
 
 {% hint style="info" %}
-You can nest components as much as you need by simply calling **wire()** from within a  [template](templates.md) ( See [Nesting Components](components.md#nesting-components) ).
+You can nest components as much as you need by simply calling **wire()** from within a  [template](templates.md) ( See [Nesting Components](nesting-components.md) ).
 {% endhint %}
 
 ## CBWIREController
