@@ -31,7 +31,8 @@ class {
                 
                 // Security
                 "csrfEnabled": false,
-                "csrfStorage": "SessionStorage@cbstorages"
+                "csrfStorage": "SessionStorage@cbstorages",
+                "checksumValidation": true
             }
         };
     }
@@ -65,7 +66,8 @@ component {
                 
                 // Security
                 "csrfEnabled" = false,
-                "csrfStorage" = "SessionStorage@cbstorages"
+                "csrfStorage" = "SessionStorage@cbstorages",
+                "checksumValidation" = true
             }
         };
     }
@@ -273,6 +275,24 @@ moduleSettings = {
     }
 };
 ```
+
+### checksumValidation
+
+Enables or disables checksum validation for component payloads. This security feature validates the integrity of data sent between the client and server to prevent tampering.
+
+**Default:** `true`
+
+```javascript
+moduleSettings = {
+    "cbwire": {
+        "checksumValidation": false
+    }
+};
+```
+
+{% hint style="info" %}
+We recommend always leaving checksum validation enabled for security, but you can disable it as needed for debugging or specific use cases.
+{% endhint %}
 
 {% hint style="warning" %}
 CSRF protection will be enabled by default starting in CBWIRE 5.0. It's recommended to enable and test CSRF protection in your applications now to ensure compatibility.
