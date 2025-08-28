@@ -62,7 +62,7 @@ cbwire create wire name="userProfile" dataProps="name,email,isActive" actions="s
 
 | Option               | Type    | Description                                                                                                                          |
 | -------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `jsWireRef`          | Boolean | Includes `livewire:init` & `component.init` hooks with `window.wirename = $wire` reference                                         |
+| `jsWireRef`          | Boolean | Includes `livewire:init` & `component.init` hooks with `window._{name} = $wire` reference using the name provided in `name` argument |
 
 ### File Management
 
