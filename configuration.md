@@ -22,7 +22,7 @@ class {
                 "throwOnMissingSetterMethod": false,
                 
                 // Request Handling
-                "updateEndpoint": "/cbwire/updates",
+                "updateEndpoint": "/cbwire/update",
                 "maxUploadSeconds": 300, // 5 minutes
                 
                 // UI Features
