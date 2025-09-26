@@ -144,7 +144,7 @@ When nesting components, it's important to provide a **key** to help Livewire un
 
 ### Why Keys Matter
 
-Livewire treats each nested component as an island, but sometimes you want to remove or delete child components entirely. The `key` parameter is what Livewire looks at to determine if a child component still exists or if it should be removed from the DOM.
+Livewire treats each nested component as an island, meaning that each child component is truly its own separate UI component with its own data properties and functionality. Refreshing the parent does not automatically refresh the child components. However, sometimes you want to remove or delete child components entirely. The `key` parameter is what Livewire looks at to determine if a child component still exists or if it should be removed from the DOM.
 
 Without keys, when a parent component refreshes, Livewire may not properly identify which nested components have changed, leading to unexpected behavior or components not being properly cleaned up.
 
@@ -271,7 +271,7 @@ component extends="cbwire.models.Component" {
 ### Key Guidelines
 
 - **Use unique identifiers**: Base keys on database IDs, UUIDs, or other unique values
-- **Keep keys stable**: Don't use random values that change on each render
+- **Keep keys stable**: Don't use random values that change on each render unless you are wanting the child component to load new on every parent refresh
 - **Be descriptive**: Use meaningful key names like `"user-#userID#"` or `"form-#formType#"`
 - **Required for dynamic lists**: Always use keys when rendering nested components in loops
 - **Essential for conditional rendering**: Use keys when components are conditionally displayed
