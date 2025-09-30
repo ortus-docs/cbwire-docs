@@ -3,8 +3,6 @@ description: >-
   CBWIRE is a ColdBox module that uses Livewire and Alpine.js to help you build
   modern, reactive BoxLang and CFML applications in record time without building
   backend APIs.
-cover: .gitbook/assets/CleanShot 2025-08-08 at 04.10.09@2x.png
-coverY: 0
 ---
 
 # Introduction
