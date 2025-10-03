@@ -11,10 +11,6 @@ description: >-
 
 CBWIRE revolutionizes BoxLang and CFML web development by bringing reactive UI capabilities directly to your server-side code. Build dynamic, interactive interfaces without writing JavaScript, managing APIs, or dealing with complex frontend frameworks.
 
-## CFSummit 2025 2-Day Workshop
-
-[Register](https://www.eventbrite.com/e/workshop-building-reactive-uis-with-cbwire-tickets-1426617624719?aff=oddtdtcreator) for our upcoming 2-day CBWIRE workshop at CFSummit!
-
 ## Your First Component
 
 Let's create a reactive counter component to demonstrate CBWIRE's power. Download and install [CommandBox](https://www.ortussolutions.com/products/commandbox), then run these commands:
