@@ -131,3 +131,32 @@ function onUpdateCount( newValue, oldValue ) {
     }
 }
 ```
+
+### onUploadError
+
+Runs automatically when a file upload encounters an error (any HTTP response with a non-2xx status code). This allows you to handle upload failures gracefully in your CBWIRE components.
+
+```javascript
+function onUploadError( property, errors, multiple ) {
+    // Set error state
+    data.uploadFailed = true;
+
+    // Create user-friendly error message
+    data.errorMessage = "Failed to upload " & ( multiple ? "files" : "file" );
+
+    // Log the error for debugging
+    if ( !isNull( errors ) ) {
+        writeLog( type="error", text="Upload error for #property#: #serializeJSON(errors)#" );
+    }
+}
+```
+
+| Parameter | Type    | Description                                                                                              |
+| --------- | ------- | -------------------------------------------------------------------------------------------------------- |
+| property  | string  | The name of the data property associated with the file input                                             |
+| errors    | any     | The error response from the server. Will be null unless the HTTP status is 422, in which case it contains the response body |
+| multiple  | boolean | Indicates whether multiple files were being uploaded (true) or a single file (false)                     |
+
+{% hint style="info" %}
+See the [File Uploads](../features/file-uploads.md#handling-upload-errors) documentation for complete upload error handling information.
+{% endhint %}

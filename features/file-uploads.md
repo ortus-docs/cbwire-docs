@@ -190,6 +190,14 @@ When a file is uploaded, CBWIRE creates a FileUpload object with the following m
 | ----------- | ------------------------------------------------------- |
 | `destroy()` | Deletes temporary file and metadata (call after saving) |
 
+{% hint style="warning" %}
+Always call `destroy()` on FileUpload objects after saving to permanent storage to clean up temporary files.
+{% endhint %}
+
+{% hint style="info" %}
+Image previews using `getPreviewURL()` only work with image file types. Use `isImage()` to check before displaying previews.
+{% endhint %}
+
 ## Loading States
 
 Display upload progress using wire:loading directives:
@@ -206,10 +214,132 @@ Display upload progress using wire:loading directives:
 </button>
 ```
 
-{% hint style="warning" %}
-Always call `destroy()` on FileUpload objects after saving to permanent storage to clean up temporary files.
-{% endhint %}
+## Handling Upload Errors
+
+The `onUploadError()` lifecycle hook is automatically called when a file upload fails with any HTTP response outside the 2xx range. This allows you to handle upload failures gracefully and provide feedback to users.
+
+### Method Signature
+
+```javascript
+function onUploadError( property, errors, multiple )
+```
+
+| Parameter | Type    | Description                                                                                              |
+| --------- | ------- | -------------------------------------------------------------------------------------------------------- |
+| property  | string  | The name of the data property associated with the file input                                             |
+| errors    | any     | The error response from the server. Will be null unless the HTTP status is 422, in which case it contains the response body |
+| multiple  | boolean | Indicates whether multiple files were being uploaded (true) or a single file (false)                     |
+
+### Usage Example
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```javascript
+// wires/PhotoUpload.bx
+class extends="cbwire.models.Component" {
+    data = {
+        "photo": "",
+        "uploadFailed": false,
+        "errorMessage": ""
+    };
+
+    function onUploadError( property, errors, multiple ) {
+        // Set error state
+        data.uploadFailed = true;
+
+        // Create user-friendly error message
+        data.errorMessage = "Failed to upload " & ( multiple ? "files" : "file" ) & " for " & property;
+
+        // Log the error for debugging
+        if ( !isNull( errors ) ) {
+            writeLog( type="error", text="Upload error for #property#: #serializeJSON(errors)#" );
+        }
+    }
+}
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```javascript
+// wires/PhotoUpload.cfc
+component extends="cbwire.models.Component" {
+    data = {
+        "photo" = "",
+        "uploadFailed" = false,
+        "errorMessage" = ""
+    };
+
+    function onUploadError( property, errors, multiple ) {
+        // Set error state
+        data.uploadFailed = true;
+
+        // Create user-friendly error message
+        data.errorMessage = "Failed to upload " & ( multiple ? "files" : "file" ) & " for " & property;
+
+        // Log the error for debugging
+        if ( !isNull( errors ) ) {
+            writeLog( type="error", text="Upload error for #property#: #serializeJSON(errors)#" );
+        }
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```html
+<!-- wires/photoUpload.bxm -->
+<bx:output>
+<div>
+    <input type="file" wire:model="photo">
+
+    <bx:if uploadFailed>
+        <div class="alert alert-danger">
+            #errorMessage#
+        </div>
+    </bx:if>
+</div>
+</bx:output>
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```html
+<!-- wires/photoUpload.cfm -->
+<cfoutput>
+<div>
+    <input type="file" wire:model="photo">
+
+    <cfif uploadFailed>
+        <div class="alert alert-danger">
+            #errorMessage#
+        </div>
+    </cfif>
+</div>
+</cfoutput>
+```
+{% endtab %}
+{% endtabs %}
+
+### When It's Called
+
+The `onUploadError()` hook is triggered when:
+
+- The upload server returns any HTTP status code outside the 2xx range (200-299)
+- Network errors occur during upload
+- The server is unreachable
+- Any other upload failure scenario
+
+### Error Information
+
+The `errors` parameter provides different information based on the HTTP status:
+
+- **422 (Unprocessable Entity)**: Contains the full response body (typically validation errors)
+- **Other error codes**: Will be null
+
+You can check the response status in your server logs or implement custom error handling based on your application's needs.
 
 {% hint style="info" %}
-Image previews using `getPreviewURL()` only work with image file types. Use `isImage()` to check before displaying previews.
+The `onUploadError()` hook is optional. If not defined, upload errors will be handled silently by the JavaScript error callback. The hook is called AFTER the `upload:errored` event is dispatched to the JavaScript layer. All three parameters are always provided, though errors may be null.
 {% endhint %}
