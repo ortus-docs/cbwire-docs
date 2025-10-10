@@ -155,6 +155,8 @@ CBWIRE handles file uploads through a multi-step process:
 3. **Create FileUpload object** - The data property becomes a FileUpload instance
 4. **Process file** - Use FileUpload methods to save, validate, or manipulate the file
 
+By default, CBWIRE stores uploaded files in its internal temporary storage directory. You can configure a custom temporary storage path using the `storagePath` setting in your configuration. This is useful for distributed server environments where temporary files need to be shared across multiple servers. See the [Configuration](../configuration.md#storagepath) documentation for details.
+
 ## FileUpload Methods
 
 When a file is uploaded, CBWIRE creates a FileUpload object with the following methods:

@@ -191,6 +191,42 @@ CBWIRE 5.0 now provides access to the ColdBox event object (request context) dir
 For example, if an interceptor sets a value in the PRC scope for your main routes but doesn't fire for `/cbwire/update`, that value won't be available during CBWIRE re-renders. If you need values from RC or PRC scopes, store them as data properties in your component's `onMount()` method to ensure they persist across re-renders.
 {% endhint %}
 
+### Custom Temporary Storage Path
+
+CBWIRE 5.0 introduces the ability to configure a custom directory path for temporary file uploads using the new `storagePath` configuration setting. This enhancement is particularly valuable in distributed server environments where temporary files need to be shared across multiple front-end servers.
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```javascript
+// config/ColdBox.bx
+moduleSettings = {
+    "cbwire": {
+        "storagePath": "/shared/temp/uploads"
+    }
+};
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```javascript
+// config/ColdBox.cfc
+moduleSettings = {
+    "cbwire" = {
+        "storagePath" = "/shared/temp/uploads"
+    }
+};
+```
+{% endtab %}
+{% endtabs %}
+
+When configured, CBWIRE will use the specified directory instead of its default internal temporary storage location. This enables:
+
+* Sharing temporary uploads across clustered servers using network-mounted storage
+* Using specific disk volumes optimized for temporary file operations
+* Implementing custom cleanup or monitoring policies on temporary file storage
+
+See the [Configuration](../configuration.md#storagepath) and [File Uploads](../features/file-uploads.md) documentation for complete details.
+
 ## Bug Fixes
 
 ### File Upload Endpoint Configuration

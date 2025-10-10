@@ -24,6 +24,7 @@ class {
                 // Request Handling
                 "updateEndpoint": "/cbwire/update",
                 "maxUploadSeconds": 300, // 5 minutes
+                "storagePath": "", // Custom temporary storage path for file uploads
                 
                 // UI Features
                 "showProgressBar": true,
@@ -59,6 +60,7 @@ component {
                 // Request Handling
                 "updateEndpoint" = "/cbwire/updates",
                 "maxUploadSeconds" = 300, // 5 minutes
+                "storagePath" = "", // Custom temporary storage path for file uploads
                 
                 // UI Features
                 "showProgressBar" = true,
@@ -207,6 +209,46 @@ moduleSettings = {
     }
 };
 ```
+
+### storagePath
+
+Configures a custom directory path for temporary file uploads. This is particularly useful in distributed server environments where you need to share temporary files across multiple front-end servers.
+
+**Default:** `""` (uses CBWIRE's default internal temporary storage)
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```javascript
+// config/ColdBox.bx
+moduleSettings = {
+    "cbwire": {
+        "storagePath": "/shared/temp/uploads"
+    }
+};
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```javascript
+// config/ColdBox.cfc
+moduleSettings = {
+    "cbwire" = {
+        "storagePath" = "/shared/temp/uploads"
+    }
+};
+```
+{% endtab %}
+{% endtabs %}
+
+When set, CBWIRE will use this directory instead of its default internal temporary storage location for uploaded files. This enables scenarios such as:
+
+* Sharing temporary uploads across clustered servers using a network-mounted directory
+* Using a specific disk volume optimized for temporary file operations
+* Implementing custom cleanup or monitoring policies on temporary file storage
+
+{% hint style="info" %}
+Ensure the configured path exists and has appropriate read/write permissions for your application server.
+{% endhint %}
 
 {% hint style="info" %}
 When URL rewriting is disabled, remember to include `/index.cfm` in your `updateEndpoint` configuration.
