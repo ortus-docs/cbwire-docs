@@ -193,6 +193,12 @@ For example, if an interceptor sets a value in the PRC scope for your main route
 
 ## Bug Fixes
 
+### File Upload Endpoint Configuration
+
+Fixed file uploads to respect the `updateEndpoint` configuration setting. Previously, file uploads used a hardcoded `/cbwire/upload` path instead of dynamically generating the upload endpoint based on the configured update endpoint. File uploads now properly derive their endpoint from the `updateEndpoint` configuration, ensuring consistent routing behavior.
+
+For example, if you configure a custom update endpoint like `/index.bxm/cbwire/update`, file uploads will now correctly use `/index.bxm/cbwire/upload` instead of the hardcoded path.
+
 ### File Upload Temporary Directory Path
 
 Fixed incorrect file path generation in the `getUploadTempDirectory()` method. The method was generating malformed paths like `cbwiremodels/tmp` instead of `cbwire/models/tmp` due to missing path separation in the path concatenation. This has been corrected to ensure proper temporary directory path resolution for file uploads.
