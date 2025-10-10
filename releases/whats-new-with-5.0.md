@@ -349,6 +349,10 @@ Wire component contains no HTML elements. It is empty.
 
 Improved component scanning and dependency injection to eliminate unnecessary error logging for single file components. Previously, you might see multiple "ioc.Injector" error messages stating components were "not located in any declared scan location(s)" during component initialization. These harmless but noisy error messages have been resolved, resulting in cleaner application logs.
 
+### Enhanced Error Handling and Serialization
+
+CBWIRE 5.0 includes improvements to error handling in snapshot deserialization and effects processing. Error handling has been refactored to remove exception causes from thrown exceptions, and effects deserialization now returns an empty struct for invalid JSON instead of throwing errors. Additionally, HTML entity encoding in snapshot and effects parsing has been improved to properly handle HTML content with quotes.
+
 ### External Module Location Support
 
 CBWIRE 5.0 now supports loading wire components from external module locations defined in your ColdBox configuration. Previously, CBWIRE could only load components from the standard `/modules` directory. Now you can reference wire components from modules located in external directories configured via `modulesExternalLocation`.
