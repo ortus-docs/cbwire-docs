@@ -48,6 +48,7 @@
 
 * [wire:click](template-directives/wire-click.md)
 * [wire:confirm](template-directives/wire-confirm.md)
+* [wire:current](template-directives/wire-current.md)
 * [wire:dirty](template-directives/wire-dirty.md)
 * [wire:ignore](template-directives/wire-ignore.md)
 * [wire:init](template-directives/wire-init.md)
