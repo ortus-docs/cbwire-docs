@@ -5,6 +5,7 @@
 * [Getting Started](getting-started.md)
 * [Configuration](configuration.md)
 * [Releases](releases/README.md)
+  * [What's New With 5.0](releases/whats-new-with-5.0.md)
   * [What's New With 4.1](releases/whats-new-with-4.1.md)
   * [What's New With 4.0](releases/whats-new-with-4.0.md)
   * [What's New With 3.2](releases/whats-new-with-3.2.md)
