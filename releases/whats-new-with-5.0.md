@@ -284,6 +284,10 @@ The HTML content of the wire component must contain at least one external elemen
 Wire component contains no HTML elements. It is empty.
 ```
 
+### Reduced Dependency Injection Error Logging
+
+Improved component scanning and dependency injection to eliminate unnecessary error logging for single file components. Previously, you might see multiple "ioc.Injector" error messages stating components were "not located in any declared scan location(s)" during component initialization. These harmless but noisy error messages have been resolved, resulting in cleaner application logs.
+
 ## Breaking Changes
 
 ### Component Parameter Auto-Population
