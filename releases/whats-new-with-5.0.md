@@ -4,6 +4,65 @@
 
 ## Enhancements
 
+### BoxLang Support
+
+CBWIRE 5.0 provides full support for BoxLang. BoxLang brings enhanced performance, improved syntax, and modern language features to your CBWIRE applications.
+
+All CBWIRE documentation has been updated with BoxLang examples alongside CFML examples, making it easy to build reactive applications with BoxLang's powerful feature set. Components can use BoxLang's `.bx` extension for classes and `.bxm` extension for templates, with full support for BoxLang's modern syntax including:
+
+- Enhanced member functions (`.filter()`, `.map()`, `.reduce()`, `.each()`)
+- Improved null handling with `isNull()` checks
+- Modern class syntax with cleaner property definitions
+- BoxLang-specific tags like `<bx:output>`, `<bx:if>`, `<bx:loop>`
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```javascript
+// wires/UserDashboard.bx
+class extends="cbwire.models.Component" {
+    data = {
+        "users": [],
+        "searchTerm": ""
+    };
+
+    function onMount() {
+        data.users = getUserService().getAllUsers();
+    }
+
+    function filteredUsers() computed {
+        return data.users.filter(function(user) {
+            return !data.searchTerm.len() ||
+                   user.name.findNoCase(data.searchTerm);
+        });
+    }
+}
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```javascript
+// wires/UserDashboard.cfc
+component extends="cbwire.models.Component" {
+    data = {
+        "users" = [],
+        "searchTerm" = ""
+    };
+
+    function onMount() {
+        data.users = getUserService().getAllUsers();
+    }
+
+    function filteredUsers() computed {
+        return arrayFilter(data.users, function(user) {
+            return !len(data.searchTerm) ||
+                   findNoCase(data.searchTerm, user.name);
+        });
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+
 ### File Upload Error Handling
 
 CBWIRE 5.0 introduces the `onUploadError()` lifecycle hook, which is automatically called when a file upload encounters an error. This enhancement provides graceful error handling for failed uploads, allowing you to display user-friendly error messages and implement custom recovery logic.
