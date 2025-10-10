@@ -572,3 +572,7 @@ Fixed incorrect file path generation in the `getUploadTempDirectory()` method. T
 ### Temporary Directory Race Condition
 
 Fixed a race condition in higher-traffic environments that caused errors when multiple requests attempted to create the temporary directory simultaneously. The error "Can't create directory [/app/modules/cbwire/models/tmp], directory already exists" would occur when concurrent requests tried to create the same directory. Added proper locking mechanisms to prevent this race condition and ensure thread-safe directory creation.
+
+### Lazy Loading onMount Error
+
+Fixed an issue where lazy loading would always attempt to call `onMount()` and throw an error if the method didn't exist on the component. CBWIRE now checks if the `onMount()` method exists before attempting to call it during lazy loading.
