@@ -540,6 +540,19 @@ CBWIRE 5.0 updates its supported CFML engines to align with modern, actively mai
 
 If you are still using Adobe ColdFusion 2018, you should remain on CBWIRE 4.x or upgrade to a supported CFML engine before upgrading to CBWIRE 5.0.
 
+### Framework Support Updates
+
+CBWIRE 5.0 adds support for the latest ColdBox framework versions.
+
+**Added Support:**
+- ColdBox 7+
+- ColdBox 8+
+
+**Supported ColdBox Versions:**
+- ColdBox 6+
+- ColdBox 7+
+- ColdBox 8+
+
 ## Bug Fixes
 
 ### File Upload Endpoint Configuration
