@@ -191,6 +191,46 @@ CBWIRE 5.0 now provides access to the ColdBox event object (request context) dir
 For example, if an interceptor sets a value in the PRC scope for your main routes but doesn't fire for `/cbwire/update`, that value won't be available during CBWIRE re-renders. If you need values from RC or PRC scopes, store them as data properties in your component's `onMount()` method to ensure they persist across re-renders.
 {% endhint %}
 
+### Single File BoxLang Components
+
+CBWIRE 5.0 introduces support for single file BoxLang components using the `.bxm` file extension. This allows you to define both your component's template and logic in a single file, providing a more compact and streamlined development experience.
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```html
+<!-- wires/greeting.bxm -->
+<bx:output>
+<div>
+    <h1>#title#</h1>
+    <p>#message#</p>
+    <button wire:click="updateMessage">Update Message</button>
+</div>
+</bx:output>
+
+<bx:script>
+// @startWire
+data = {
+    "title": "Welcome to CBWIRE",
+    "message": "Hello from a single file component!"
+};
+
+function updateMessage() {
+    data.message = "Message updated at " & now();
+}
+// @endWire
+</bx:script>
+```
+{% endtab %}
+{% endtabs %}
+
+Single file components use two main sections:
+- **`<bx:output>`**: Contains your component's HTML template
+- **`<bx:script>`**: Contains your component's data properties and methods, wrapped in `// @startWire` and `// @endWire` comments
+
+This approach keeps your component's template and logic together in one file, making it easier to understand and maintain smaller components.
+
+See the [Single-file Components](../features/single-file-components.md) documentation for complete usage information.
+
 ### Custom Temporary Storage Path
 
 CBWIRE 5.0 introduces the ability to configure a custom directory path for temporary file uploads using the new `storagePath` configuration setting. This enhancement is particularly valuable in distributed server environments where temporary files need to be shared across multiple front-end servers.
