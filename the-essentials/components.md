@@ -199,13 +199,57 @@ CBWIRE only executes **onMount()** once when the component is initially rendered
 
 ## Auto Populating Data Properties
 
-Properties you pass into your component as params will be automatically populated if **onMount()** is not defined and a matching [data property](properties.md) is found.
+Properties you pass into your component as params will be automatically populated **only if `onMount()` is not defined** and a matching [data property](properties.md) is found.
 
 ```html
 <div>
     #wire( name="ShowPost", params={ title: "Some title" } )#
 </div>
 ```
+
+If you define an `onMount()` method, you must manually set any passed parameters inside the method:
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```javascript
+// ./wires/ShowPost.bx
+class extends="cbwire.models.Component" {
+    data = {
+        "title": "",
+        "author": ""
+    };
+
+    function onMount( params ) {
+        // Must explicitly set parameters when onMount() is defined
+        data.title = params.title;
+        data.author = params.author;
+    }
+}
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```javascript
+// ./wires/ShowPost.cfc
+component extends="cbwire.models.Component" {
+    data = {
+        "title" = "",
+        "author" = ""
+    };
+
+    function onMount( params ) {
+        // Must explicitly set parameters when onMount() is defined
+        data.title = params.title;
+        data.author = params.author;
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+
+{% hint style="warning" %}
+**Breaking Change in CBWIRE 5.0:** When `onMount()` is defined, parameters are no longer automatically set to data properties. You must explicitly assign them inside the `onMount()` method. This change provides more explicit control over component initialization.
+{% endhint %}
 
 {% hint style="warning" %}
 Passed-in properties must have a data type of string, boolean, numeric, date, array, or struct.

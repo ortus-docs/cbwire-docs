@@ -227,6 +227,71 @@ When configured, CBWIRE will use the specified directory instead of its default 
 
 See the [Configuration](../configuration.md#storagepath) and [File Uploads](../features/file-uploads.md) documentation for complete details.
 
+## Breaking Changes
+
+### Component Parameter Auto-Population
+
+When a component defines an `onMount()` method, parameters passed via `wire()` are no longer automatically set to matching data properties. You must now explicitly assign parameters inside the `onMount()` method.
+
+**Previous Behavior (CBWIRE 4.x):**
+Parameters would automatically populate data properties even when `onMount()` was defined.
+
+**New Behavior (CBWIRE 5.0):**
+Parameters are only auto-populated when `onMount()` is NOT defined. If you define `onMount()`, you must manually set the parameters.
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```javascript
+// ./wires/ShowPost.bx
+class extends="cbwire.models.Component" {
+    data = {
+        "title": "",
+        "author": ""
+    };
+
+    function onMount( params ) {
+        // Now required: explicitly set parameters when onMount() is defined
+        data.title = params.title;
+        data.author = params.author;
+    }
+}
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```javascript
+// ./wires/ShowPost.cfc
+component extends="cbwire.models.Component" {
+    data = {
+        "title" = "",
+        "author" = ""
+    };
+
+    function onMount( params ) {
+        // Now required: explicitly set parameters when onMount() is defined
+        data.title = params.title;
+        data.author = params.author;
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+
+**Migration Guide:**
+
+If your components define `onMount()` and rely on automatic parameter population, update them to explicitly assign parameters:
+
+```javascript
+function onMount( params ) {
+    // Add explicit assignments for all parameters you need
+    data.propertyName = params.propertyName;
+}
+```
+
+This change provides more explicit control over component initialization and makes the behavior more predictable.
+
+See the [Components](../the-essentials/components.md#auto-populating-data-properties) documentation for complete details.
+
 ## Bug Fixes
 
 ### File Upload Endpoint Configuration
