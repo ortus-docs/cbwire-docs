@@ -187,6 +187,10 @@ component extends="cbwire.models.Component" {
 </div>
 ```
 
+{% hint style="info" %}
+Computed properties are cached and only executed when first called or when their dependencies change. See [Computed Properties](computed-properties.md) for details.
+{% endhint %}
+
 ## Explicit Templates
 
 Override default template location using the `onRender()` method:
@@ -295,13 +299,5 @@ Access the ColdBox event object (request context) directly in your templates to 
 {% endtabs %}
 
 {% hint style="warning" %}
-Templates must have a single outer element for CBWIRE's DOM diffing to work correctly.
-{% endhint %}
-
-{% hint style="warning" %}
 Be cautious when using `event.getCollection()` (RC scope) or `event.getPrivateCollection()` (PRC scope) in templates. CBWIRE fires background requests to `/cbwire/update` on component re-renders, which may not have access to values set by interceptors or handlers that only run on your primary routes. If you need values from RC or PRC scopes, store them as data properties in your component's `onMount()` method to ensure they persist across re-renders.
-{% endhint %}
-
-{% hint style="info" %}
-Computed properties are cached and only executed when first called or when their dependencies change. See [Computed Properties](computed-properties.md) for details.
 {% endhint %}
