@@ -294,6 +294,8 @@ See the [Single-file Components](../features/single-file-components.md) document
 
 CBWIRE 5.0 introduces the ability to configure a custom directory path for temporary file uploads using the new `storagePath` configuration setting. This enhancement is particularly valuable in distributed server environments where temporary files need to be shared across multiple front-end servers.
 
+Contributed by community member **David Moreno**.
+
 {% tabs %}
 {% tab title="BoxLang" %}
 ```javascript
