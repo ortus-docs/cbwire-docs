@@ -303,3 +303,7 @@ For example, if you configure a custom update endpoint like `/index.bxm/cbwire/u
 ### File Upload Temporary Directory Path
 
 Fixed incorrect file path generation in the `getUploadTempDirectory()` method. The method was generating malformed paths like `cbwiremodels/tmp` instead of `cbwire/models/tmp` due to missing path separation in the path concatenation. This has been corrected to ensure proper temporary directory path resolution for file uploads.
+
+### Temporary Directory Race Condition
+
+Fixed a race condition in higher-traffic environments that caused errors when multiple requests attempted to create the temporary directory simultaneously. The error "Can't create directory [/app/modules/cbwire/models/tmp], directory already exists" would occur when concurrent requests tried to create the same directory. Added proper locking mechanisms to prevent this race condition and ensure thread-safe directory creation.
