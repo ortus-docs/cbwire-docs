@@ -81,3 +81,4 @@ The documentation is structured as a GitBook project with the following organiza
 - keep basic usage examples minimal - you're only trying to show the user the specific directive being documented
 - when i tell you to improve a template directive page (wire:), resturcture the page to match other pages such as wire:transition but make sure to not hallucinate things that don't exist such as available modifiers. use the original source material to check your work
 - always check yourself to see if you are repeating yourself.
+- Always double check your documentation changes to make sure content is still in the appropriate sections
