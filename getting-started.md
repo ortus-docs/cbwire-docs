@@ -9,7 +9,7 @@ Before installing CBWIRE, ensure your system meets these requirements:
 ### BoxLang Requirements
 
 * **BoxLang 1.0+**
-* **CBWIRE 4.1+** (BoxLang support was introduced in version 4.1)
+* **CBWIRE 5.0+** (BoxLang support was introduced in version 4.1)
 * **OpenJDK 21** (required for BoxLang)
 * **ColdBox 6+**
 * **Required modules:**
@@ -18,7 +18,8 @@ Before installing CBWIRE, ensure your system meets these requirements:
 
 ### CFML Requirements
 
-* **Adobe ColdFusion 2021+** or **Lucee 5+**
+* **Adobe ColdFusion 2021+**, **Adobe ColdFusion 2023+**, or **Adobe ColdFusion 2025+**
+* **Lucee 5.3+** or **Lucee 6.0+**
 * **ColdBox 6+**
 
 ## Installation
@@ -34,7 +35,7 @@ If you don't have CommandBox installed, download it from [ortussolutions.com/pro
 Navigate to your ColdBox application root and run:
 
 ```bash
-box install cbwire@4
+box install cbwire@5
 ```
 
 For the latest development version:
@@ -86,7 +87,7 @@ The compatibility modules are only required for BoxLang applications. CFML appli
 
 ## Asset Integration
 
-CBWIRE requires CSS and JavaScript assets to function properly. By default, CBWIRE 4 automatically injects these assets into your application's layout, so no manual configuration is needed.
+CBWIRE requires CSS and JavaScript assets to function properly. By default, CBWIRE automatically injects these assets into your application's layout, so no manual configuration is needed.
 
 ### Automatic Asset Injection (Default)
 
@@ -190,5 +191,5 @@ CBWIRE requires its CSS and JavaScript assets to function. If components aren't 
 {% endhint %}
 
 {% hint style="info" %}
-Previous versions of CBWIRE required manual asset inclusion. CBWIRE 4 automatically handles this by default, making setup much simpler.
+Previous versions of CBWIRE required manual asset inclusion. CBWIRE 4+ automatically handles this by default, making setup much simpler.
 {% endhint %}

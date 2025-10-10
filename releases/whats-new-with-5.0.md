@@ -516,15 +516,23 @@ This change provides more explicit control over component initialization and mak
 
 See the [Components](../the-essentials/components.md#auto-populating-data-properties) documentation for complete details.
 
-### Adobe ColdFusion 2018 Support Removed
+### CFML Engine Support Updates
 
-CBWIRE 5.0 removes support for Adobe ColdFusion 2018, as it has reached end-of-life and is no longer officially supported by Adobe. CBWIRE 5.0 requires Adobe ColdFusion 2021 or later, Lucee 5.3 or later, or BoxLang.
+CBWIRE 5.0 updates its supported CFML engines to align with modern, actively maintained versions.
+
+**Added Support:**
+- Lucee 6.0+
+
+**Removed Support:**
+- Adobe ColdFusion 2018 (reached end-of-life)
 
 **Supported Engines:**
 - BoxLang
 - Lucee 5.3+
+- Lucee 6.0+
 - Adobe ColdFusion 2021+
 - Adobe ColdFusion 2023+
+- Adobe ColdFusion 2025+
 
 If you are still using Adobe ColdFusion 2018, you should remain on CBWIRE 4.x or upgrade to a supported CFML engine before upgrading to CBWIRE 5.0.
 
