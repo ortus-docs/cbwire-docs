@@ -576,3 +576,7 @@ Fixed a race condition in higher-traffic environments that caused errors when mu
 ### Lazy Loading onMount Error
 
 Fixed an issue where lazy loading would always attempt to call `onMount()` and throw an error if the method didn't exist on the component. CBWIRE now checks if the `onMount()` method exists before attempting to call it during lazy loading.
+
+### Wires Location Configuration
+
+Fixed the `wiresLocation` configuration setting not being used when set to anything other than the default "wires" value. The configuration setting now properly applies custom wire component locations as specified in your module settings.
