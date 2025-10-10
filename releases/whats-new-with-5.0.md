@@ -4,6 +4,12 @@
 
 ## Enhancements
 
+### Livewire v3.6.4
+
+Upgraded the underlying Livewire JavaScript to v3.6.4, bringing new features including:
+
+- **`wire:current`** - Directive allows you to easily detect and style currently active links on a page
+
 ### BoxLang Support
 
 Full support for BoxLang brings enhanced performance, improved syntax, and modern language features to your applications. All documentation has been updated with BoxLang examples alongside CFML examples. Components use the `.bx` extension for classes and `.bxm` extension for templates, with support for:
