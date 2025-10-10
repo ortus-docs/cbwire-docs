@@ -258,8 +258,48 @@ Access global helper methods from installed ColdBox modules:
 </div>
 ```
 
+## ColdBox Event Object
+
+Access the ColdBox event object (request context) directly in your templates to use helpful methods like `event.buildLink()` for generating URLs:
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```html
+<!-- wires/navigation.bxm -->
+<bx:output>
+<nav>
+    <ul>
+        <li><a href="#event.buildLink('dashboard')#">Dashboard</a></li>
+        <li><a href="#event.buildLink('profile')#">Profile</a></li>
+        <li><a href="#event.buildLink('settings')#">Settings</a></li>
+    </ul>
+</nav>
+</bx:output>
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```html
+<!-- wires/navigation.cfm -->
+<cfoutput>
+<nav>
+    <ul>
+        <li><a href="#event.buildLink('dashboard')#">Dashboard</a></li>
+        <li><a href="#event.buildLink('profile')#">Profile</a></li>
+        <li><a href="#event.buildLink('settings')#">Settings</a></li>
+    </ul>
+</nav>
+</cfoutput>
+```
+{% endtab %}
+{% endtabs %}
+
 {% hint style="warning" %}
 Templates must have a single outer element for CBWIRE's DOM diffing to work correctly.
+{% endhint %}
+
+{% hint style="warning" %}
+Be cautious when using `event.getCollection()` (RC scope) or `event.getPrivateCollection()` (PRC scope) in templates. CBWIRE fires background requests to `/cbwire/update` on component re-renders, which may not have access to values set by interceptors or handlers that only run on your primary routes. If you need values from RC or PRC scopes, store them as data properties in your component's `onMount()` method to ensure they persist across re-renders.
 {% endhint %}
 
 {% hint style="info" %}

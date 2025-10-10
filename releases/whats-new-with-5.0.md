@@ -148,3 +148,45 @@ The hook is triggered when:
 * Any other upload failure scenario
 
 See the [File Upload Error Handling](../features/file-uploads.md#handling-upload-errors) documentation for complete usage information.
+
+### Event Object Access in Templates
+
+CBWIRE 5.0 now provides access to the ColdBox event object (request context) directly in your templates. This allows you to use helpful methods like `event.buildLink()` for generating URLs within your CBWIRE components.
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```html
+<!-- wires/navigation.bxm -->
+<bx:output>
+<nav>
+    <ul>
+        <li><a href="#event.buildLink('dashboard')#">Dashboard</a></li>
+        <li><a href="#event.buildLink('profile')#">Profile</a></li>
+        <li><a href="#event.buildLink('settings')#">Settings</a></li>
+    </ul>
+</nav>
+</bx:output>
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```html
+<!-- wires/navigation.cfm -->
+<cfoutput>
+<nav>
+    <ul>
+        <li><a href="#event.buildLink('dashboard')#">Dashboard</a></li>
+        <li><a href="#event.buildLink('profile')#">Profile</a></li>
+        <li><a href="#event.buildLink('settings')#">Settings</a></li>
+    </ul>
+</nav>
+</cfoutput>
+```
+{% endtab %}
+{% endtabs %}
+
+{% hint style="warning" %}
+**Important:** Be cautious when using `event.getCollection()` (RC scope) or `event.getPrivateCollection()` (PRC scope) in CBWIRE templates. CBWIRE fires background requests to `/cbwire/update` on component re-renders, which may not have access to values set by interceptors or handlers that only run on your primary routes.
+
+For example, if an interceptor sets a value in the PRC scope for your main routes but doesn't fire for `/cbwire/update`, that value won't be available during CBWIRE re-renders. If you need values from RC or PRC scopes, store them as data properties in your component's `onMount()` method to ensure they persist across re-renders.
+{% endhint %}
