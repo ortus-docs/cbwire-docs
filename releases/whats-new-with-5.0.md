@@ -267,6 +267,23 @@ When configured, CBWIRE will use the specified directory instead of its default 
 
 See the [Configuration](../configuration.md#storagepath) and [File Uploads](../features/file-uploads.md) documentation for complete details.
 
+### Improved Error Messaging for Empty Components
+
+CBWIRE 5.0 provides clearer error messages when component templates are empty or missing HTML elements. Previously, you would encounter a cryptic error like "Cannot return first element of array; array is empty" when a component template had no HTML content. Now, CBWIRE displays a descriptive error message that clearly explains the issue and how to fix it.
+
+Contributed by community member **David Moreno**.
+
+**Previous Error (CBWIRE 4.x):**
+```
+Cannot return first element of array; array is empty
+```
+
+**New Error (CBWIRE 5.0):**
+```
+The HTML content of the wire component must contain at least one external element.
+Wire component contains no HTML elements. It is empty.
+```
+
 ## Breaking Changes
 
 ### Component Parameter Auto-Population
