@@ -190,3 +190,9 @@ CBWIRE 5.0 now provides access to the ColdBox event object (request context) dir
 
 For example, if an interceptor sets a value in the PRC scope for your main routes but doesn't fire for `/cbwire/update`, that value won't be available during CBWIRE re-renders. If you need values from RC or PRC scopes, store them as data properties in your component's `onMount()` method to ensure they persist across re-renders.
 {% endhint %}
+
+## Bug Fixes
+
+### File Upload Temporary Directory Path
+
+Fixed incorrect file path generation in the `getUploadTempDirectory()` method. The method was generating malformed paths like `cbwiremodels/tmp` instead of `cbwire/models/tmp` due to missing path separation in the path concatenation. This has been corrected to ensure proper temporary directory path resolution for file uploads.
