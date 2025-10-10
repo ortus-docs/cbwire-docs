@@ -4,9 +4,9 @@
 
 ## New Features
 
-### BoxLang Support
+### Limited  BoxLang Support
 
-CBWIRE 4.1 introduces full BoxLang support, allowing you to build components and templates using BoxLang's powerful, modular, and modern feature set. This opens up a whole new world of possibilities for CBWIRE development with BoxLang's enhanced syntax and capabilities.
+CBWIRE 4.1 introduces BoxLang support, allowing you to build components and templates using BoxLang's powerful, modular, and modern feature set. This opens up a whole new world of possibilities for CBWIRE development with BoxLang's enhanced syntax and capabilities.
 
 **Requirements:**
 
