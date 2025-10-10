@@ -353,6 +353,10 @@ Improved component scanning and dependency injection to eliminate unnecessary er
 
 CBWIRE 5.0 includes improvements to error handling in snapshot deserialization and effects processing. Error handling has been refactored to remove exception causes from thrown exceptions, and effects deserialization now returns an empty struct for invalid JSON instead of throwing errors. Additionally, HTML entity encoding in snapshot and effects parsing has been improved to properly handle HTML content with quotes.
 
+### Thread-Safe Single File Component Building
+
+CBWIRE 5.0 adds locking mechanisms to ensure thread-safe building of single file components. This prevents race conditions in high-traffic environments where multiple requests might attempt to build the same component simultaneously.
+
 ### External Module Location Support
 
 CBWIRE 5.0 now supports loading wire components from external module locations defined in your ColdBox configuration. Previously, CBWIRE could only load components from the standard `/modules` directory. Now you can reference wire components from modules located in external directories configured via `modulesExternalLocation`.
