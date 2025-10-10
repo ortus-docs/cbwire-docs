@@ -288,6 +288,48 @@ Wire component contains no HTML elements. It is empty.
 
 Improved component scanning and dependency injection to eliminate unnecessary error logging for single file components. Previously, you might see multiple "ioc.Injector" error messages stating components were "not located in any declared scan location(s)" during component initialization. These harmless but noisy error messages have been resolved, resulting in cleaner application logs.
 
+### External Module Location Support
+
+CBWIRE 5.0 now supports loading wire components from external module locations defined in your ColdBox configuration. Previously, CBWIRE could only load components from the standard `/modules` directory. Now you can reference wire components from modules located in external directories configured via `modulesExternalLocation`.
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```javascript
+// config/ColdBox.bx
+class {
+    function configure() {
+        modulesExternalLocation = [
+            "/modules_external"
+        ];
+    }
+}
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```javascript
+// config/ColdBox.cfc
+component {
+    function configure() {
+        modulesExternalLocation = [
+            "/modules_external"
+        ];
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+
+You can now reference wires from external modules using the `@module` syntax:
+
+```html
+<div>
+    #wire( name="MyComponent@externalModule" )#
+</div>
+```
+
+This enhancement enables better module organization and supports multi-repository development workflows where modules are maintained separately from your main application.
+
 ## Breaking Changes
 
 ### Component Parameter Auto-Population
