@@ -391,6 +391,66 @@ You can now reference wires from external modules using the `@module` syntax:
 
 This enhancement enables better module organization and supports multi-repository development workflows where modules are maintained separately from your main application.
 
+### CSRF Protection
+
+CBWIRE 5.0 introduces Cross-Site Request Forgery (CSRF) protection to enhance security for your reactive applications. When enabled, all component actions require a valid CSRF token, protecting your application from CSRF attacks.
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```javascript
+// config/ColdBox.bx
+moduleSettings = {
+    "cbwire": {
+        "csrfEnabled": true
+    }
+};
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```javascript
+// config/ColdBox.cfc
+moduleSettings = {
+    "cbwire" = {
+        "csrfEnabled" = true
+    }
+};
+```
+{% endtab %}
+{% endtabs %}
+
+CSRF protection is disabled by default in CBWIRE 5.0 but can be enabled via the `csrfEnabled` configuration setting. You can also customize the storage provider used for CSRF tokens with the `csrfStorage` setting:
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```javascript
+// config/ColdBox.bx
+moduleSettings = {
+    "cbwire": {
+        "csrfEnabled": true,
+        "csrfStorage": "CacheStorage@cbstorages"
+    }
+};
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```javascript
+// config/ColdBox.cfc
+moduleSettings = {
+    "cbwire" = {
+        "csrfEnabled" = true,
+        "csrfStorage" = "CacheStorage@cbstorages"
+    }
+};
+```
+{% endtab %}
+{% endtabs %}
+
+The default storage provider is `SessionStorage@cbstorages`, but you can use any WireBox mapping that implements the appropriate storage interface.
+
+See the [Configuration](../configuration.md#security-configuration) documentation for complete details on CSRF protection settings.
+
 ## Breaking Changes
 
 ### Component Parameter Auto-Population
