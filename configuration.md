@@ -24,7 +24,8 @@ class {
                 // Request Handling
                 "updateEndpoint": "/cbwire/update",
                 "maxUploadSeconds": 300, // 5 minutes
-                "storagePath": "", // Custom temporary storage path for file uploads
+                "uploadsStoragePath": "", // Custom temporary storage path for file uploads
+                "storagePath": "", // Custom storage path for component compilation
                 
                 // UI Features
                 "showProgressBar": true,
@@ -60,7 +61,8 @@ component {
                 // Request Handling
                 "updateEndpoint" = "/cbwire/updates",
                 "maxUploadSeconds" = 300, // 5 minutes
-                "storagePath" = "", // Custom temporary storage path for file uploads
+                "uploadsStoragePath" = "", // Custom temporary storage path for file uploads
+                "storagePath" = "", // Custom storage path for component compilation
                 
                 // UI Features
                 "showProgressBar" = true,
@@ -210,11 +212,11 @@ moduleSettings = {
 };
 ```
 
-### storagePath
+### uploadsStoragePath
 
 Configures a custom directory path for temporary file uploads. This is particularly useful in distributed server environments where you need to share temporary files across multiple front-end servers.
 
-**Default:** `""` (uses CBWIRE's default internal temporary storage)
+**Default:** `getTempDirectory() & "/cbwire"` (system temporary directory)
 
 {% tabs %}
 {% tab title="BoxLang" %}
@@ -222,7 +224,7 @@ Configures a custom directory path for temporary file uploads. This is particula
 // config/ColdBox.bx
 moduleSettings = {
     "cbwire": {
-        "storagePath": "/shared/temp/uploads"
+        "uploadsStoragePath": "/shared/temp/uploads"
     }
 };
 ```
@@ -233,21 +235,57 @@ moduleSettings = {
 // config/ColdBox.cfc
 moduleSettings = {
     "cbwire" = {
-        "storagePath" = "/shared/temp/uploads"
+        "uploadsStoragePath" = "/shared/temp/uploads"
     }
 };
 ```
 {% endtab %}
 {% endtabs %}
 
-When set, CBWIRE will use this directory instead of its default internal temporary storage location for uploaded files. This enables scenarios such as:
+When set, CBWIRE will use this directory instead of the system's temporary directory for uploaded files. This enables scenarios such as:
 
 * Sharing temporary uploads across clustered servers using a network-mounted directory
 * Using a specific disk volume optimized for temporary file operations
 * Implementing custom cleanup or monitoring policies on temporary file storage
 
+See the [File Uploads](features/file-uploads.md) documentation for details on how uploaded files are stored and managed.
+
 {% hint style="info" %}
 Ensure the configured path exists and has appropriate read/write permissions for your application server.
+{% endhint %}
+
+### storagePath
+
+Configures a custom directory path for single-file component compilation. When CBWIRE compiles single-file components (`.bxm` files with embedded code), it stores the compiled component classes in this directory.
+
+**Default:** `{module}/models/tmp` (CBWIRE module's internal directory)
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```javascript
+// config/ColdBox.bx
+moduleSettings = {
+    "cbwire": {
+        "storagePath": "/custom/component/compilation"
+    }
+};
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```javascript
+// config/ColdBox.cfc
+moduleSettings = {
+    "cbwire" = {
+        "storagePath" = "/custom/component/compilation"
+    }
+};
+```
+{% endtab %}
+{% endtabs %}
+
+{% hint style="warning" %}
+The `storagePath` must be within a directory accessible to WireBox for component instantiation. Unlike `uploadsStoragePath` which can use any directory, this path requires proper classpath configuration.
 {% endhint %}
 
 {% hint style="info" %}

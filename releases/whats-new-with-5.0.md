@@ -280,37 +280,6 @@ Single file components use two main sections:
 
 See the [Single-file Components](../features/single-file-components.md) documentation for complete usage information.
 
-### Custom Temporary Storage Path
-
-Configure a custom directory path for temporary file uploads using the new `storagePath` configuration setting. Particularly valuable in distributed server environments where temporary files need to be shared across multiple front-end servers.
-
-Contributed by community member **David Moreno**.
-
-{% tabs %}
-{% tab title="BoxLang" %}
-```javascript
-// config/ColdBox.bx
-moduleSettings = {
-    "cbwire": {
-        "storagePath": "/shared/temp/uploads"
-    }
-};
-```
-{% endtab %}
-
-{% tab title="CFML" %}
-```javascript
-// config/ColdBox.cfc
-moduleSettings = {
-    "cbwire" = {
-        "storagePath" = "/shared/temp/uploads"
-    }
-};
-```
-{% endtab %}
-{% endtabs %}
-
-See the [Configuration](../configuration.md#storagepath) and [File Uploads](../features/file-uploads.md) documentation for complete details.
 
 ### Improved Error Messaging for Empty Components
 
@@ -442,6 +411,114 @@ The default storage provider is `SessionStorage@cbstorages`, but you can use any
 See the [Configuration](../configuration.md#security-configuration) documentation for complete details.
 
 ## Breaking Changes
+
+### Secure File Upload Storage
+
+File uploads now use the system temporary directory by default instead of the CBWIRE module's internal storage directory. This security enhancement prevents potential unauthorized access to uploaded files before they're explicitly moved to permanent storage using the new `store()` method.
+
+**Previous Behavior (4.x):**
+Files were uploaded directly to `{module}/models/tmp/uploads/` which could be publicly accessible depending on server configuration.
+
+**New Behavior (5.0):**
+Files are uploaded to the system's temporary directory (via `getTempDirectory()`) by default, isolated from web-accessible paths. The new `uploadsStoragePath` configuration setting uses `getTempDirectory()` instead of the module directory.
+
+**What Changed:**
+- Default upload storage moved from module directory to system temp directory
+- New `store()` method required to move files from temporary to permanent storage
+- Configuration split: `uploadsStoragePath` for file uploads, `storagePath` for component compilation
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```javascript
+// wires/PhotoUpload.bx
+class extends="cbwire.models.Component" {
+    data = {
+        "photo": ""
+    };
+
+    function save() {
+        if (data.photo != "") {
+            // New in 5.0: Use store() to move file to permanent location
+            var storedPath = data.photo.store("/uploads/photos");
+
+            // Process the stored file
+            writeLog("Photo stored at: #storedPath#");
+
+            // Clean up
+            data.photo.destroy();
+            data.photo = "";
+        }
+    }
+}
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```javascript
+// wires/PhotoUpload.cfc
+component extends="cbwire.models.Component" {
+    data = {
+        "photo" = ""
+    };
+
+    function save() {
+        if (data.photo != "") {
+            // New in 5.0: Use store() to move file to permanent location
+            var storedPath = data.photo.store("/uploads/photos");
+
+            // Process the stored file
+            writeLog("Photo stored at: #storedPath#");
+
+            // Clean up
+            data.photo.destroy();
+            data.photo = "";
+        }
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+
+**Migration Guide:**
+
+If your 4.x application processes uploaded files using methods like `fileWrite()` or `get()`, update your code to use the `store()` method:
+
+{% tabs %}
+{% tab title="4.x Approach" %}
+```javascript
+function save() {
+    if (data.photo != "") {
+        // 4.x: Read file content and write to permanent location
+        var uploadPath = expandPath("./uploads/#createUUID()#.jpg");
+        fileWrite(uploadPath, data.photo.get());
+        data.photo.destroy();
+    }
+}
+```
+{% endtab %}
+
+{% tab title="5.0 Approach" %}
+```javascript
+function save() {
+    if (data.photo != "") {
+        // 5.0: Use store() to move file directly
+        var storedPath = data.photo.store(expandPath("./uploads"));
+        data.photo.destroy();
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+
+The `store()` method provides several advantages:
+- More efficient - moves files instead of reading/writing
+- Creates destination directories automatically
+- Returns absolute path to stored file
+- Updates internal metadata for tracking
+
+You can still use `get()` to read file content if needed, but `store()` is the recommended approach for moving files to permanent storage.
+
+See the [File Uploads](../features/file-uploads.md) documentation for complete details.
 
 ### Component Parameter Auto-Population
 

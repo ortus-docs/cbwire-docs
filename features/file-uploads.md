@@ -15,16 +15,15 @@ class extends="cbwire.models.Component" {
         "photo": "",
         "isUploading": false
     };
-    
+
     function save() {
         if (data.photo != "") {
-            // Save file to permanent location
-            var uploadPath = expandPath("./uploads/#createUUID()#.jpg");
-            fileWrite(uploadPath, data.photo.get());
-            
+            // Move file to permanent location
+            var storedPath = data.photo.store(expandPath("./uploads"));
+
             // Clean up temporary file
             data.photo.destroy();
-            
+
             // Reset form
             data.photo = "";
         }
@@ -41,16 +40,15 @@ component extends="cbwire.models.Component" {
         "photo" = "",
         "isUploading" = false
     };
-    
+
     function save() {
         if (data.photo != "") {
-            // Save file to permanent location
-            var uploadPath = expandPath("./uploads/#createUUID()#.jpg");
-            fileWrite(uploadPath, data.photo.get());
-            
+            // Move file to permanent location
+            var storedPath = data.photo.store(expandPath("./uploads"));
+
             // Clean up temporary file
             data.photo.destroy();
-            
+
             // Reset form
             data.photo = "";
         }
@@ -151,11 +149,12 @@ component extends="cbwire.models.Component" {
 CBWIRE handles file uploads through a multi-step process:
 
 1. **Request signed URL** - CBWIRE gets a temporary upload URL from the server
-2. **Upload file** - JavaScript uploads the file to temporary storage
+2. **Upload file** - JavaScript uploads the file to secure temporary storage
 3. **Create FileUpload object** - The data property becomes a FileUpload instance
-4. **Process file** - Use FileUpload methods to save, validate, or manipulate the file
+4. **Process file** - Use FileUpload methods to validate, manipulate, or store the file
+5. **Store permanently** - Move files to permanent storage using the `store()` method
 
-By default, CBWIRE stores uploaded files in its internal temporary storage directory. You can configure a custom temporary storage path using the `storagePath` setting in your configuration. This is useful for distributed server environments where temporary files need to be shared across multiple servers. See the [Configuration](../configuration.md#storagepath) documentation for details.
+By default, CBWIRE stores uploaded files in the system's temporary directory (via `getTempDirectory()`) for enhanced security. This prevents unauthorized access to uploaded files before they're explicitly moved to permanent storage. You can configure a custom temporary storage path using the `uploadsStoragePath` setting. This is useful for distributed server environments where temporary files need to be shared across multiple servers. See the [Configuration](../configuration.md#uploadsstoragepath) documentation for details.
 
 ## FileUpload Methods
 
@@ -186,6 +185,12 @@ When a file is uploaded, CBWIRE creates a FileUpload object with the following m
 | `getMetaPath()`             | Returns path to file metadata           |
 | `getPreviewURL()`           | Returns URL for previewing images       |
 
+### File Storage
+
+| Method           | Description                                                                                            |
+| ---------------- | ------------------------------------------------------------------------------------------------------ |
+| `store( path )`  | Moves file from temporary to permanent storage. Path can be a directory or full file path. Creates destination directories automatically. Returns absolute path to stored file. |
+
 ### Cleanup
 
 | Method      | Description                                             |
@@ -198,6 +203,128 @@ Always call `destroy()` on FileUpload objects after saving to permanent storage 
 
 {% hint style="info" %}
 Image previews using `getPreviewURL()` only work with image file types. Use `isImage()` to check before displaying previews.
+{% endhint %}
+
+## Storing Files Permanently
+
+The `store()` method moves uploaded files from temporary storage to a permanent location. This is the recommended approach for persisting uploaded files.
+
+### Basic Usage
+
+Pass a directory path to store the file with its original filename:
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```javascript
+function save() {
+    if (data.photo != "") {
+        // Store in directory with original filename
+        var storedPath = data.photo.store(expandPath("./uploads"));
+
+        writeLog("File stored at: #storedPath#");
+
+        data.photo.destroy();
+    }
+}
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```javascript
+function save() {
+    if (data.photo != "") {
+        // Store in directory with original filename
+        var storedPath = data.photo.store(expandPath("./uploads"));
+
+        writeLog("File stored at: #storedPath#");
+
+        data.photo.destroy();
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+
+### Store with Custom Filename
+
+Pass a full file path to store with a custom filename:
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```javascript
+function save() {
+    if (data.document != "") {
+        // Store with custom filename
+        var customPath = expandPath("./uploads/#createUUID()#.pdf");
+        var storedPath = data.document.store(customPath);
+
+        // Save path to database
+        saveDocumentPath(storedPath);
+
+        data.document.destroy();
+    }
+}
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```javascript
+function save() {
+    if (data.document != "") {
+        // Store with custom filename
+        var customPath = expandPath("./uploads/#createUUID()#.pdf");
+        var storedPath = data.document.store(customPath);
+
+        // Save path to database
+        saveDocumentPath(storedPath);
+
+        data.document.destroy();
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+
+### Automatic Directory Creation
+
+The `store()` method automatically creates destination directories if they don't exist:
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```javascript
+function save() {
+    if (data.avatar != "") {
+        // Directory will be created if it doesn't exist
+        var userUploadDir = expandPath("./uploads/users/#data.userId#");
+        var storedPath = data.avatar.store(userUploadDir);
+
+        data.avatar.destroy();
+    }
+}
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```javascript
+function save() {
+    if (data.avatar != "") {
+        // Directory will be created if it doesn't exist
+        var userUploadDir = expandPath("./uploads/users/#data.userId#");
+        var storedPath = data.avatar.store(userUploadDir);
+
+        data.avatar.destroy();
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+
+{% hint style="info" %}
+The `store()` method is more efficient than reading file content with `get()` and writing it manually. It moves the file directly using `fileMove()`, avoiding the overhead of reading and writing file content.
+{% endhint %}
+
+{% hint style="warning" %}
+After calling `store()`, the FileUpload object's internal path is updated to the new location. You can continue to use FileUpload methods like `get()` or `getSize()` on the stored file. However, you should call `destroy()` after storing to clean up the metadata file in temporary storage.
 {% endhint %}
 
 ## Loading States
