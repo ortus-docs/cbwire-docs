@@ -204,6 +204,64 @@ component extends="cbwire.models.Component" {
 <!--[if ENDBLOCK]><![endif]-->
 ```
 
+## Server Configuration Issues
+
+### 400 Bad Request on CBWIRE Updates
+
+**Problem**: The `/cbwire/update` endpoint returns "400 Bad Request" errors, preventing CBWIRE components from updating.
+
+**Root Cause**: Server software or connectors stripping out the `X-Livewire` header that CBWIRE requires for request handling.
+
+**Error**: HTTP 400 status code when CBWIRE attempts to process component updates.
+
+**Solution**: Configure your server software to allow empty headers or preserve the `X-Livewire` header.
+
+#### BonCode AJP Connector (IIS + Lucee)
+
+If you're running Lucee behind IIS using the BonCode AJP Connector, you need to allow empty headers:
+
+**File**: `/BIN/BonCodeAJP13.settings`
+
+```xml
+<!-- Change from False to True -->
+<AllowEmptyHeaders>True</AllowEmptyHeaders>
+```
+
+After making this change, restart your web server for the setting to take effect.
+
+#### Other Server Software
+
+The `X-Livewire` header is essential for CBWIRE to function properly. If you're experiencing 400 errors with other server configurations:
+
+1. **Check server logs** - Look for messages about rejected or stripped headers
+2. **Review proxy settings** - Ensure reverse proxies (nginx, Apache) pass through the `X-Livewire` header
+3. **Check security modules** - WAF or security modules might be filtering custom headers
+4. **Test header presence** - Use browser developer tools to verify the `X-Livewire` header is being sent
+
+**Example nginx configuration** to preserve headers:
+
+```nginx
+location /cbwire/ {
+    proxy_pass http://your-backend;
+    proxy_set_header X-Livewire $http_x_livewire;
+    proxy_pass_request_headers on;
+}
+```
+
+**Example Apache configuration** to preserve headers:
+
+```apache
+<Location /cbwire/>
+    ProxyPreserveHost On
+    ProxyPass http://your-backend/cbwire/
+    ProxyPassReverse http://your-backend/cbwire/
+</Location>
+```
+
+{% hint style="warning" %}
+CBWIRE depends on the `X-Livewire` header for proper request routing and component identification. If this header is stripped or blocked by your server configuration, CBWIRE will return 400 errors and components will fail to update.
+{% endhint %}
+
 ## Alpine.js Integration Issues
 
 ### Quote Syntax Errors in x-data
@@ -315,11 +373,12 @@ component extends="cbwire.models.Component" {
 
 ### Common Error Messages
 
-| Error                      | Likely Cause                      | Solution                     |
-| -------------------------- | --------------------------------- | ---------------------------- |
-| "Snapshot missing"         | Placeholder/template mismatch     | Match outer elements exactly |
-| "Unable to find component" | Alpine `x-if` removing components | Use `x-show` instead         |
-| JavaScript syntax error    | Double quotes in `x-data`         | Use single quotes            |
+| Error                      | Likely Cause                              | Solution                                    |
+| -------------------------- | ----------------------------------------- | ------------------------------------------- |
+| "Snapshot missing"         | Placeholder/template mismatch             | Match outer elements exactly                |
+| "Unable to find component" | Alpine `x-if` removing components         | Use `x-show` instead                        |
+| JavaScript syntax error    | Double quotes in `x-data`                 | Use single quotes                           |
+| 400 Bad Request            | `X-Livewire` header stripped by server    | Configure server to allow empty headers     |
 
 {% hint style="info" %}
 When in doubt, add `wire:key` to dynamic elements and wrap conditionals with block markers. These techniques help Livewire's DOM diffing engine track changes accurately.
