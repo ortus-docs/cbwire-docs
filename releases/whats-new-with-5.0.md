@@ -12,6 +12,7 @@ Upgraded the underlying Livewire JavaScript to v3.6.4, bringing new features inc
 - **`wire:cloak`** - Hides elements until Livewire initializes, preventing flash of unstyled content during page load
 - **`wire:show`** - Toggle element visibility using CSS without removing elements from the DOM, enabling smooth transitions
 - **`wire:text`** - Dynamically update element text content without network roundtrips, perfect for optimistic UIs
+- **`wire:replace`** - Force elements to render from scratch instead of DOM diffing, useful for third-party libraries and web components
 
 ### BoxLang Support
 
