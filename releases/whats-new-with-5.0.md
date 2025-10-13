@@ -11,6 +11,7 @@ Upgraded the underlying Livewire JavaScript to v3.6.4, bringing new features inc
 - **`wire:current`** - Directive allows you to easily detect and style currently active links on a page
 - **`wire:cloak`** - Hides elements until Livewire initializes, preventing flash of unstyled content during page load
 - **`wire:show`** - Toggle element visibility using CSS without removing elements from the DOM, enabling smooth transitions
+- **`wire:text`** - Dynamically update element text content without network roundtrips, perfect for optimistic UIs
 
 ### BoxLang Support
 
