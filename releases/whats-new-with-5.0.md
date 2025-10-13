@@ -71,7 +71,7 @@ component extends="cbwire.models.Component" {
 {% endtab %}
 {% endtabs %}
 
-### File Upload Error Handling
+### Upload Error Handling
 
 The new `onUploadError()` lifecycle hook provides graceful error handling for failed uploads, allowing you to display user-friendly error messages and implement custom recovery logic. In 4.x, upload errors would throw exceptions.
 
@@ -206,7 +206,7 @@ The hook is triggered when:
 
 See the [File Upload Error Handling](../features/file-uploads.md#handling-upload-errors) documentation for complete usage information.
 
-### Event Object Access in Templates
+### Event Object Access
 
 Access the ColdBox event object (request context) directly in templates to use methods like `event.buildLink()` for generating URLs.
 
@@ -246,7 +246,7 @@ Access the ColdBox event object (request context) directly in templates to use m
 **Important:** Be cautious when using `event.getCollection()` (RC scope) or `event.getPrivateCollection()` (PRC scope) in templates. Background requests to `/cbwire/update` may not have access to values set by interceptors or handlers that only run on your primary routes. Store needed values as data properties in your component's `onMount()` method to ensure they persist across re-renders.
 {% endhint %}
 
-### Single File BoxLang Components
+### Single File Components
 
 Define both your component's template and logic in a single `.bxm` file for a more compact development experience.
 
@@ -285,7 +285,7 @@ Single file components use two main sections:
 See the [Single-file Components](../features/single-file-components.md) documentation for complete usage information.
 
 
-### Improved Error Messaging for Empty Components
+### Empty Component Error Messages
 
 Clearer error messages when component templates are empty or missing HTML elements.
 
@@ -302,19 +302,19 @@ The HTML content of the wire component must contain at least one external elemen
 Wire component contains no HTML elements. It is empty.
 ```
 
-### Reduced Dependency Injection Error Logging
+### Reduced DI Error Logging
 
 Eliminated unnecessary "ioc.Injector" error messages stating components were "not located in any declared scan location(s)" during single file component initialization, resulting in cleaner application logs.
 
-### Enhanced Error Handling and Serialization
+### Error Handling Improvements
 
 Improvements to error handling in snapshot deserialization and effects processing. Error handling has been refactored to remove exception causes from thrown exceptions, and effects deserialization now returns an empty struct for invalid JSON instead of throwing errors. HTML entity encoding has been improved to properly handle HTML content with quotes.
 
-### Thread-Safe Single File Component Building
+### Thread-Safe Component Building
 
 Added locking mechanisms to ensure thread-safe building of single file components, preventing race conditions in high-traffic environments.
 
-### External Module Location Support
+### External Module Support
 
 Load wire components from external module locations defined in your ColdBox configuration via `modulesExternalLocation`.
 
@@ -416,7 +416,7 @@ See the [Configuration](../configuration.md#security-configuration) documentatio
 
 ## Breaking Changes
 
-### Secure File Upload Storage
+### Secure Upload Storage
 
 File uploads now use the system temporary directory by default instead of the CBWIRE module's internal storage directory. This security enhancement prevents potential unauthorized access to uploaded files before they're explicitly moved to permanent storage using the new `store()` method.
 
@@ -524,7 +524,7 @@ You can still use `get()` to read file content if needed, but `store()` is the r
 
 See the [File Uploads](../features/file-uploads.md) documentation for complete details.
 
-### Component Parameter Auto-Population
+### Parameter Auto-Population
 
 When a component defines an `onMount()` method, parameters passed via `wire()` are no longer automatically set to matching data properties. You must now explicitly assign parameters inside the `onMount()` method.
 
@@ -585,7 +585,7 @@ function onMount( params ) {
 
 See the [Components](../the-essentials/components.md#auto-populating-data-properties) documentation for complete details.
 
-### CFML Engine Support Updates
+### Engine Support Updates
 
 Updated supported CFML engines to align with modern, actively maintained versions.
 
@@ -605,7 +605,7 @@ Updated supported CFML engines to align with modern, actively maintained version
 
 If you are still using Adobe ColdFusion 2018, remain on CBWIRE 4.x or upgrade to a supported CFML engine before upgrading to 5.0.
 
-### Framework Support Updates
+### ColdBox Support Updates
 
 Added support for the latest ColdBox framework versions.
 
@@ -620,22 +620,22 @@ Added support for the latest ColdBox framework versions.
 
 ## Bug Fixes
 
-### File Upload Endpoint Configuration
+### Upload Endpoint Configuration
 
 Fixed file uploads to respect the `updateEndpoint` configuration setting. Previously, file uploads used a hardcoded `/cbwire/upload` path. File uploads now properly derive their endpoint from the `updateEndpoint` configuration.
 
-### File Upload Temporary Directory Path
+### Upload Directory Path
 
 Fixed incorrect file path generation in the `getUploadTempDirectory()` method. The method was generating malformed paths like `cbwiremodels/tmp` instead of `cbwire/models/tmp`.
 
-### Temporary Directory Race Condition
+### Directory Race Condition
 
 Fixed a race condition that caused errors when multiple requests attempted to create the temporary directory simultaneously. Added proper locking mechanisms to ensure thread-safe directory creation.
 
-### Lazy Loading onMount Error
+### Lazy Loading Error
 
 Fixed lazy loading attempting to call `onMount()` when the method didn't exist on the component. Now checks if the `onMount()` method exists before calling it.
 
-### Wires Location Configuration
+### Wires Location Config
 
 Fixed the `wiresLocation` configuration setting not being used when set to anything other than the default "wires" value. The configuration setting now properly applies custom wire component locations.
