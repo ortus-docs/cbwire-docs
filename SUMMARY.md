@@ -47,6 +47,7 @@
 ## Template Directives
 
 * [wire:click](template-directives/wire-click.md)
+* [wire:cloak](template-directives/wire-cloak.md)
 * [wire:confirm](template-directives/wire-confirm.md)
 * [wire:current](template-directives/wire-current.md)
 * [wire:dirty](template-directives/wire-dirty.md)
@@ -58,8 +59,11 @@
 * [wire:navigate](template-directives/wire-navigate.md)
 * [wire:offline](template-directives/wire-offline.md)
 * [wire:poll](template-directives/wire-poll.md)
+* [wire:replace](template-directives/wire-replace.md)
+* [wire:show](template-directives/wire-show.md)
 * [wire:stream](template-directives/wire-stream.md)
 * [wire:submit](template-directives/wire-submit.md)
+* [wire:text](template-directives/wire-text.md)
 * [wire:transition](template-directives/wire-transition.md)
 
 ## Advanced
