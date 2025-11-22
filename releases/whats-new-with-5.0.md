@@ -371,7 +371,9 @@ See the [Components](../the-essentials/components.md#auto-populating-data-proper
 
 ### Engine Support Updates
 
-Added Lucee 6.0+ support. Removed Adobe ColdFusion 2018. Supported engines: BoxLang, Lucee 5.3+/6.0+, Adobe ColdFusion 2021+/2023+/2025+.
+Added Lucee 6.0+ support. Removed Adobe ColdFusion 2018 and 2021 as both have reached end-of-life.
+
+**Supported engines:** BoxLang, Lucee 5.3+/6.0+, Adobe ColdFusion 2023+/2025+.
 
 ### ColdBox Support Updates
 

@@ -18,9 +18,13 @@ Before installing CBWIRE, ensure your system meets these requirements:
 
 ### CFML Requirements
 
-* **Adobe ColdFusion 2021+**, **Adobe ColdFusion 2023+**, or **Adobe ColdFusion 2025+**
+* **Adobe ColdFusion 2023+** or **Adobe ColdFusion 2025+**
 * **Lucee 5.3+** or **Lucee 6.0+**
 * **ColdBox 6+**
+
+{% hint style="info" %}
+Adobe ColdFusion 2018 and 2021 are no longer supported as both have reached end-of-life.
+{% endhint %}
 
 ## Installation
 
