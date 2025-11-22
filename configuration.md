@@ -28,10 +28,8 @@ class {
                 // UI Features
                 "showProgressBar": true,
                 "progressBarColor": "#2299dd",
-                
+
                 // Security
-                "csrfEnabled": false,
-                "csrfStorage": "SessionStorage@cbstorages",
                 "checksumValidation": true
             }
         };
@@ -63,10 +61,8 @@ component {
                 // UI Features
                 "showProgressBar" = true,
                 "progressBarColor" = "##2299dd",
-                
+
                 // Security
-                "csrfEnabled" = false,
-                "csrfStorage" = "SessionStorage@cbstorages",
                 "checksumValidation" = true
             }
         };
@@ -247,38 +243,6 @@ The progress bar only appears when using `wire:navigate` for page transitions. S
 {% endhint %}
 
 ## Security Configuration
-
-### csrfEnabled
-
-Enables Cross-Site Request Forgery (CSRF) protection for CBWIRE requests. When enabled, all component actions require a valid CSRF token.
-
-**Default:** `false`
-
-```javascript
-moduleSettings = {
-    "cbwire": {
-        "csrfEnabled": true
-    }
-};
-```
-
-### csrfStorage
-
-Specifies the WireBox mapping for the storage provider used to store CSRF tokens. The storage provider must implement the appropriate interface for session or cache storage.
-
-**Default:** `SessionStorage@cbstorages`
-
-```javascript
-moduleSettings = {
-    "cbwire": {
-        "csrfStorage": "CacheStorage@cbstorages"
-    }
-};
-```
-
-{% hint style="warning" %}
-CSRF protection will be enabled by default starting in CBWIRE 5.0. It's recommended to enable and test CSRF protection in your applications now to ensure compatibility.
-{% endhint %}
 
 ### checksumValidation
 
