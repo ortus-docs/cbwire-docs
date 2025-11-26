@@ -106,12 +106,26 @@ When automatic asset injection is enabled (default), CBWIRE will automatically i
 </head>
 <body>
     <!-- Your content -->
-    
+
     <!-- CBWIRE JavaScript (automatically injected) -->
     <script src="/modules/cbwire/includes/js/livewire.js" data-csrf="..." data-update-uri="/cbwire/update"></script>
 </body>
 </html>
 ```
+
+{% hint style="warning" %}
+Automatic asset injection requires your layout to have `<head></head>` and `<body></body>` tags. CBWIRE uses these tags to inject the necessary CSS and JavaScript. If your layout doesn't include these tags, you'll need to manually place `wireStyles()` in your `<head>` and `wireScripts()` before your closing `</body>` tag:
+
+```html
+<head>
+    #wireStyles()#
+</head>
+<body>
+    <!-- Your content -->
+    #wireScripts()#
+</body>
+```
+{% endhint %}
 
 ### Manual Asset Management
 
