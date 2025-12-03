@@ -343,9 +343,25 @@ Load wire components from external module locations via `modulesExternalLocation
 
 ### CSRF Protection
 
-Cross-Site Request Forgery protection enhances security. Enable via `csrfEnabled` configuration. Customize storage with `csrfStorage` setting (defaults to `SessionStorage@cbstorages`).
+Built-in Cross-Site Request Forgery protection prevents unauthorized requests. CSRF tokens are automatically generated and validated for all component interactions, with no changes required to component code.
 
-See the [Configuration](../configuration.md#security-configuration) documentation for details.
+**Session Storage by Default:**
+CBWIRE 5.x uses session-based storage (OWASP-recommended), eliminating "Page Expired" errors common with cache-based approaches.
+
+**Flexible Storage Options:**
+Choose between `SessionCSRFStorage` (default) for single-server deployments or `CacheCSRFStorage` for distributed systems. Implement custom storage backends using the `ICSRFStorage` interface.
+
+**Configuration:**
+```javascript
+moduleSettings = {
+    cbwire = {
+        csrfEnabled = true, // Enabled by default
+        csrfStorage = "SessionCSRFStorage@cbwire"
+    }
+};
+```
+
+See the [Security](../features/security.md#csrf-protection) documentation for complete details.
 
 ## Breaking Changes
 

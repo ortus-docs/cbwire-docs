@@ -372,6 +372,181 @@ These errors typically indicate:
 - Version mismatches between client and server code
 - Different secret keys across application servers
 
+## CSRF Protection
+
+CBWIRE includes built-in Cross-Site Request Forgery (CSRF) protection to prevent malicious websites from submitting unauthorized requests to your application. CSRF tokens are automatically generated and validated for all component interactions.
+
+### How It Works
+
+CSRF protection operates transparently:
+
+1. CBWIRE generates a unique token when components mount
+2. The token is included with every client-server interaction
+3. Server validates the token before processing requests
+4. Invalid or missing tokens reject the request
+
+No changes to your component code are required—CSRF protection works automatically when enabled.
+
+### Configuration
+
+CSRF protection is enabled by default in CBWIRE 5.x. Configure it in your ColdBox settings:
+
+```javascript
+// config/ColdBox.cfc
+moduleSettings = {
+    cbwire = {
+        // Enable/disable CSRF protection (enabled by default)
+        csrfEnabled = true,
+
+        // Storage implementation (defaults to SessionCSRFStorage)
+        csrfStorage = "SessionCSRFStorage@cbwire"
+    }
+};
+```
+
+### Storage Implementations
+
+CBWIRE provides two built-in storage implementations for CSRF tokens:
+
+#### SessionCSRFStorage (Default)
+
+Session-based storage is the OWASP-recommended approach and the default in CBWIRE 5.x:
+
+```javascript
+moduleSettings = {
+    cbwire = {
+        csrfStorage = "SessionCSRFStorage@cbwire"
+    }
+};
+```
+
+**Benefits:**
+- Eliminates "Page Expired" errors common with cache-based storage
+- Follows OWASP security recommendations
+- Simpler configuration for single-server deployments
+
+**Requirements:**
+- Application sessions must be enabled
+
+#### CacheCSRFStorage
+
+Cache-based storage is designed for distributed and clustered deployments:
+
+```javascript
+moduleSettings = {
+    cbwire = {
+        csrfStorage = "CacheCSRFStorage@cbwire"
+    }
+};
+```
+
+**Benefits:**
+- Works across multiple application servers
+- No session requirement
+- Suitable for stateless architectures
+
+**Considerations:**
+- Requires distributed cache configuration
+- Uses cookie/URL fallback when cache is unavailable
+
+### Custom Storage
+
+Implement custom CSRF storage (Redis, DynamoDB, etc.) by creating a component that implements the `ICSRFStorage` interface:
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```javascript
+// models/RedisCSRFStorage.bx
+class implements="cbwire.models.ICSRFStorage" {
+    property name="redisClient" inject="RedisClient";
+
+    function set( key, value ) {
+        redisClient.set( key, value );
+    }
+
+    function get( key ) {
+        return redisClient.get( key );
+    }
+
+    function exists( key ) {
+        return redisClient.exists( key );
+    }
+
+    function delete( key ) {
+        redisClient.del( key );
+    }
+
+    function clear() {
+        // Implement based on your requirements
+    }
+}
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```javascript
+// models/RedisCSRFStorage.cfc
+component implements="cbwire.models.ICSRFStorage" {
+    property name="redisClient" inject="RedisClient";
+
+    function set( key, value ) {
+        redisClient.set( key, value );
+    }
+
+    function get( key ) {
+        return redisClient.get( key );
+    }
+
+    function exists( key ) {
+        return redisClient.exists( key );
+    }
+
+    function delete( key ) {
+        redisClient.del( key );
+    }
+
+    function clear() {
+        // Implement based on your requirements
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+
+Configure your custom implementation:
+
+```javascript
+moduleSettings = {
+    cbwire = {
+        csrfStorage = "RedisCSRFStorage@myapp"
+    }
+};
+```
+
+### Changes in 5.x
+
+CBWIRE 5.x refactored CSRF protection with significant improvements:
+
+**Session Storage by Default:**
+- Changed from cache-based to session-based storage
+- Eliminates "Page Expired" errors
+- Aligns with OWASP recommendations
+
+**Extensible Architecture:**
+- Interface-based design allows custom implementations
+- Easy integration with any storage backend
+- Two built-in implementations for common scenarios
+
+**Simplified Configuration:**
+- Single `csrfEnabled` setting to enable/disable
+- Flexible `csrfStorage` setting for storage backend
+- No dependency on external CSRF modules
+
+**Backward Compatibility:**
+- Public API remains unchanged
+- Existing code continues working without modifications
+- Optional migration to session storage
+
 {% hint style="info" %}
 Security annotations are only active when cbSecurity is installed and configured. Without cbSecurity, use the `onSecure()` lifecycle method for custom security logic.
 {% endhint %}
