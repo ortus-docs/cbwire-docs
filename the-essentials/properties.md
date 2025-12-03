@@ -96,6 +96,254 @@ You can access data properties within your [templates](templates.md) using **#pr
 {% endtab %}
 {% endtabs %}
 
+## Nested Properties
+
+Organize related data using nested structures and access them with dot notation. This keeps your data organized hierarchically instead of flattening everything into top-level properties.
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```javascript
+// wires/UserProfile.bx
+class extends="cbwire.models.Component" {
+    data = {
+        "user": {
+            "name": {
+                "first": "John",
+                "last": "Doe"
+            },
+            "contact": {
+                "email": "john@example.com",
+                "phone": "555-1234"
+            },
+            "preferences": {
+                "theme": "dark",
+                "notifications": true
+            }
+        }
+    };
+}
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```javascript
+// wires/UserProfile.cfc
+component extends="cbwire.models.Component" {
+    data = {
+        "user" = {
+            "name" = {
+                "first" = "John",
+                "last" = "Doe"
+            },
+            "contact" = {
+                "email" = "john@example.com",
+                "phone" = "555-1234"
+            },
+            "preferences" = {
+                "theme" = "dark",
+                "notifications" = true
+            }
+        }
+    };
+}
+```
+{% endtab %}
+{% endtabs %}
+
+### Accessing in Templates
+
+Reference nested properties using dot notation in `wire:model` and other directives:
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```html
+<!-- wires/userProfile.bxm -->
+<bx:output>
+<form wire:submit="saveProfile">
+    <input type="text" wire:model="user.name.first" placeholder="First Name">
+    <input type="text" wire:model="user.name.last" placeholder="Last Name">
+    <input type="email" wire:model="user.contact.email" placeholder="Email">
+    <input type="tel" wire:model="user.contact.phone" placeholder="Phone">
+
+    <select wire:model="user.preferences.theme">
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+    </select>
+
+    <label>
+        <input type="checkbox" wire:model="user.preferences.notifications">
+        Enable notifications
+    </label>
+
+    <button type="submit">Save Profile</button>
+</form>
+</bx:output>
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```html
+<!-- wires/userProfile.cfm -->
+<cfoutput>
+<form wire:submit="saveProfile">
+    <input type="text" wire:model="user.name.first" placeholder="First Name">
+    <input type="text" wire:model="user.name.last" placeholder="Last Name">
+    <input type="email" wire:model="user.contact.email" placeholder="Email">
+    <input type="tel" wire:model="user.contact.phone" placeholder="Phone">
+
+    <select wire:model="user.preferences.theme">
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+    </select>
+
+    <label>
+        <input type="checkbox" wire:model="user.preferences.notifications">
+        Enable notifications
+    </label>
+
+    <button type="submit">Save Profile</button>
+</form>
+</cfoutput>
+```
+{% endtab %}
+{% endtabs %}
+
+### Accessing in Actions
+
+Use dot notation to access and modify nested properties in your component methods:
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```javascript
+// wires/UserProfile.bx
+class extends="cbwire.models.Component" {
+    data = {
+        "user": {
+            "name": {
+                "first": "John",
+                "last": "Doe"
+            },
+            "contact": {
+                "email": "john@example.com"
+            }
+        }
+    };
+
+    function saveProfile() {
+        // Access nested properties
+        var fullName = data.user.name.first & " " & data.user.name.last;
+
+        // Modify nested properties
+        data.user.contact.email = data.user.contact.email.trim();
+
+        // Save to database
+        userService.update( data.user );
+    }
+
+    function updateTheme( theme ) {
+        data.user.preferences.theme = theme;
+    }
+}
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```javascript
+// wires/UserProfile.cfc
+component extends="cbwire.models.Component" {
+    data = {
+        "user" = {
+            "name" = {
+                "first" = "John",
+                "last" = "Doe"
+            },
+            "contact" = {
+                "email" = "john@example.com"
+            }
+        }
+    };
+
+    function saveProfile() {
+        // Access nested properties
+        var fullName = data.user.name.first & " " & data.user.name.last;
+
+        // Modify nested properties
+        data.user.contact.email = trim( data.user.contact.email );
+
+        // Save to database
+        userService.update( data.user );
+    }
+
+    function updateTheme( theme ) {
+        data.user.preferences.theme = theme;
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+
+### Lifecycle Hooks
+
+Lifecycle hooks for nested properties use underscores instead of dots. A property path like `user.name.first` triggers `onUpdateuser_name_first()`:
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```javascript
+// wires/UserProfile.bx
+class extends="cbwire.models.Component" {
+    data = {
+        "user": {
+            "contact": {
+                "email": "john@example.com"
+            }
+        }
+    };
+
+    function onUpdateuser_contact_email( value, oldValue ) {
+        // Triggered when user.contact.email changes
+        writeLog( "Email changed from #oldValue# to #value#" );
+
+        // Validate email format
+        if ( !isValid( "email", value ) ) {
+            data.user.contact.email = oldValue;
+            addError( "user.contact.email", "Please enter a valid email address" );
+        }
+    }
+}
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```javascript
+// wires/UserProfile.cfc
+component extends="cbwire.models.Component" {
+    data = {
+        "user" = {
+            "contact" = {
+                "email" = "john@example.com"
+            }
+        }
+    };
+
+    function onUpdateuser_contact_email( value, oldValue ) {
+        // Triggered when user.contact.email changes
+        writeLog( "Email changed from #oldValue# to #value#" );
+
+        // Validate email format
+        if ( !isValid( "email", value ) ) {
+            data.user.contact.email = oldValue;
+            addError( "user.contact.email", "Please enter a valid email address" );
+        }
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+
+{% hint style="info" %}
+Missing nested keys are created automatically. If `data.user` doesn't have a `preferences` key, setting `data.user.preferences.theme = "dark"` creates the structure automatically.
+{% endhint %}
+
 ## Resetting Properties
 
 You can reset all data properties to their original default value inside your [actions](actions.md) using **reset()**.
