@@ -15,8 +15,6 @@
   * [What's New With 2.1](releases/whats-new-with-2.1.md)
   * [What's New With 2.0](releases/whats-new-with-2.0.md)
 * [Resources](resources.md)
-* [Upgrading from CBWIRE 3.x](upgrading-from-cbwire-3.x.md)
-* [Upgrading from CBWIRE 2.x](upgrading-from-cbwire-2.x.md)
 * [CBWIRE CLI](cbwire-cli.md)
 
 ## The Essentials
