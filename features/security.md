@@ -318,6 +318,60 @@ interceptors = [
 ];
 ```
 
+## Checksum Validation
+
+CBWIRE automatically validates component data integrity using HMAC-SHA256 checksums to prevent tampering with data between client and server. Every component snapshot includes a checksum that validates the data hasn't been modified.
+
+### How It Works
+
+When data travels between client and server, CBWIRE:
+
+1. Calculates a cryptographic checksum of the component snapshot using HMAC-SHA256
+2. Includes the checksum with the data payload
+3. Validates the checksum on subsequent requests
+4. Throws `CBWIRECorruptPayloadException` if validation fails
+
+The checksum uses a secret key—either a custom secret you provide or a hash of the module's root path.
+
+### Configuration
+
+Control checksum validation in your ColdBox configuration:
+
+```javascript
+// config/ColdBox.cfc
+moduleSettings = {
+    cbwire = {
+        // Disable checksum validation (not recommended for production)
+        checksumValidation = false,
+
+        // Optional: provide a custom secret key
+        secret = "your-secret-key-here"
+    }
+};
+```
+
+{% hint style="danger" %}
+Disabling checksum validation removes protection against client-side data tampering. Only disable this in controlled development environments where you trust all clients.
+{% endhint %}
+
+{% hint style="info" %}
+If you don't provide a custom secret, CBWIRE generates one automatically based on the module's installation path. For production deployments across multiple servers, set a consistent secret key.
+{% endhint %}
+
+### Error Handling
+
+Checksum validation failures throw `CBWIRECorruptPayloadException` in these scenarios:
+
+- **Invalid JSON**: Payload is not properly formatted JSON
+- **Missing Checksum**: No checksum found in the payload
+- **Checksum Mismatch**: Calculated checksum doesn't match the provided checksum
+
+These errors typically indicate:
+- Client-side data tampering attempts
+- Network corruption during transmission
+- Version mismatches between client and server code
+- Different secret keys across application servers
+
 {% hint style="info" %}
 Security annotations are only active when cbSecurity is installed and configured. Without cbSecurity, use the `onSecure()` lifecycle method for custom security logic.
 {% endhint %}
