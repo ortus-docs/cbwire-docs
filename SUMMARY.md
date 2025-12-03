@@ -41,6 +41,7 @@
 * [Query String](features/query-string.md)
 * [Redirecting](features/redirecting.md)
 * [WireBox](features/wirebox.md)
+* [Security](features/security.md)
 
 ## Template Directives
 
