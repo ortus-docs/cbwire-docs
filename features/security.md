@@ -76,6 +76,10 @@ component extends="cbwire.models.Component" {
 | isInitial | boolean | True for initial mount, false for subsequent AJAX requests    |
 | params    | struct  | Parameters passed to the component via `wire()`               |
 
+{% hint style="warning" %}
+`onSecure()` fires on every request—both initial rendering and all subsequent AJAX requests. This ensures security checks run continuously throughout the component's lifecycle.
+{% endhint %}
+
 ### Custom Failure Messages
 
 By default, returning `false` from `onSecure()` renders an empty div. Customize this message per component or globally:
@@ -240,52 +244,6 @@ component extends="cbwire.models.Component" {
 {% endtab %}
 {% endtabs %}
 
-### Lifecycle Method Security
-
-Apply annotations to lifecycle methods:
-
-{% tabs %}
-{% tab title="BoxLang" %}
-```javascript
-// wires/Reports.bx
-class extends="cbwire.models.Component" {
-    data = {
-        "reports": []
-    };
-
-    @secured("reports.view")
-    function onMount() {
-        data.reports = reportService.getAll();
-    }
-
-    @secured("reports.edit")
-    function onUpdate() {
-        // Validate and update
-    }
-}
-```
-{% endtab %}
-
-{% tab title="CFML" %}
-```javascript
-// wires/Reports.cfc
-component extends="cbwire.models.Component" {
-    data = {
-        "reports" = []
-    };
-
-    function onMount() secured="reports.view" {
-        data.reports = reportService.getAll();
-    }
-
-    function onUpdate() secured="reports.edit" {
-        // Validate and update
-    }
-}
-```
-{% endtab %}
-{% endtabs %}
-
 ### Annotation Formats
 
 cbSecurity annotations support multiple formats:
@@ -359,154 +317,6 @@ interceptors = [
     { class="interceptors.SecurityLogger" }
 ];
 ```
-
-## Practical Examples
-
-### Protecting Admin Features
-
-{% tabs %}
-{% tab title="BoxLang" %}
-```javascript
-// wires/UserList.bx
-@secured("admin")
-class extends="cbwire.models.Component" {
-    property name="userService" inject="UserService";
-
-    secureMountFailMessage = "<div class='alert alert-danger'>Admin access required</div>";
-
-    data = {
-        "users": [],
-        "searchTerm": ""
-    };
-
-    function onMount() {
-        data.users = userService.getAll();
-    }
-
-    @secured("admin.users.delete")
-    function deleteUser( userId ) {
-        userService.delete( userId );
-        data.users = userService.getAll();
-    }
-
-    function filteredUsers() computed {
-        return data.users.filter( function( user ) {
-            return !data.searchTerm.len() ||
-                   user.name.findNoCase( data.searchTerm );
-        });
-    }
-}
-```
-{% endtab %}
-
-{% tab title="CFML" %}
-```javascript
-// wires/UserList.cfc
-component extends="cbwire.models.Component" secured="admin" {
-    property name="userService" inject="UserService";
-
-    secureMountFailMessage = "<div class='alert alert-danger'>Admin access required</div>";
-
-    data = {
-        "users" = [],
-        "searchTerm" = ""
-    };
-
-    function onMount() {
-        data.users = userService.getAll();
-    }
-
-    function deleteUser( userId ) secured="admin.users.delete" {
-        userService.delete( userId );
-        data.users = userService.getAll();
-    }
-
-    function filteredUsers() computed {
-        return data.users.filter( function( user ) {
-            return !len( data.searchTerm ) ||
-                   findNoCase( data.searchTerm, user.name );
-        });
-    }
-}
-```
-{% endtab %}
-{% endtabs %}
-
-### Mixed Security Levels
-
-{% tabs %}
-{% tab title="BoxLang" %}
-```javascript
-// wires/BlogPost.bx
-class extends="cbwire.models.Component" {
-    property name="postService" inject="PostService";
-
-    data = {
-        "post": {},
-        "comment": ""
-    };
-
-    function onMount( params ) {
-        data.post = postService.get( params.postId );
-    }
-
-    // Anyone can add comments
-    function addComment() {
-        postService.addComment( data.post.id, data.comment );
-        data.comment = "";
-    }
-
-    // Only editors can edit posts
-    @secured("editor")
-    function editPost() {
-        postService.update( data.post );
-    }
-
-    // Only admins can delete
-    @secured("admin")
-    function deletePost() {
-        postService.delete( data.post.id );
-        redirect( "/blog" );
-    }
-}
-```
-{% endtab %}
-
-{% tab title="CFML" %}
-```javascript
-// wires/BlogPost.cfc
-component extends="cbwire.models.Component" {
-    property name="postService" inject="PostService";
-
-    data = {
-        "post" = {},
-        "comment" = ""
-    };
-
-    function onMount( params ) {
-        data.post = postService.get( params.postId );
-    }
-
-    // Anyone can add comments
-    function addComment() {
-        postService.addComment( data.post.id, data.comment );
-        data.comment = "";
-    }
-
-    // Only editors can edit posts
-    function editPost() secured="editor" {
-        postService.update( data.post );
-    }
-
-    // Only admins can delete
-    function deletePost() secured="admin" {
-        postService.delete( data.post.id );
-        redirect( "/blog" );
-    }
-}
-```
-{% endtab %}
-{% endtabs %}
 
 {% hint style="info" %}
 Security annotations are only active when cbSecurity is installed and configured. Without cbSecurity, use the `onSecure()` lifecycle method for custom security logic.

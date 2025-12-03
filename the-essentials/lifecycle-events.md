@@ -65,6 +65,10 @@ function onSecure( event, rc, prc, isInitial, params ) {
 }
 ```
 
+{% hint style="warning" %}
+`onSecure()` fires on every request—both initial rendering and all subsequent AJAX requests. This ensures security checks run continuously throughout the component's lifecycle.
+{% endhint %}
+
 {% hint style="info" %}
 See the [Security](../features/security.md) documentation for complete information on securing wire components with `onSecure()`, cbSecurity integration, and security annotations.
 {% endhint %}
