@@ -288,6 +288,8 @@ Ready to dive deeper? Explore these essential concepts:
 
 CBWIRE leverages the incredible JavaScript libraries [Livewire](https://laravel-livewire.com/) and [Alpine.js](https://alpinejs.dev/) for DOM diffing and client-side functionality. CBWIRE wouldn't exist without the brilliant work of [Caleb Porzio](https://x.com/calebporzio), creator of both Livewire and Alpine.js. CBWIRE brings these powerful tools into the ColdBox and BoxLang/CFML ecosystem.
 
+Special thanks to [Mike Rigsby](https://github.com/mrigsby) for his significant contributions to the development and features of CBWIRE 5.
+
 The CBWIRE module is developed and maintained by [Grant Copley](https://twitter.com/grantcopley), [Luis Majano](https://twitter.com/lmajano), and the team at [Ortus Solutions](https://www.ortussolutions.com/).
 
 ## Project Support
