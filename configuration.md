@@ -32,8 +32,8 @@ class {
                 "progressBarColor": "#2299dd",
                 
                 // Security
-                "csrfEnabled": false,
-                "csrfStorage": "SessionStorage@cbstorages",
+                "csrfEnabled": true,
+                "csrfStorage": "SessionCSRFStorage@cbwire",
                 "checksumValidation": true
             }
         };
@@ -69,8 +69,8 @@ component {
                 "progressBarColor" = "##2299dd",
                 
                 // Security
-                "csrfEnabled" = false,
-                "csrfStorage" = "SessionStorage@cbstorages",
+                "csrfEnabled" = true,
+                "csrfStorage" = "SessionCSRFStorage@cbwire",
                 "checksumValidation" = true
             }
         };
@@ -330,34 +330,37 @@ The progress bar only appears when using `wire:navigate` for page transitions. S
 
 ### csrfEnabled
 
-Enables Cross-Site Request Forgery (CSRF) protection for CBWIRE requests. When enabled, all component actions require a valid CSRF token.
+Enables Cross-Site Request Forgery (CSRF) protection for CBWIRE requests. When enabled, all component actions require a valid CSRF token. CSRF protection is enabled by default in CBWIRE 5.x.
 
-**Default:** `false`
+**Default:** `true`
 
 ```javascript
 moduleSettings = {
     "cbwire": {
-        "csrfEnabled": true
+        "csrfEnabled": false // Disable if needed (not recommended)
     }
 };
 ```
 
 ### csrfStorage
 
-Specifies the WireBox mapping for the storage provider used to store CSRF tokens. The storage provider must implement the appropriate interface for session or cache storage.
+Specifies the storage implementation used to store CSRF tokens. CBWIRE provides two built-in implementations: `SessionCSRFStorage@cbwire` (default, recommended) for session-based storage, and `CacheCSRFStorage@cbwire` for cache-based storage in distributed environments.
 
-**Default:** `SessionStorage@cbstorages`
+**Default:** `SessionCSRFStorage@cbwire`
 
 ```javascript
 moduleSettings = {
     "cbwire": {
-        "csrfStorage": "CacheStorage@cbstorages"
+        // Use cache storage for distributed/clustered deployments
+        "csrfStorage": "CacheCSRFStorage@cbwire"
     }
 };
 ```
 
-{% hint style="warning" %}
-CSRF protection will be enabled by default starting in CBWIRE 5.0. It's recommended to enable and test CSRF protection in your applications now to ensure compatibility.
+See the [Security](features/security.md#csrf-protection) documentation for complete details on CSRF protection, including custom storage implementations.
+
+{% hint style="info" %}
+Session-based CSRF storage (default) follows OWASP recommendations and eliminates "Page Expired" errors common with cache-based approaches.
 {% endhint %}
 
 ### checksumValidation
