@@ -228,6 +228,92 @@ Access the ColdBox event object (request context) directly in templates to use m
 Background requests to `/cbwire/update` may not have access to RC/PRC values set by interceptors or handlers. Store needed values as data properties in `onMount()` to ensure they persist across re-renders.
 {% endhint %}
 
+### Dot Notation Data Properties
+
+Work with nested data structures using dot-separated paths in `wire:model` and component code. Reference hierarchical data naturally without flattening your structure.
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```javascript
+// wires/UserProfile.bx
+class extends="cbwire.models.Component" {
+    data = {
+        "user": {
+            "name": {
+                "first": "John",
+                "last": "Doe"
+            },
+            "contact": {
+                "email": "john@example.com",
+                "phone": "555-1234"
+            }
+        }
+    };
+
+    function onUpdateuser_name_first( value, oldValue ) {
+        writeLog( "First name changed from #oldValue# to #value#" );
+    }
+}
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```javascript
+// wires/UserProfile.cfc
+component extends="cbwire.models.Component" {
+    data = {
+        "user" = {
+            "name" = {
+                "first" = "John",
+                "last" = "Doe"
+            },
+            "contact" = {
+                "email" = "john@example.com",
+                "phone" = "555-1234"
+            }
+        }
+    };
+
+    function onUpdateuser_name_first( value, oldValue ) {
+        writeLog( "First name changed from #oldValue# to #value#" );
+    }
+}
+```
+{% endtab %}
+{% endtabs %}
+
+{% tabs %}
+{% tab title="BoxLang" %}
+```html
+<!-- wires/userProfile.bxm -->
+<bx:output>
+<div>
+    <input type="text" wire:model="user.name.first" placeholder="First Name">
+    <input type="text" wire:model="user.name.last" placeholder="Last Name">
+    <input type="email" wire:model="user.contact.email" placeholder="Email">
+    <input type="tel" wire:model="user.contact.phone" placeholder="Phone">
+</div>
+</bx:output>
+```
+{% endtab %}
+
+{% tab title="CFML" %}
+```html
+<!-- wires/userProfile.cfm -->
+<cfoutput>
+<div>
+    <input type="text" wire:model="user.name.first" placeholder="First Name">
+    <input type="text" wire:model="user.name.last" placeholder="Last Name">
+    <input type="email" wire:model="user.contact.email" placeholder="Email">
+    <input type="tel" wire:model="user.contact.phone" placeholder="Phone">
+</div>
+</cfoutput>
+```
+{% endtab %}
+{% endtabs %}
+
+Missing keys are created automatically. Lifecycle hooks use underscores—`user.name.first` triggers `onUpdateuser_name_first(newValue, oldValue)`.
+
 ### Single File Components
 
 Define both template and logic in a single `.bxm` file. Use `<bx:output>` for HTML and `<bx:script>` with `// @startWire` and `// @endWire` comments for component code.
