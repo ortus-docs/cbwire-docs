@@ -6,17 +6,19 @@ CBWIRE provides lifecycle methods you can hook into to update and render your [c
 
 The lifecycle methods are executed in the following order when a component is initially loaded:
 
-1. onMount()
-2. onRender()
+1. onSecure()
+2. onMount()
+3. onRender()
 
 Lifecycle methods are executed in this order for subsequent AJAX requests.
 
-1. onHydrate\[DataProperty]\()
-2. onHydrate()
-3. onUpdate\[DataProperty]\()
-4. onUpdate()
-5. Fire actions
-6. onRender()
+1. onSecure()
+2. onHydrate\[DataProperty]\()
+3. onHydrate()
+4. onUpdate\[DataProperty]\()
+5. onUpdate()
+6. Fire actions
+7. onRender()
 
 {% tabs %}
 {% tab title="BoxLang" %}
@@ -49,6 +51,23 @@ component extends="cbwire.models.Component" {
 {% endtabs %}
 
 ## Methods
+
+### onSecure
+
+Runs before all other lifecycle methods to enforce security rules. Return `false` to halt processing and render an empty div, or return nothing to continue normally.
+
+```javascript
+function onSecure( event, rc, prc, isInitial, params ) {
+    // Check if user is authenticated
+    if ( !auth.check() ) {
+        return false;
+    }
+}
+```
+
+{% hint style="info" %}
+See the [Security](../features/security.md) documentation for complete information on securing wire components with `onSecure()`, cbSecurity integration, and security annotations.
+{% endhint %}
 
 ### onMount
 
