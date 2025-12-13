@@ -1,6 +1,6 @@
 # What's New With 5.0
 
-[Release Date TBD]
+12/03/2025
 
 ## Enhancements
 
