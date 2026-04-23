@@ -206,6 +206,38 @@ component extends="cbwire.models.Component" {
 
 ## Server Configuration Issues
 
+### 500 Error Loading livewire.js with New ColdBox Template Layout
+
+**Problem**: CBWIRE returns a 500 error when trying to load `livewire.js` after switching to the newer ColdBox template layout.
+
+**Root Cause**: The newer ColdBox template layout installs modules under `./lib/modules/` instead of the traditional `./modules/` directory. CBWIRE references `/modules/cbwire/includes/js/livewire.js`, which no longer maps to a valid path, causing the 500 error.
+
+**Solution**: Add a `/modules` alias in your `server.json` so that CommandBox maps requests for `/modules` to the new `./lib/modules/` directory:
+
+```json
+{
+    "web": {
+        "aliases": {
+            "/modules": "./lib/modules/"
+        }
+    }
+}
+```
+
+Restart your CommandBox server after making this change:
+
+```bash
+box restart
+```
+
+{% hint style="info" %}
+This alias approach applies to **CommandBox-managed servers**. If you are running a different web server (e.g., IIS, Apache, nginx), you will need to create an equivalent URL alias or virtual directory using your web server's configuration.
+{% endhint %}
+
+{% hint style="info" %}
+If you prefer to use the traditional `./modules/` layout, you can scaffold your project from the [flat ColdBox template](https://github.com/coldbox-templates/flat), which keeps modules in the conventional location and does not require this alias.
+{% endhint %}
+
 ### 400 Bad Request on CBWIRE Updates
 
 **Problem**: The `/cbwire/update` endpoint returns "400 Bad Request" errors, preventing CBWIRE components from updating.
@@ -379,6 +411,7 @@ CBWIRE depends on the `X-Livewire` header for proper request routing and compone
 | "Unable to find component" | Alpine `x-if` removing components         | Use `x-show` instead                        |
 | JavaScript syntax error    | Double quotes in `x-data`                 | Use single quotes                           |
 | 400 Bad Request            | `X-Livewire` header stripped by server    | Configure server to allow empty headers     |
+| 500 Error (livewire.js)    | New ColdBox layout moves modules to `lib/modules/` | Add `/modules` alias in `server.json` |
 
 {% hint style="info" %}
 When in doubt, add `wire:key` to dynamic elements and wrap conditionals with block markers. These techniques help Livewire's DOM diffing engine track changes accurately.

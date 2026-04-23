@@ -185,6 +185,26 @@ Congratulations! You've successfully set up CBWIRE. Here are some recommended ne
 * **Master Template Directives**: Learn about [wire:click](template-directives/wire-click.md), [wire:model](template-directives/wire-model.md), and other directives
 * **Advanced Features**: Discover [Events](the-essentials/events.md), [File Uploads](features/file-uploads.md), and [Alpine.js Integration](https://github.com/ortus-docs/cbwire-docs/blob/v4.x/features/alpine-js.md)
 
+## New ColdBox Template Layout
+
+If you scaffolded your project using a newer ColdBox template, modules are installed under `./lib/modules/` instead of the traditional `./modules/` directory. CBWIRE references `/modules/cbwire/...` for its assets, so you need to add a URL alias in your `server.json` to point `/modules` at the new location:
+
+```json
+{
+    "web": {
+        "aliases": {
+            "/modules": "./lib/modules/"
+        }
+    }
+}
+```
+
+Without this alias, CommandBox-managed servers will return a 500 error when CBWIRE tries to load `livewire.js`.
+
+{% hint style="info" %}
+If you prefer the traditional module layout, scaffold your project from the [flat ColdBox template](https://github.com/coldbox-templates/flat), which keeps modules in `./modules/` and requires no alias configuration.
+{% endhint %}
+
 ## Troubleshooting
 
 If you encounter issues:
